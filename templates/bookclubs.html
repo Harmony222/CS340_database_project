@@ -3,5 +3,47 @@
 
 {% block body %}
 <h2>Novel Hovel Book Clubs Page</h2>
-
+<main role="main" class="container">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="clubForm">
+                <form method="POST" action="">
+                    <fieldset class="form-group">
+                        <div class="form-group">
+                            {{ form.clubName.label(class="form-control-label") }} 
+                            {{ form.clubName(class="form-control") }}
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-4">
+                                    {{ form.meetingFrequency.label(class="form-control-label") }}
+                                </div>
+                                <div class="col-8">
+                                    <label class="form-control-label col-form-label-sm freqLabel">
+                                        Enter the number of days between meetings. For example, enter 30
+                                        if your group meets monthly.
+                                    </label>
+                                </div>
+                            </div>
+                            {{ form.meetingFrequency(class="form-control") }}
+                        </div>
+                        <div class="form-group">
+                            {{ form.clubGenre.label(class="form-control-label") }}
+                            {{ form.clubGenre(class="form-control") }}
+                        </div>
+                        <label class="form-control-label">Club Leader's Name</label>
+                        <div class="row">
+                            <div class="col">
+                                {{ form.clubLeaderFirst(class="form-control", placeholder="First name") }}
+                            </div>
+                            <div class="col">
+                                {{ form.clubLeaderLast(class="form-control", placeholder="Last name") }}
+                            </div>
+                        </div>
+                    </fieldset>
+                </form>
+            </div>            
+        </div>
+    </div>
+</main>
 {% endblock body %}
