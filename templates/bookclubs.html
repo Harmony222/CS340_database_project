@@ -2,48 +2,58 @@
 {% block title %}Novel Hovel Book Clubs Page{% endblock title %}
 
 {% block body %}
-<main role="main" class="container">
-<h2>Novel Hovel Book Clubs Page</h2>
-    <div class="row">
-        <div class="col-md-8">
-            <div class="clubForm">
-                <form method="POST" action="">
-                    <fieldset class="form-group">
-                        <div class="form-group">
-                            {{ form.clubName.label(class="form-control-label") }} 
-                            {{ form.clubName(class="form-control") }}
-                        </div>
-                        <div class="form-group">
-                            <div class="row">
-                                <div class="col-4">
-                                    {{ form.meetingFrequency.label(class="form-control-label") }}
-                                </div>
-                                <div class="col-8">
-                                    <label class="form-control-label col-form-label-sm freqLabel">
-                                        Enter the number of days between meetings. For example, enter 30
-                                        if the group meets monthly.
-                                    </label>
-                                </div>
-                            </div>
-                            {{ form.meetingFrequency(class="form-control") }}
-                        </div>
-                        <div class="form-group">
-                            {{ form.clubGenre.label(class="form-control-label") }}
-                            {{ form.clubGenre(class="form-control") }}
-                        </div>
-                        <label class="form-control-label">Club Leader's Name</label>
-                        <div class="row">
-                            <div class="col">
-                                {{ form.clubLeaderFirst(class="form-control", placeholder="First name") }}
-                            </div>
-                            <div class="col">
-                                {{ form.clubLeaderLast(class="form-control", placeholder="Last name") }}
-                            </div>
-                        </div>
-                    </fieldset>
-                </form>
-            </div>            
-        </div>
+<!-- <h2>Novel Hovel Book Clubs Page</h2> -->
+<div class="row">
+    <div class="col-md-3">
+        <h4>Side Bar navigation?</h4>
+        <p>Create a new book club.</p>
+        <p>View all book clubs.</p>
+        <p>Sign up for a book club.</p>
+        <p>Update a book club???</p>
+        <p>Delete a book club???</p>
     </div>
-</main>
+    <div class="col-md-9">
+        <div class="clubForm">
+            <form method="POST" action="">
+                <fieldset class="form-group">
+                    <legend class="border-bottom mb-4">Create a New Book Club</legend>
+                    <div class="form-group">
+                        {{ form.clubName.label(class="form-control-label") }} 
+                        {{ form.clubName(class="form-control") }}
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-4">
+                                {{ form.meetingFrequency.label(class="form-control-label") }}
+                            </div>
+                            <div class="col-8">
+                                <label class="form-control-label col-form-label-sm freqLabel">
+                                    Enter the number of days between meetings. For example, enter 30
+                                    if the group meets monthly.
+                                </label>
+                            </div>
+                        </div>
+                        {{ form.meetingFrequency(class="form-control") }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.clubGenre.label(class="form-control-label") }}
+                        {{ form.clubGenre(class="form-control") }}
+                    </div>
+                    <label class="form-control-label">Club Leader's Name</label>
+                    <div class="row">
+                        <div class="col">
+                            {{ form.clubLeaderFirst(class="form-control", placeholder="First name") }}
+                        </div>
+                        <div class="col">
+                            {{ form.clubLeaderLast(class="form-control", placeholder="Last name") }}
+                        </div>
+                    </div> 
+                </fieldset>
+                <div class="form-group">
+                    {{ form.submit(class="btn btn-outline-primary") }}
+                </div>
+            </form>
+        </div>            
+    </div>
+</div>
 {% endblock body %}
