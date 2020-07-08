@@ -19,3 +19,15 @@ class MeetingForm(FlaskForm):
     meetingLeaderFirst = StringField('Leader First Name')
     meetingLeaderLast = StringField('Leader Last Name')
     meetingSubmit = SubmitField('Schedule Meeting')
+
+class MembersForm(FlaskForm):
+    firstName = StringField('First Name', validators=[DataRequired(), Length(min=2, max=100)])
+    lastName = StringField('Last Name', validators=[DataRequired(), Length(min=2, max=100)])
+    email = StringField('Email', validators=[Email()]) # pip3 install email-validator if you get exception
+    submit = SubmitField('Add New Member')
+
+class BooksForm(FlaskForm):
+    title = StringField('Title', validators=[DataRequired()])
+    author = StringField('Author', validators=[DataRequired()])
+    genre = StringField('Genre', validators=[DataRequired()])
+    submit = SubmitField('Add New Book')
