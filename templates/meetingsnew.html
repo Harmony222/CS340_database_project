@@ -1,0 +1,51 @@
+{% extends "layout.html" %}
+{% block title %}Novel Hovel Meetings Page{% endblock title %}
+
+{% block body %}
+<!-- <h2>Novel Hovel Meetings Page</h2> -->
+<div class="row">
+    {% include "partials/meetingssidebar.html" %}
+    <div class="col-md-7">
+        <div class="meetingForm">
+            <form method="POST" action="">
+                <fieldset class="form-group">
+                    <legend class="border-bottom mb-4">Schedule a New Club Meeting</legend>
+                    <div class="form-group">
+                        {{ form.clubName.label(class="form-control-label") }} 
+                        {{ form.clubName(class="form-control") }}
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                        <div class="col">
+                            {{ form.meetingDate.label(class="form-control-label") }}
+                            {{ form.meetingDate(class="form-control", placeholder="YYYY-MM-DD") }}
+                        </div>
+                        <div class="col">
+                            {{ form.meetingTime.label(class="form-control-label") }}
+                            {{ form.meetingTime(class="form-control", placeholder="H:M") }}
+                        </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        {{ form.meetingBook.label(class="form-control-label") }}
+                        {{ form.meetingBook(class="form-control") }}
+                    </div>
+                
+                    <label class="form-control-label">Meeting Leader's Name</label>
+                    <div class="row">
+                        <div class="col">
+                            {{ form.meetingLeaderFirst(class="form-control", placeholder="First name") }}
+                        </div>
+                        <div class="col">
+                            {{ form.meetingLeaderLast(class="form-control", placeholder="Last name") }}
+                        </div>
+                    </div> 
+                </fieldset>
+                <div class="form-group">
+                    {{ form.meetingSubmit(class="btn btn-outline-primary") }}
+                </div>
+            </form>
+        </div>            
+    </div>
+</div>
+{% endblock body %}

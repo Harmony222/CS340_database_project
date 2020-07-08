@@ -7,14 +7,14 @@
         <ul>
             <li><a href="{{ url_for('members') }}">Members</a></li>
                 <ul>
-                    <li>Become a member - INSERT required</li>
+                    <li>Become a member - INSERT - required</li>
                     <li>View members - SELECT query required (could view members specific to a book club or meeting)</li>
                     <li>UPDATE - optional</li>
                     <li>DELETE - optional</li>
                 </ul>
             <li><a href="{{ url_for('bookclubs') }}">Book Clubs</a></li>
                 <ul>
-                    <li>Create a new book club - INSERT required</li>
+                    <li>Create a new book club - INSERT - required</li>
                     <li>Sign up for a book club - part of one of our M:M relationships - INSERT required if we keep as M:M relationship</li>
                     <li>View Book Clubs - SELECT query required (could implement when a member is signing up for a book club)</li>
                     <li>UPDATE - optional</li>
@@ -22,7 +22,7 @@
                 </ul>
             <li><a href="{{ url_for('meetings') }}">Meetings</a></li>
                 <ul>
-                    <li>Create a new meeting - INSERT required</li>
+                    <li>Create a new meeting - INSERT - required</li>
                     <li>Sign up for a meeting - part of one of our M:M relationships - INSERT required</li>
                         <ul>
                             <li>Quit a meeting - DELETE required for one of our M:M relationships</li>
@@ -33,7 +33,7 @@
                 </ul>
             <li><a href="{{ url_for('books') }}">Books</a></li>
                 <ul>
-                    <li>Add a book - INSERT required</li>
+                    <li>Add a book - INSERT - required</li>
                     <li>View books - SELECT query required (could implement when creating a book club to narrow down book results by genre)</li>
                     <li>UPDATE - optional</li>
                     <li>DELETE - optional</li>

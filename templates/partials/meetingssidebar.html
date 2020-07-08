@@ -1,0 +1,19 @@
+<!-- <div class="col-md-3">
+    <h4>Club meetings navigation</h4>
+    <a href="{{ url_for('meetings') }}">View all meetings.</a>
+    <br>
+    <a href="{{ url_for('meetingsnew') }}">Schedule a new club meeting.</a>
+    <p>Sign up for a meeting.</p>
+    <p>Update a meeting</p>
+    <p>Delete a meeting</p>
+</div> -->
+<div class="col-md-3">
+    <h4>Club Meetings Navigation</h4>
+    <div class="nav flex-column nav-pill">
+        <a class="nav-link {% if active.view %}active{% endif %}" href="{{ url_for('meetings') }}">View all meetings</a>
+        <a class="nav-link active" href="{{ url_for('meetingsnew') }}">Schedule a new club meeting</a>
+        <a class="nav-link">Sign up for a meeting</a>
+        <a class="nav-link">Update a club meeting</a>
+        <a class="nav-link">Delete a club meeting</a>
+    </div>
+</div>
