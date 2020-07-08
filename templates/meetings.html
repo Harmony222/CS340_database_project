@@ -4,9 +4,74 @@
 {% block body %}
 <!-- <h2>Novel Hovel Meetings Page</h2> -->
 <div class="row">
-    {% include "partials/meetingssidebar.html" %}
-    <div class="col-md-7">
-        <h4>View club meetings - GET request to database and list all club meetings here.</h4>
+    <div class="col-md-3">
+        <h5 class="side_nav_header">Club Meetings</h5>
+        <div class="nav flex-column nav-pills side_nav" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+            <a class="nav-link active" id="v-pills-view-tab" data-toggle="pill" href="#v-pills-view" role="tab" aria-controls="v-pills-view-tab" aria-selected="true">View all meetings</a>
+            <a class="nav-link" id="v-pills-new-tab" data-toggle="pill" href="#v-pills-new" role="tab" aria-controls="v-pills-new-tab" aria-selected="false">Schedule a new meeting</a>
+            <a class="nav-link" id="v-pills-signup-tab" data-toggle="pill" href="#v-pills-signup" role="tab" aria-controls="v-pills-signup-tab" aria-selected="false">Sign up for a meeting</a>
+            <!-- <a class="nav-link" id="v-pills-update-tab" data-toggle="pill" href="#v-pills-update" role="tab" aria-controls="v-pills-update" aria-selected="false">Update a meeting</a>
+            <a class="nav-link" id="v-pills-delete-tab" data-toggle="pill" href="#v-pills-delete" role="tab" aria-controls="v-pills-delete" aria-selected="false">Delete a meeting</a> -->
+        </div>
+    </div>
+    <div class="col-md-7 mainContent">
+        <div class="tab-content" id="v-pills-tabContent">
+            <div class="tab-pane fade show active" id="v-pills-view" role="tabpanel" aria-labelledby="v-pills-view-tab">
+                <h4>View club meetings - GET request to database and list all club meetings here.</h4>
+                <h4>Update and Delete functionality will also go here.</h4>
+            </div>
+            <div class="tab-pane fade" id="v-pills-new" role="tabpanel" aria-labelledby="v-pills-new-tab">
+                <div class="meetingForm">
+                    <form method="POST" action="">
+                        <fieldset class="form-group">
+                            <legend class="border-bottom mb-4">Schedule a New Club Meeting</legend>
+                            <div class="form-group">
+                                {{ form.clubName.label(class="form-control-label") }} 
+                                {{ form.clubName(class="form-control") }}
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                <div class="col">
+                                    {{ form.meetingDate.label(class="form-control-label") }}
+                                    {{ form.meetingDate(class="form-control", placeholder="YYYY-MM-DD") }}
+                                </div>
+                                <div class="col">
+                                    {{ form.meetingTime.label(class="form-control-label") }}
+                                    {{ form.meetingTime(class="form-control", placeholder="H:M") }}
+                                </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                {{ form.meetingBook.label(class="form-control-label") }}
+                                {{ form.meetingBook(class="form-control") }}
+                            </div>
+                        
+                            <label class="form-control-label">Meeting Leader's Name</label>
+                            <div class="row">
+                                <div class="col">
+                                    {{ form.meetingLeaderFirst(class="form-control", placeholder="First name") }}
+                                </div>
+                                <div class="col">
+                                    {{ form.meetingLeaderLast(class="form-control", placeholder="Last name") }}
+                                </div>
+                            </div> 
+                        </fieldset>
+                        <div class="form-group">
+                            {{ form.meetingSubmit(class="btn btn-outline-primary") }}
+                        </div>
+                    </form>
+                </div>            
+            </div>
+            <div class="tab-pane fade" id="v-pills-signup" role="tabpanel" aria-labelledby="v-pills-signup-tab">
+                <h4>Signup for a meeting - form will go here.</h4>
+            </div>
+            <!-- <div class="tab-pane fade" id="v-pills-update" role="tabpanel" aria-labelledby="v-pills-update-tab">
+                <h4>Update a meeting - form will go here.</h4>
+            </div>
+            <div class="tab-pane fade" id="v-pills-delete" role="tabpanel" aria-labelledby="v-pills-delete-tab">
+                <h4>Delete a meeting - form will go here.</h4>
+            </div> -->
+        </div>            
     </div>
 </div>
 {% endblock body %}

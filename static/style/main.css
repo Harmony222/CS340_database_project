@@ -4,9 +4,29 @@ body {
 
 .fa-book {
     margin-right: 4px;
+    padding-left: 1rem;
 }
 
 .clubForm span {
     font-size: 0.8em;
     line-height: 1;
+}
+
+.side_nav_header {
+    display: block;
+    padding: 1rem 1rem 0.5rem;
+    border-radius: .25rem;
+    background-color: #f8f9fa;
+    margin-bottom: 0;
+}
+
+.side_nav {
+    display: block;
+    border-radius: .25rem;
+    background-color: #f8f9fa;
+    padding-bottom: 0.5rem;
+}
+
+.mainContent {
+    padding-top: 0.5rem;
 }
