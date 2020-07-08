@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect
 from flask_mysqldb import MySQL
 from db_credentials import host, user, passwd, db
-from forms import BookClubForm
+from forms import BookClubForm, MembersForm
 
 app = Flask(__name__)
 
@@ -20,7 +20,8 @@ def index():
 
 @app.route('/members')
 def members():
-    return render_template('members.html', active={'members':True})
+    members_form = MembersForm()
+    return render_template('members.html', members_form=members_form, active={'members':True})
 
 @app.route('/bookclubs')
 def bookclubs():
