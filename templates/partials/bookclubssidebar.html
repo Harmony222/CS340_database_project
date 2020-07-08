@@ -1,0 +1,19 @@
+<!-- <div class="col-md-3">
+    <h4>Book Clubs Navigation</h4>
+    <a class="item" href="{{ url_for('bookclubs') }}">View all book clubs</a>
+    <br>
+    <a class="item" href="{{ url_for('bookclubsnew') }}">Create a new book club</a>
+    <p>Sign up for a book club</p>
+    <p>Update a book club???</p>
+    <p>Delete a book club???</p>
+</div> -->
+<div class="col-md-3">
+    <h4>Book Clubs Navigation</h4>
+    <div class="nav flex-column nav-pill">
+        <a class="nav-link" href="{{ url_for('bookclubs') }}">View all book clubs</a>
+        <a class="nav-link" href="{{ url_for('bookclubsnew') }}">Create a new book club</a> 
+        <a class="nav-link">Sign up for a book club</a>
+        <a class="nav-link">Update a book club??</a>
+        <a class="nav-link">Delete a book club??</a>
+    </div>
+</div>

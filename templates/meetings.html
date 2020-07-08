@@ -2,6 +2,11 @@
 {% block title %}Novel Hovel Meetings Page{% endblock title %}
 
 {% block body %}
-<h2>Novel Hovel Meetings Page</h2>
-
+<!-- <h2>Novel Hovel Meetings Page</h2> -->
+<div class="row">
+    {% include "partials/meetingssidebar.html" %}
+    <div class="col-md-7">
+        <h4>View club meetings - GET request to database and list all club meetings here.</h4>
+    </div>
+</div>
 {% endblock body %}

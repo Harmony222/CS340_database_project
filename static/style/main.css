@@ -2,11 +2,11 @@ body {
     margin-top: 5rem;
 }
 
-.freqLabel {
-    display: inline-block;
-    line-height: 1;
+.fa-book {
+    margin-right: 4px;
 }
 
-.fa-book {
-    margin-right: 3px;
+.clubForm span {
+    font-size: 0.8em;
+    line-height: 1;
 }
