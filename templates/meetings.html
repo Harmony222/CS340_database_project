@@ -63,14 +63,30 @@
                 </div>            
             </div>
             <div class="tab-pane fade" id="v-pills-signup" role="tabpanel" aria-labelledby="v-pills-signup-tab">
-                <h4>Signup for a meeting - form will go here.</h4>
+                <div class="meetingSignUpForm">
+                    <form method="POST" action="">
+                        <fieldset class="form-group">
+                            <legend class="border-bottom mb-4">Sign Up For A Club Meeting</legend>
+                            <div class="form-group">
+                                {{ formSignUp.clubName.label(class="form-control-label") }} 
+                                {{ formSignUp.clubName(class="form-control") }}
+                            </div>       
+                            <label class="form-control-label">Your Name</label>
+                            <div class="row">
+                                <div class="col">
+                                    {{ formSignUp.firstName(class="form-control", placeholder="First name") }}
+                                </div>
+                                <div class="col">
+                                    {{ formSignUp.lastName(class="form-control", placeholder="Last name") }}
+                                </div>
+                            </div>         
+                        </fieldset>
+                        <div class="form-group">
+                            {{ formSignUp.signUpSubmit(class="btn btn-outline-primary") }}
+                        </div>
+                    </form>
+                </div>                 
             </div>
-            <!-- <div class="tab-pane fade" id="v-pills-update" role="tabpanel" aria-labelledby="v-pills-update-tab">
-                <h4>Update a meeting - form will go here.</h4>
-            </div>
-            <div class="tab-pane fade" id="v-pills-delete" role="tabpanel" aria-labelledby="v-pills-delete-tab">
-                <h4>Delete a meeting - form will go here.</h4>
-            </div> -->
         </div>            
     </div>
 </div>
