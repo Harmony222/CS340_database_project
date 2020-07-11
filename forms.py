@@ -42,3 +42,7 @@ class MeetingSignUp(FlaskForm):
     firstName = StringField('First Name', validators=[DataRequired(), Length(min=2, max=100)])
     lastName = StringField('Last Name', validators=[DataRequired(), Length(min=2, max=100)])
     signUpSubmit = SubmitField('Sign Up For Club Meeting')
+
+class GenresForm(FlaskForm):
+    genre = StringField('Genre', validators=[DataRequired()])
+    genreSubmit = SubmitField('Add New Genre')
