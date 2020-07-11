@@ -10,7 +10,6 @@ class BookClubForm(FlaskForm):
     clubLeaderLast = StringField('Leader Last Name')
     clubSubmit = SubmitField('Create New Book Club')
 
-
 class MeetingForm(FlaskForm):
     clubName = StringField('Book Club Name', validators=[DataRequired(), Length(min=2, max=100)])
     meetingDate = DateField('Meeting Date', format='%Y-%m-%d', validators=[DataRequired()])
@@ -31,3 +30,15 @@ class BooksForm(FlaskForm):
     author = StringField('Author', validators=[DataRequired()])
     genre = StringField('Genre', validators=[DataRequired()])
     submit = SubmitField('Add New Book')
+
+class ClubSignUp(FlaskForm):
+    clubName = StringField('Book Club Name', validators=[DataRequired(), Length(min=2, max=100)]) 
+    firstName = StringField('First Name', validators=[DataRequired(), Length(min=2, max=100)])
+    lastName = StringField('Last Name', validators=[DataRequired(), Length(min=2, max=100)])
+    signUpSubmit = SubmitField('Sign Up For Book Club')
+
+class MeetingSignUp(FlaskForm):
+    clubName = StringField('Book Club Name', validators=[DataRequired(), Length(min=2, max=100)]) 
+    firstName = StringField('First Name', validators=[DataRequired(), Length(min=2, max=100)])
+    lastName = StringField('Last Name', validators=[DataRequired(), Length(min=2, max=100)])
+    signUpSubmit = SubmitField('Sign Up For Club Meeting')

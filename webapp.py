@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect
 from flask_mysqldb import MySQL
 from db_credentials import host, user, passwd, db
-from forms import BookClubForm, MeetingForm, MembersForm, BooksForm
+from forms import BookClubForm, MeetingForm, MembersForm, BooksForm, ClubSignUp, MeetingSignUp
 
 app = Flask(__name__)
 
@@ -26,18 +26,29 @@ def members():
 @app.route('/bookclubs')
 def bookclubs():
     form = BookClubForm()
-    return render_template('bookclubs.html', form=form, active={'bookclubs':True})
+    formSignUp = ClubSignUp()
+    return render_template('bookclubs.html', 
+                            form=form, 
+                            formSignUp=formSignUp,
+                            active={'bookclubs':True})
 
 @app.route('/meetings')
 def meetings():
     form = MeetingForm()
-    return render_template('meetings.html', form=form, active={'meetings':True})
+    formSignUp = MeetingSignUp()
+    return render_template('meetings.html', 
+                            form=form, 
+                            formSignUp=formSignUp,
+                            active={'meetings':True})
     
 @app.route('/books')
 def books():
     form = BooksForm()
     return render_template('books.html', form=form, active={'books':True})
 
+@app.route('/genres')
+def genres():
+    return render_template('genres.html', active={'index':True})
 
 if __name__ == '__main__':
     app.run(debug=True)
