@@ -4,6 +4,7 @@ DROP TABLE IF EXISTS Books;
 DROP TABLE IF EXISTS Genres;
 DROP TABLE IF EXISTS Members;
 
+
 CREATE TABLE Members (
     memberID int(11) NOT NULL AUTO_INCREMENT,
     firstName varchar(255) NOT NULL,
@@ -18,6 +19,14 @@ INSERT INTO Members (firstName, lastName, email)
     VALUES ('Jay', 'Gatsby', 'jgats@westegg.org');
 INSERT INTO Members (firstName, lastName, email)
     VALUES ('Veruca', 'Salt', 'veruca.salt@wonka.edu');
+INSERT INTO Members (firstName, lastName, email)
+    VALUES ('Atticus', 'Finch', 'attifinch@maycomb.com');
+INSERT INTO Members (firstName, lastName, email)
+    VALUES ('Hester', 'Prynne', 'h.prynne@pearl.edu');
+INSERT INTO Members (firstName, lastName, email)
+    VALUES ('John', 'Watson', 'watsonj@bakerst.net');
+INSERT INTO Members (firstName, lastName, email)
+    VALUES ('Annabel', 'Lee', 'ann.lee@poe.org');
 
 
 CREATE TABLE Genres (
@@ -25,6 +34,16 @@ CREATE TABLE Genres (
     genre varchar(255) NOT NULL,
     PRIMARY KEY (genreID)
 );
+
+INSERT INTO Genres (genre) VALUES ('classic');
+INSERT INTO Genres (genre) VALUES ('graphic novel');
+INSERT INTO Genres (genre) VALUES ('mystery');
+INSERT INTO Genres (genre) VALUES ('science fiction');
+INSERT INTO Genres (genre) VALUES ('history');
+INSERT INTO Genres (genre) VALUES ('short story');
+INSERT INTO Genres (genre) VALUES ('biography');
+INSERT INTO Genres (genre) VALUES ('poetry');
+INSERT INTO Genres (genre) VALUES ('children');
 
 
 CREATE TABLE BookClubs (
@@ -40,6 +59,27 @@ CREATE TABLE BookClubs (
         REFERENCES Members(memberID)
 );
 
+INSERT INTO BookClubs (clubName, meetingFrequency, clubGenreID, clubLeaderID)
+    VALUES ('But I Progress Book Club', 
+            '30', 
+            (SELECT genreID FROM Genres WHERE genre = 'short story'),
+            (SELECT memberID FROM Members WHERE email = 'attifinch@maycomb.com'));
+INSERT INTO BookClubs (clubName, meetingFrequency, clubGenreID, clubLeaderID)
+    VALUES ('The Book Was Better',
+            '14',
+            (SELECT genreID FROM Genres WHERE genre = 'mystery'),
+            (SELECT memberID FROM Members WHERE email = 'watsonj@bakerst.net'));
+INSERT INTO BookClubs (clubName, meetingFrequency, clubGenreID, clubLeaderID)
+    VALUES ('Get Lit Book Club', 
+            '30',
+            (SELECT genreID FROM Genres WHERE genre = 'classic'),
+            (SELECT memberID FROM Members WHERE email = 'h.prynne@pearl.edu'));
+INSERT INTO BookClubs (clubName, meetingFrequency, clubGenreID, clubLeaderID)
+    VALUES ('Beyond Words Book Club',
+            '21',
+            (SELECT genreID FROM Genres WHERE genre = 'poetry'),
+            (SELECT memberID FROM Members WHERE email = 'ann.lee@poe.org'));
+
 
 CREATE TABLE Books (
     bookID int(11) NOT NULL AUTO_INCREMENT,
@@ -50,6 +90,7 @@ CREATE TABLE Books (
     FOREIGN KEY (bookGenreID)
         REFERENCES Genres(genreID)
 );
+
 
 CREATE TABLE ClubMeetings (
     meetingID int(11) NOT NULL AUTO_INCREMENT,
