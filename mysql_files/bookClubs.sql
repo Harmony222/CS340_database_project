@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS meetings_members;
 DROP TABLE IF EXISTS ClubMeetings;
 DROP TABLE IF EXISTS BookClubs;
 DROP TABLE IF EXISTS Books;
@@ -106,3 +107,12 @@ CREATE TABLE ClubMeetings (
 );
 
 
+CREATE TABLE meetings_members (
+    meetingID int(11) NOT NULL,
+    memberID int(11) NOT NULL,
+    PRIMARY KEY (meetingID, memberID),
+    FOREIGN KEY (meetingID)
+        REFERENCES ClubMeetings(meetingID),
+    FOREIGN KEY (memberID)
+        REFERENCES Members(memberID)
+);
