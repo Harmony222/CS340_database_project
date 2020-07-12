@@ -8,6 +8,7 @@
         https://www.w3schools.com/bootstrap/bootstrap_grid_basic.asp
         https://www.youtube.com/watch?v=eu0tg4vgFr4
         https://getbootstrap.com/docs/4.0/components/navs/   -> vertical pills with tabs plugin
+        https://mdbootstrap.com/docs/jquery/utilities/borders/
 -->
 
 <div class="row">
@@ -26,6 +27,7 @@
         <div class="tab-content" id="v-pills-tabContent">
             <div class="tab-pane fade show active" id="v-pills-add" role="tabpanel" aria-labelledby="v-pills-add-tab">
                 <form method="POST" action="/">
+                    <legend class="border-bottom mb-4">Add a New Book</legend>
                     <div class="form-group">
                         {{ form.title.label(class="form-control-label") }}
                         {{ form.title(class="form-control") }}
