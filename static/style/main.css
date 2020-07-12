@@ -7,9 +7,12 @@ body {
     padding-left: 1rem;
 }
 
-.clubForm span {
-    font-size: 0.8em;
+.frequencyLabel {
+    padding-right: 0;
+}
+.frequencyDetails {
     line-height: 1;
+    padding-left: 0;
 }
 
 .side_nav_header {
@@ -29,4 +32,8 @@ body {
 
 .mainContent {
     padding-top: 0.5rem;
+}
+
+.extra {
+    margin-left: 2rem;
 }

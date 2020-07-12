@@ -25,8 +25,12 @@ def members():
 
 @app.route('/bookclubs')
 def bookclubs():
+    genres_list = get_genres()
+    clubs_list = get_clubs()
     form = BookClubForm()
+    form.clubGenre.choices = genres_list
     formSignUp = ClubSignUp()
+    formSignUp.clubName.choices = clubs_list
     return render_template('bookclubs.html', 
                             form=form, 
                             formSignUp=formSignUp,
@@ -49,6 +53,29 @@ def books():
 @app.route('/genres')
 def genres():
     return render_template('genres.html', active={'index':True})
+
+
+
+def get_genres():
+    cur = mysql.connection.cursor()
+    result_val = cur.execute('SELECT * FROM Genres')
+    if result_val > 0:
+        genres_dict = cur.fetchall()
+    genres_list = []
+    for g in genres_dict:
+        genres_list.append((g['genreID'], g['genre'].capitalize())) 
+    return genres_list
+
+def get_clubs():
+    cur = mysql.connection.cursor()
+    result_val = cur.execute('SELECT bookClubID, clubName FROM BookClubs')
+    if result_val > 0:
+        clubs_dict = cur.fetchall()
+    clubs_list = []
+    for c in clubs_dict:
+        clubs_list.append((c['bookClubID'], c['clubName']))
+    return clubs_list
+
 
 if __name__ == '__main__':
     app.run(debug=True)
