@@ -14,16 +14,37 @@
             <a class="nav-link" id="v-pills-delete-tab" data-toggle="pill" href="#v-pills-delete" role="tab" aria-controls="v-pills-delete" aria-selected="false">Delete a book club</a> -->
         </div>
     </div>
-    <div class="col-md-7 mainContent">
+    <div class="col-md-9 mainContent">
         <div class="tab-content" id="v-pills-tabContent">
             <!-- View All Book Clubs -->
             <div class="tab-pane fade show active" id="v-pills-view" role="tabpanel" aria-labelledby="v-pills-view-tab">
                 <h4>View book clubs - GET request to database and list all book clubs here.</h4>
+                <table class="table">
+                    <thead>
+                        <th hidden>ID</th>
+                        <th>Book Club Name</th>
+                        <th>Meeting Frequency</th>
+                        <th>Genre</th>
+                        <th>Club Leader</th>
+                    </thead>
+                    <tbody>
+                        {% for club in clubs %}
+                        <tr id="{{ club.bookClubID }}">
+                            <td hidden>{{ club.bookClubID }}</td>
+                            <td>{{ club.clubName }}</td>
+                            <td>{{ club.meetingFrequency }}</td>
+                            <td>{{ club.genre }}</td>
+                            <td>{{ club.firstName }} {{ club.lastName }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
                 <h4>Update and Delete functionality can also go here (if implemented).</h4>
             </div>
-            
+    
             <!-- Create a New Book Club -->
             <div class="tab-pane fade" id="v-pills-new" role="tabpanel" aria-labelledby="v-pills-new-tab">
+            <div class="col-md-9">
                 <div class="clubForm">
                     <form method="POST" action="">
                         <fieldset class="form-group">
@@ -51,12 +72,15 @@
                                 <small class="text-muted extra">
                                     Genre not listed? <a class="ml-2" href="{{ url_for('genres') }}">Add new genre.</a>
                                 </small>
-                                {{ form.clubGenre(class="form-control") }}
+                                <select class="form-control" name="clubGenre">
+                                {% for option in form.clubGenre %}
+                                    {% if loop.first %}
+                                        <option value="" disabled selected>Select a genre</option>
+                                    {% endif %}
+                                    {{ option }}
+                                {% endfor %}
+                                </select>
                             </div>
-                            <!-- <div class="form-group">
-                                {{ form.clubGenre.label(class="form-control-label") }}
-                                {{ form.clubGenre(class="form-control") }}
-                            </div> -->
                             <div class="form-group">
                                 {{ form.clubLeaderEmail.label(class="form-control-label") }}    
                                 {{ form.clubLeaderEmail(class="form-control") }}
@@ -68,16 +92,25 @@
                     </form>
                 </div>
             </div>
+            </div>
 
             <!-- Sign Up For A Book Club -->
             <div class="tab-pane fade" id="v-pills-signup" role="tabpanel" aria-labelledby="v-pills-signup-tab">
+            <div class="col-md-9">
                 <div class="clubSignUpForm">
                     <form method="POST" action="">
                         <fieldset class="form-group">
                             <legend class="border-bottom mb-4">Sign Up For A Book Club</legend>
                             <div class="form-group">
                                 {{ formSignUp.clubName.label(class="form-control-label") }} 
-                                {{ formSignUp.clubName(class="form-control") }}
+                                <select class="form-control" name="clubName">
+                                {% for option in formSignUp.clubName %}
+                                    {% if loop.first %}
+                                        <option value="" disabled selected>Select a book club</option>
+                                    {% endif %}
+                                    {{ option }}
+                                {% endfor %}
+                                </select>
                             </div>       
                             <div class="form-group">
                                 {{ formSignUp.email.label(class="form-control-label") }}
@@ -89,6 +122,7 @@
                         </div>
                     </form>
                 </div> 
+            </div>
             </div>
         </div>
     </div>

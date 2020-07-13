@@ -5,12 +5,12 @@ from wtforms.validators import InputRequired, Length, Email, equal_to
 class BookClubForm(FlaskForm):
     clubName = StringField('Book Club Name', validators=[InputRequired(), Length(min=2, max=100)])
     meetingFrequency = IntegerField('Meeting Frequency')
-    clubGenre = SelectField('Select Genre', coerce=int, validators=[InputRequired()])
+    clubGenre = SelectField('Genre', coerce=int, validators=[InputRequired()])
     clubLeaderEmail = StringField('Club Leader Email', validators=[InputRequired(), Email()])
     clubSubmit = SubmitField('Create New Book Club')
 
 class MeetingForm(FlaskForm):
-    clubName = StringField('Book Club Name', validators=[InputRequired(), Length(min=2, max=100)])
+    clubName = SelectField('Book Club', coerce=int, validators=[InputRequired()])
     meetingDate = DateField('Meeting Date', format='%Y-%m-%d', validators=[InputRequired()])
     meetingTime = DateTimeField('Meeting Time', format='%H:%M')
     meetingBook = StringField('Meeting Book', validators=[InputRequired()])
@@ -30,12 +30,12 @@ class BooksForm(FlaskForm):
     submit = SubmitField('Add New Book')
 
 class ClubSignUp(FlaskForm):
-    clubName = SelectField('Select Book Club', coerce=int, validators=[InputRequired()])
+    clubName = SelectField('Book Club', coerce=int, validators=[InputRequired()])
     email = StringField('Member Email', validators=[InputRequired(), Email()])
     signUpSubmit = SubmitField('Sign Up For Book Club')
 
 class MeetingSignUp(FlaskForm):
-    clubName = StringField('Book Club Name', validators=[InputRequired(), Length(min=2, max=100)]) 
+    clubName = SelectField('Book Club', coerce=int, validators=[InputRequired()])
     email = StringField('Member Email', validators=[InputRequired(), Email()])
     signUpSubmit = SubmitField('Sign Up For Club Meeting')
 

@@ -92,6 +92,15 @@ CREATE TABLE Books (
         REFERENCES Genres(genreID)
 );
 
+INSERT INTO Books (title, author, bookGenreID)
+    VALUES ('Florida', 
+            'Lauren Groff', 
+            (SELECT genreID FROM Genres WHERE genre = 'short story'));
+INSERT INTO Books (title, author, bookGenreID)
+    VALUES ('Nine Stories',
+            'J.D. Salinger',
+            (SELECT genreID FROM Genres WHERE genre = 'short story'));
+
 
 CREATE TABLE ClubMeetings (
     meetingID int(11) NOT NULL AUTO_INCREMENT,
@@ -106,6 +115,17 @@ CREATE TABLE ClubMeetings (
         REFERENCES Members(memberID)
 );
 
+INSERT INTO ClubMeetings (`dateTime`, bookClubID, meetingBookID, meetingLeaderID)
+    VALUES ('2000-08-20 19:30',
+            (SELECT bookClubID FROM BookClubs WHERE clubName = 'But I Progress Book Club'),
+            (SELECT bookID FROM Books WHERE title = 'Florida'),
+            (SELECT memberID FROM Members WHERE email = 'jgats@westegg.org'));
+INSERT INTO ClubMeetings (`dateTime`, bookClubID, meetingBookID, meetingLeaderID)
+    VALUES ('2000-09-20 19:30',
+            (SELECT bookClubID FROM BookClubs WHERE clubName = 'But I Progress Book Club'),
+            (SELECT bookID FROM Books WHERE title = 'Nine Stories'),
+            (SELECT memberID FROM Members WHERE email = 'inigo.montoya@florian.com'));
+            
 
 CREATE TABLE meetings_members (
     meetingID int(11) NOT NULL,
