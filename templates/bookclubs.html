@@ -2,7 +2,15 @@
 {% block title %}Novel Hovel Book Clubs Page{% endblock title %}
 
 {% block body %}
-<!-- <h2>Novel Hovel Book Clubs Page</h2> -->
+
+<!-- 
+References:
+https://getbootstrap.com/docs/4.0/components/navs/   -> vertical pills with tabs plugin
+https://wtforms.readthedocs.io/en/2.2.1/fields/#
+https://stackoverflow.com/questions/44379016/disabling-one-of-the-options-in-wtforms-selectfield
+https://stackoverflow.com/questions/46921823/dynamic-choices-wtforms-flask-selectfield 
+-->
+
 <div class="row">
     <div class="col-md-3">
         <h5 class="side_nav_header">Book Clubs</h5>
@@ -10,30 +18,31 @@
             <a class="nav-link active" id="v-pills-view-tab" data-toggle="pill" href="#v-pills-view" role="tab" aria-controls="v-pills-view-tab" aria-selected="true">View all book clubs</a>
             <a class="nav-link" id="v-pills-new-tab" data-toggle="pill" href="#v-pills-new" role="tab" aria-controls="v-pills-new-tab" aria-selected="false">Create a new book club</a>
             <a class="nav-link" id="v-pills-signup-tab" data-toggle="pill" href="#v-pills-signup" role="tab" aria-controls="v-pills-signup-tab" aria-selected="false">Sign up for a book club</a>
-            <!-- <a class="nav-link" id="v-pills-update-tab" data-toggle="pill" href="#v-pills-update" role="tab" aria-controls="v-pills-update" aria-selected="false">Update a book club</a>
-            <a class="nav-link" id="v-pills-delete-tab" data-toggle="pill" href="#v-pills-delete" role="tab" aria-controls="v-pills-delete" aria-selected="false">Delete a book club</a> -->
         </div>
     </div>
     <div class="col-md-9 mainContent">
         <div class="tab-content" id="v-pills-tabContent">
+
             <!-- View All Book Clubs -->
             <div class="tab-pane fade show active" id="v-pills-view" role="tabpanel" aria-labelledby="v-pills-view-tab">
-                <h4>View book clubs - GET request to database and list all book clubs here.</h4>
+                <legend class="border-bottom mb-4">Book Club Information</legend>
                 <table class="table">
                     <thead>
                         <th hidden>ID</th>
+                        <th>Genre</th>
                         <th>Book Club Name</th>
                         <th>Meeting Frequency</th>
-                        <th>Genre</th>
+                        <th>Next Meeting</th>
                         <th>Club Leader</th>
                     </thead>
                     <tbody>
                         {% for club in clubs %}
                         <tr id="{{ club.bookClubID }}">
                             <td hidden>{{ club.bookClubID }}</td>
+                            <td class="genre">{{ club.genre }}</td>
                             <td>{{ club.clubName }}</td>
                             <td>{{ club.meetingFrequency }}</td>
-                            <td>{{ club.genre }}</td>
+                            <td>{{ club.nextMeeting }}</td>
                             <td>{{ club.firstName }} {{ club.lastName }}</td>
                         </tr>
                         {% endfor %}

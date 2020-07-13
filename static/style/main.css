@@ -10,6 +10,7 @@ body {
 .frequencyLabel {
     padding-right: 0;
 }
+
 .frequencyDetails {
     line-height: 1;
     padding-left: 0;
@@ -36,4 +37,8 @@ body {
 
 .extra {
     margin-left: 2rem;
+}
+
+.genre {
+    text-transform: capitalize;
 }

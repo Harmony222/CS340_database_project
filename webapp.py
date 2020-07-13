@@ -86,16 +86,20 @@ def get_club_names():
 def get_all_clubs():
     cur = mysql.connection.cursor()
     result_val = cur.execute('''
-        SELECT b.bookClubID, b.clubName, b.meetingFrequency, g.genre, m.firstName, m.lastName
+        SELECT b.bookClubID, b.clubName, b.meetingFrequency, g.genre, m.firstName, m.lastName, tmp.nextMeeting
         FROM BookClubs as b
         JOIN Genres as g ON b.clubGenreID = g.genreID
-        JOIN Members as m ON b.clubLeaderID = m.memberID''')
+        JOIN Members as m ON b.clubLeaderID = m.memberID
+        LEFT JOIN (
+                SELECT tmp.bookClubID, MIN(tmp.dateTime) as nextMeeting
+                FROM (SELECT cm2.bookClubID, cm2.dateTime
+                        FROM ClubMeetings as cm2
+                        WHERE cm2.dateTime > CURDATE()) as tmp
+                        GROUP BY tmp.bookClubID) as tmp ON b.bookClubID = tmp.bookClubID''')
     if result_val > 0:
         clubs = cur.fetchall()
     else:
         clubs = dict()
-
-    print(clubs)
     return clubs
 
 def get_all_meetings():
@@ -105,12 +109,16 @@ def get_all_meetings():
         FROM ClubMeetings as cm
         JOIN Books as b ON cm.meetingBookID = b.bookID
         JOIN Members as m on cm.meetingLeaderID = m.memberID
-        JOIN BookClubs as bc on cm.bookClubID = bc.bookClubID''')
+        JOIN BookClubs as bc on cm.bookClubID = bc.bookClubID
+        WHERE cm.dateTime >= CURDATE()
+        ORDER BY cm.bookClubID, cm.dateTime''')
     if result_val > 0:
         meetings = cur.fetchall()
     else:
         meetings = dict()
     return meetings
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)

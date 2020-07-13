@@ -28,6 +28,10 @@ INSERT INTO Members (firstName, lastName, email)
     VALUES ('John', 'Watson', 'watsonj@bakerst.net');
 INSERT INTO Members (firstName, lastName, email)
     VALUES ('Annabel', 'Lee', 'ann.lee@poe.org');
+INSERT INTO Members (firstName, lastName, email)
+    VALUES ('Elizabeth', 'Bennet', 'lizzyb@longbourn.net');
+INSERT INTO Members (firstName, lastName, email)
+    VALUES ('Lyra', 'Belacqua', 'lyra@oxford.edu');
 
 
 CREATE TABLE Genres (
@@ -100,7 +104,18 @@ INSERT INTO Books (title, author, bookGenreID)
     VALUES ('Nine Stories',
             'J.D. Salinger',
             (SELECT genreID FROM Genres WHERE genre = 'short story'));
-
+INSERT INTO Books (title, author, bookGenreID)
+    VALUES ('Stone Mattress',
+            'Margaret Atwood',
+            (SELECT genreID FROM Genres WHERE genre = 'short story'));
+INSERT INTO Books (title, author, bookGenreID)
+    VALUES ('A Farewell to Arms',
+            'Ernest Hemingway',
+            (SELECT genreID FROM Genres WHERE genre = 'classic'));
+INSERT INTO Books (title, author, bookGenreID)
+    VALUES ('The Stranger',
+           'Albert Camus',
+           (SELECT genreID FROM Genres WHERE genre = 'classic'));
 
 CREATE TABLE ClubMeetings (
     meetingID int(11) NOT NULL AUTO_INCREMENT,
@@ -116,15 +131,30 @@ CREATE TABLE ClubMeetings (
 );
 
 INSERT INTO ClubMeetings (`dateTime`, bookClubID, meetingBookID, meetingLeaderID)
-    VALUES ('2000-08-20 19:30',
+    VALUES ('2020-06-20 19:30',
+            (SELECT bookClubID FROM BookClubs WHERE clubName = 'But I Progress Book Club'),
+            (SELECT bookID FROM Books WHERE title = 'Stone Mattress'),
+            (SELECT memberID FROM Members WHERE email = 'attifinch@maycomb.com'));
+INSERT INTO ClubMeetings (`dateTime`, bookClubID, meetingBookID, meetingLeaderID)
+    VALUES ('2020-09-20 19:30',
+            (SELECT bookClubID FROM BookClubs WHERE clubName = 'But I Progress Book Club'),
+            (SELECT bookID FROM Books WHERE title = 'Nine Stories'),
+            (SELECT memberID FROM Members WHERE email = 'inigo.montoya@florian.com'));
+INSERT INTO ClubMeetings (`dateTime`, bookClubID, meetingBookID, meetingLeaderID)
+    VALUES ('2020-08-20 19:30',
             (SELECT bookClubID FROM BookClubs WHERE clubName = 'But I Progress Book Club'),
             (SELECT bookID FROM Books WHERE title = 'Florida'),
             (SELECT memberID FROM Members WHERE email = 'jgats@westegg.org'));
 INSERT INTO ClubMeetings (`dateTime`, bookClubID, meetingBookID, meetingLeaderID)
-    VALUES ('2000-09-20 19:30',
-            (SELECT bookClubID FROM BookClubs WHERE clubName = 'But I Progress Book Club'),
-            (SELECT bookID FROM Books WHERE title = 'Nine Stories'),
-            (SELECT memberID FROM Members WHERE email = 'inigo.montoya@florian.com'));
+    VALUES ('2020-8-27 18:00',
+            (SELECT bookClubID FROM BookClubs WHERE clubName = 'Get Lit Book Club'),
+            (SELECT bookID FROM Books WHERE title = 'A Farewell to Arms'),
+            (SELECT memberID FROM Members WHERE email = 'veruca.salt@wonka.edu'));
+INSERT INTO ClubMeetings (`dateTime`, bookClubID, meetingBookID, meetingLeaderID)
+    VALUES ('2020-9-24 18:00',
+            (SELECT bookClubID FROM BookClubs WHERE clubName = 'Get Lit Book Club'),
+            (SELECT bookID FROM Books WHERE title = 'The Stranger'),
+            (SELECT memberID FROM Members WHERE email = 'lizzyb@longbourn.net'));
             
 
 CREATE TABLE meetings_members (
