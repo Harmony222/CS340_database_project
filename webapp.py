@@ -18,10 +18,20 @@ mysql = MySQL(app)
 def index():
     return render_template('index.html', active={'index':True})
 
-@app.route('/members')
+@app.route('/members', methods=['POST', 'GET'])
 def members():
-    form = MembersForm()
-    return render_template('members.html', form=form, active={'members':True})
+    members_form = MembersForm()
+    # Week 7: Learn using Python and Flask Framework - Inserting Data Using Flask
+    if request.method == 'POST':
+        firstName = request.form['firstName']
+        lastName = request.form['lastName']
+        email = request.form['email']
+        print("First name is: ", firstName)
+        print("Last Name is: ", lastName)
+        print("Email is: ", email)
+    #else:
+        #print("This is a POST test")
+    return render_template('members.html', form=members_form, active={'members':True})
 
 @app.route('/bookclubs')
 def bookclubs():
@@ -52,10 +62,17 @@ def meetings():
                             active={'meetings':True},
                             all_meetings=all_meetings)
     
-@app.route('/books')
+@app.route('/books', methods=['POST', 'GET'])
 def books():
-    form = BooksForm()
-    return render_template('books.html', form=form, active={'books':True})
+    books_form = BooksForm()
+    if request.method == 'POST':
+        title = request.form['title']
+        author = request.form['author']
+        genre = request.form['genre']
+        print("Title is: ", title)
+        print("Author is: ", author)
+        print("Genre is: ", genre)
+    return render_template('books.html', form=books_form, active={'books':True})
 
 @app.route('/genres')
 def genres():
