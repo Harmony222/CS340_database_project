@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect
 from flask_mysqldb import MySQL
 from db_credentials import host, user, passwd, db
 from forms import *
-from db_connector import connect_to_database, execute_query
+#from db_connector import connect_to_database, execute_query
 
 app = Flask(__name__)
 
@@ -31,20 +31,20 @@ def members():
         print("Last Name is: ", lastName)
         print("Email is: ", email)
 
-        db_connection = connect_to_database()
-        query = 'DROP TABLE IF EXISTS Members'
-        execute_query(db_connection, query)
+        #db_connection = connect_to_database()
+        #query = 'DROP TABLE IF EXISTS Members'
+        #execute_query(db_connection, query)
 
-        query = 'CREATE TABLE Members (memberID int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT, firstName varchar(255) NOT NULL, lastName varchar(255) NOT NULL, email varchar(255) UNIQUE NOT NULL)'
-        execute_query(db_connection, query)
+        #query = 'CREATE TABLE Members (memberID int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT, firstName varchar(255) NOT NULL, lastName varchar(255) NOT NULL, email varchar(255) UNIQUE NOT NULL)'
+        #execute_query(db_connection, query)
         
-        query = 'INSERT INTO Members (firstName, lastName, email) VALUES (%s, %s, %s)'
-        data = (firstName, lastName, email)
-        execute_query(db_connection, query, data)
+        #query = 'INSERT INTO Members (firstName, lastName, email) VALUES (%s, %s, %s)'
+        #data = (firstName, lastName, email)
+        #execute_query(db_connection, query, data)
 
-        query = 'SELECT * FROM Members'
-        result = execute_query(db_connection, query).fetchall()
-        print(result)
+        #query = 'SELECT * FROM Members'
+        #result = execute_query(db_connection, query).fetchall()
+        #print(result)
 
     return render_template('members.html', form=members_form, active={'members':True})
 
