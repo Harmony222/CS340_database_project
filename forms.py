@@ -34,8 +34,12 @@ class ClubSignUp(FlaskForm):
     email = StringField('Member Email', validators=[InputRequired(), Email()])
     signUpSubmit = SubmitField('Sign Up For Book Club')
 
-class MeetingSignUp(FlaskForm):
+class SelectClub(FlaskForm):
     clubName = SelectField('Book Club', coerce=int, validators=[InputRequired()])
+    selectClubSubmit = SubmitField('View Upcoming Meetings')
+
+class MeetingSignUp(FlaskForm):
+    meetingID = IntegerField('Meeting ID', validators=[InputRequired()])
     email = StringField('Member Email', validators=[InputRequired(), Email()])
     signUpSubmit = SubmitField('Sign Up For Club Meeting')
 

@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect
 from flask_mysqldb import MySQL
 from db_credentials import host, user, passwd, db
-from forms import BookClubForm, MeetingForm, MembersForm, BooksForm, ClubSignUp, MeetingSignUp, GenresForm
+from forms import *
 
 app = Flask(__name__)
 
@@ -38,18 +38,35 @@ def bookclubs():
                             active={'bookclubs':True},
                             clubs=clubs)
 
-@app.route('/meetings')
+@app.route('/meetings', methods=['GET', 'POST'])
 def meetings():
     all_meetings = get_all_meetings()
     club_names_list = get_club_names()
     form = MeetingForm()
     form.clubName.choices = club_names_list
+    formSelectClub = SelectClub()
+    formSelectClub.clubName.choices = club_names_list
     formSignUp = MeetingSignUp()
-    formSignUp.clubName.choices = club_names_list
+    # if request.method == 'POST':
+    #     if formSelectClub.validate_on_submit():
+    if request.method == 'POST' and formSelectClub.validate():
+            club = formSelectClub.clubName.data
+            club_meetings = get_club_meetings(club)
+            return render_template('meetings.html', 
+                                       form=form, 
+                            formSelectClub=formSelectClub,
+                            formSignUp=formSignUp,
+                            active={'meetings':True, 'signup':True},
+                            all_meetings=all_meetings,
+                            club_meetings=club_meetings)
+    print(formSignUp.meetingID.errors)
+    if request.method == 'POST' and formSignUp.validate_on_submit():
+        print(formSignUp.meetingID.data)
     return render_template('meetings.html', 
                             form=form, 
+                            formSelectClub=formSelectClub,
                             formSignUp=formSignUp,
-                            active={'meetings':True},
+                            active={'meetings':True, 'view':True},
                             all_meetings=all_meetings)
     
 @app.route('/books')
@@ -82,6 +99,16 @@ def get_club_names():
     for c in club_names_dict:
         club_names_list.append((c['bookClubID'], c['clubName']))
     return club_names_list
+
+def get_book_list():
+    cur = mysql.connection.cursor()
+    result_val = cur.execute('SELECT * FROM Books')
+    if result_val > 0:
+        books_dict = cur.fetchall()
+    books_list = []
+    for b in books_dict:
+        books_list.append((b['bookID'], b['title']))
+    return books_list
 
 def get_all_clubs():
     cur = mysql.connection.cursor()
@@ -118,7 +145,21 @@ def get_all_meetings():
         meetings = dict()
     return meetings
 
-
+def get_club_meetings(club):
+    cur = mysql.connection.cursor()
+    result_val = cur.execute(f'''
+        SELECT cm.meetingID, cm.dateTime, b.title, b.author, bc.clubName, m.firstName, m.lastName
+        FROM ClubMeetings as cm
+        JOIN Books as b ON cm.meetingBookID = b.bookID
+        JOIN Members as m on cm.meetingLeaderID = m.memberID
+        JOIN BookClubs as bc on cm.bookClubID = bc.bookClubID
+        WHERE cm.dateTime >= CURDATE() AND cm.bookClubID = '{club}'
+        ORDER BY cm.bookClubID, cm.dateTime''')
+    if result_val > 0:
+        club_meetings = cur.fetchall()
+    else:
+        club_meetings = dict()
+    return club_meetings
 
 if __name__ == '__main__':
     app.run(debug=True)
