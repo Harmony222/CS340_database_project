@@ -83,7 +83,8 @@ def meetings():
                             formSignUp=formSignUp,
                             active={'meetings':True, 'signup':True},
                             all_meetings=all_meetings,
-                            club_meetings=club_meetings)
+                            club_meetings=club_meetings,
+                            SelectClub=True)
     print(formSignUp.meetingID.errors)
     if request.method == 'POST' and formSignUp.validate_on_submit():
         print(formSignUp.meetingID.data)
