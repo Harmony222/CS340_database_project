@@ -26,7 +26,7 @@ class MembersForm(FlaskForm):
 class BooksForm(FlaskForm):
     title = StringField('Title', validators=[InputRequired()])
     author = StringField('Author', validators=[InputRequired()])
-    genre = StringField('Genre', validators=[InputRequired()])
+    genre = SelectField('Genre', coerce=int, validators=[InputRequired()])
     submit = SubmitField('Add New Book')
 
 class ClubSignUp(FlaskForm):

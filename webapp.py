@@ -106,13 +106,18 @@ def books():
         print("Title is: ", title)
         print("Author is: ", author)
         print("Genre is: ", genre)
+    genres_list = get_genres()
+    books_form.genre.choices = genres_list
+    all_books = get_all_books()
+    print(all_books)
         
-    return render_template('books.html', form=books_form, active={'books':True})
+    return render_template('books.html', form=books_form, active={'books':True}, books = all_books)
 
-@app.route('/genres')
+@app.route('/genres', methods=['POST', 'GET'] )
 def genres():
     form = GenresForm()
-    return render_template('genres.html', form=form, active={'index':True})
+    all_genres = get_genres()
+    return render_template('genres.html', form=form, active={'index':True}, genres=all_genres)
 
 
 def get_genres():
@@ -202,6 +207,15 @@ def get_all_members():
     query = "SELECT * FROM Members"
     all_members = execute_query(db_connection, query).fetchall()
     return all_members
+
+def get_all_books():
+    db_connection = connect_to_database()
+    query = '''SELECT b.bookID, b.title, b.author, g.genre
+                FROM Books AS b
+                JOIN Genres AS g 
+                ON b.bookGenreID = g.genreID'''
+    all_books = execute_query(db_connection, query).fetchall()
+    return all_books
 
 
 
