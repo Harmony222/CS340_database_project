@@ -54,7 +54,7 @@ INSERT INTO Genres (genre) VALUES ('children');
 CREATE TABLE BookClubs (
     bookClubID int(11) NOT NULL AUTO_INCREMENT,
     clubName varchar(255) NOT NULL,
-    meetingFrequency int(11) DEFAULT NULL,
+    meetingFrequency varchar(255),
     clubGenreID int(11) NOT NULL,
     clubLeaderID int(11) NOT NULL,
     PRIMARY KEY (bookClubID),
@@ -66,22 +66,22 @@ CREATE TABLE BookClubs (
 
 INSERT INTO BookClubs (clubName, meetingFrequency, clubGenreID, clubLeaderID)
     VALUES ('But I Progress Book Club', 
-            '30', 
+            'monthly', 
             (SELECT genreID FROM Genres WHERE genre = 'short story'),
             (SELECT memberID FROM Members WHERE email = 'attifinch@maycomb.com'));
 INSERT INTO BookClubs (clubName, meetingFrequency, clubGenreID, clubLeaderID)
     VALUES ('The Book Was Better',
-            '14',
+            'twice monthly',
             (SELECT genreID FROM Genres WHERE genre = 'mystery'),
             (SELECT memberID FROM Members WHERE email = 'watsonj@bakerst.net'));
 INSERT INTO BookClubs (clubName, meetingFrequency, clubGenreID, clubLeaderID)
     VALUES ('Get Lit Book Club', 
-            '30',
+            'monthly',
             (SELECT genreID FROM Genres WHERE genre = 'classic'),
             (SELECT memberID FROM Members WHERE email = 'h.prynne@pearl.edu'));
 INSERT INTO BookClubs (clubName, meetingFrequency, clubGenreID, clubLeaderID)
     VALUES ('Beyond Words Book Club',
-            '21',
+            'weekly',
             (SELECT genreID FROM Genres WHERE genre = 'poetry'),
             (SELECT memberID FROM Members WHERE email = 'ann.lee@poe.org'));
 
@@ -119,8 +119,8 @@ INSERT INTO Books (title, author, bookGenreID)
 
 CREATE TABLE ClubMeetings (
     meetingID int(11) NOT NULL AUTO_INCREMENT,
-    `dateTime` datetime(0) NOT NULL,
-    bookClubID int(11) NOT NULL,
+    `dateTime` datetime NOT NULL,
+    bookClubID int(11),
     meetingBookID int(11) NOT NULL,
     meetingLeaderID int(11) NOT NULL,
     PRIMARY KEY (meetingID),

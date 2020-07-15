@@ -29,18 +29,22 @@
                         <li>UPDATE - required (one entity UPDATE is required)</li>
                         <li>DELETE - required (one entity DELETE is required)</li>
                     </ul>
-                    <li>Create a new meeting - INSERT - required</li>
+                    <li>Schedule a new meeting - INSERT - required</li>
                     <li>Sign up for a meeting - part of one of our M:M relationships - INSERT required</li>
+                    <li>View members attending a meeting. 
                         <ul>
-                            <li>Quit a meeting - DELETE required for one of our M:M relationships</li>
+                            <li>Remove member from a meeting - DELETE required for one of our M:M relationships</li>
                         </ul>
+                    </li>
                 </ul>
             <li><a href="{{ url_for('books') }}">Books</a></li>
                 <ul>
                     <li>Add a book - INSERT - required</li>
                     <li>View books - SELECT query required (could implement when creating a book club to narrow down book results by genre)</li>
+                    <ul>
+                        <li>DELETE - can delete a book, if a book is selected for a book club meeting, the club meeting book will be "NULL" </li>
+                    </ul>   
                     <li>UPDATE - optional</li>
-                    <li>DELETE - optional</li>
                 </ul>
             <li><a href="{{ url_for('genres') }}">Genres</a></li>
                 <ul>
