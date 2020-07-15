@@ -47,6 +47,21 @@
             </div>
 
             <div class="tab-pane fade" id="v-pills-view" role="tabpanel" aria-labelledby="v-pills-view-tab">
+                <table class = "table">
+                    <thead>
+                        <th hidden>Book ID</th>
+                        <th>Title</th>
+                        <th>Author</th>
+                        <th>Genre</th>
+                    </thead>
+                    {% for book in books %}
+                    <tr>
+                        <td>{{ book[0] }}</td> <!-- title -->
+                        <td>{{ book[1] }}</td> <!-- author -->
+                        <td>{{ book[2] }}</td> <!-- genre -->
+                    </tr>
+                    {% endfor %}
+                </table>
                 <h3>GET Request Here. Update and Delete functionality here (if implemented).</h3>
                 <p> will put a search bar here?</p>
             </div>
