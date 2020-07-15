@@ -18,6 +18,7 @@ https://stackoverflow.com/questions/46921823/dynamic-choices-wtforms-flask-selec
             <a class="nav-link {% if active.view %}active{% endif %}" id="v-pills-view-tab" data-toggle="pill" href="#v-pills-view" role="tab" aria-controls="v-pills-view-tab" aria-selected="true">View all meetings</a>
             <a class="nav-link {% if active.schedule %}active{% endif %}" id="v-pills-new-tab" data-toggle="pill" href="#v-pills-new" role="tab" aria-controls="v-pills-new-tab" aria-selected="false">Schedule a new meeting</a>
             <a class="nav-link {% if active.signup %}active{% endif %}" id="v-pills-signup-tab" data-toggle="pill" href="#v-pills-signup" role="tab" aria-controls="v-pills-signup-tab" aria-selected="false">Sign up for a meeting</a>
+            <a class="nav-link {% if active.attendees %}active{% endif %}" id="v-pills-attendees-tab" data-toggle="pill" href="#v-pills-attendees" role="tab" aria-controls="v-pills-attendees-tab" aria-selected="false">Who's Attending?</a>
         </div>
     </div>
     <div class="col-md-9 mainContent">
@@ -109,7 +110,7 @@ https://stackoverflow.com/questions/46921823/dynamic-choices-wtforms-flask-selec
                 <div class="row">
                     <div class="col-md-8">
                     <div class="selectClub">
-                        <form method="POST" action="">
+                        <form method="POST" action="/meetings">
                             {{ formSelectClub.csrf_token() }}
                             {{ formSelectClub.name }}
                             <fieldset class="form-group">
@@ -202,7 +203,67 @@ https://stackoverflow.com/questions/46921823/dynamic-choices-wtforms-flask-selec
                 </div>
                 {% endif %}
             </div>
-
+            <div class="tab-pane fade show {% if active.attendees %}active{% endif %}" id="v-pills-attendees" role="tabpanel" aria-labelledby="v-pills-attendees-tab">
+                <div class="row">
+                    <div class="col-md-8">
+                    <div class="selectClub">
+                        <form method="POST" action="/meetings">
+                            {{ formSelectClub.csrf_token() }}
+                            {{ formSelectClub.name }}
+                            <fieldset class="form-group">
+                                <legend class="border-bottom mb-4">Who's Attending?</legend>
+                                <div class="form-group">
+                                    {{ formSelectClub.clubName.label(class="form-control-label") }} 
+                                    <select class="form-control" name="clubName">
+                                    {% for option in formSelectClub.clubName %}
+                                        {% if loop.first %}
+                                            <option value="" disabled selected>Select a book club</option>
+                                        {% endif %}
+                                        {{ option }}
+                                    {% endfor %}
+                                    </select>
+                                </div>       
+                            </fieldset>
+                            <div class="form-group">
+                                {{ formSelectClub.selectClubSubmit(class="btn btn-outline-primary") }}
+                            </div> 
+                        </form>
+                    </div>
+                    </div>
+                </div>
+                {% if SelectClub %}
+                <div class="row">
+                    <div class="col-md-12">
+                    {% if club_meetings %}
+                        <table class="table">
+                            <thead>
+                                <th hidden>ID</th>
+                                <th>Date/Time</th>
+                                <th>Book Title</th>
+                                <th>Author</th>
+                                <th>Book Club</th>
+                                <th>Meeting Leader</th>
+                                <th></th>
+                            </thead>
+                            <tbody id="signUpMeetings">
+                                {% for meeting in club_meetings %}
+                                <tr id="{{ meeting.meetingID }}">
+                                    <td hidden>{{ meeting.meetingID}}</td>
+                                    <td>{{ meeting.dateTime }}</td>
+                                    <td>{{ meeting.title }}</td>
+                                    <td>{{ meeting.author }}</td>
+                                    <td>{{ meeting.clubName }}</td>
+                                    <td>{{ meeting.firstName }} {{ meeting.lastName }}</td>
+                                    <td><button type="button" class="btn btn-primary btn-sm">Select</button></td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% endif %}
+                    </div>
+                {% endif %}
+                </div>
+            </div>
         </div>            
     </div>
 </div>

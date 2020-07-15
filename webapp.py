@@ -85,9 +85,22 @@ def meetings():
                             all_meetings=all_meetings,
                             club_meetings=club_meetings,
                             SelectClub=True)
+
     print(formSignUp.meetingID.errors)
     if request.method == 'POST' and formSignUp.validate_on_submit():
-        print(formSignUp.meetingID.data)
+        # signUp_meetingID = formSignUp.meetingID.data
+        signUp_meetingID = request.form['meetingID']
+        signUp_email = request.form['email']
+        print(signUp_meetingID, signUp_email)
+
+        cur = mysql.connection.cursor()
+        cur.execute('''INSERT INTO meetings_members (meetingID, memberID) 
+                       VALUES (%s, (SELECT memberID FROM Members WHERE email = %s))''', 
+                       (signUp_meetingID, signUp_email))
+        mysql.connection.commit()
+        cur.close()
+        return redirect('/meetings')
+
     return render_template('meetings.html', 
                             form=form, 
                             formSelectClub=formSelectClub,
