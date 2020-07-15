@@ -119,7 +119,7 @@ INSERT INTO Books (title, author, bookGenreID)
 
 CREATE TABLE ClubMeetings (
     meetingID int(11) NOT NULL AUTO_INCREMENT,
-    `dateTime` datetime(0) NOT NULL,
+    `dateTime` datetime NOT NULL,
     bookClubID int(11) NOT NULL,
     meetingBookID int(11) NOT NULL,
     meetingLeaderID int(11) NOT NULL,
