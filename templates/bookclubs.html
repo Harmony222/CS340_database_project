@@ -63,17 +63,7 @@ https://stackoverflow.com/questions/46921823/dynamic-choices-wtforms-flask-selec
                                 {{ form.clubName(class="form-control") }}
                             </div>
                             <div class="form-group">
-                                <div class="row">
-                                    <div class="col-4 frequencyLabel">
-                                        {{ form.meetingFrequency.label(class="form-control-label") }}
-                                    </div>
-                                    <div class="col-8 frequencyDetails">
-                                        <small class="text-muted">
-                                            Number of days between meetings. For example, enter 30
-                                            if the group meets monthly. 
-                                        </small>
-                                    </div>
-                                </div>
+                                {{ form.meetingFrequency.label(class="form-control-label") }}
                                 {{ form.meetingFrequency(class="form-control") }}
                             </div>
                             <div class="form-group">

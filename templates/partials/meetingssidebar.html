@@ -1,0 +1,9 @@
+<div class="col-md-3">
+    <h5 class="side_nav_header">Club Meetings</h5>
+    <div class="nav flex-column nav-pills side_nav">
+        <a class="nav-link {% if active.view %}active{% endif %}" href="{{ url_for('meetings') }}">View all meetings</a>
+        <a class="nav-link {% if active.new %}active{% endif %}" href="{{ url_for('meetingsnew') }}">Schedule a new meeting</a>
+        <a class="nav-link {% if active.signup %}active{% endif %}" href="{{ url_for('meetingssignup') }}">Sign up for a meeting</a>
+        <a class="nav-link {% if active.attendees %}active{% endif %}" href="{{ url_for('attendees') }}">Who's attending?</a>
+    </div>
+</div> 

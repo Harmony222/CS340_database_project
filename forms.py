@@ -4,16 +4,19 @@ from wtforms.validators import InputRequired, Length, Email, equal_to
 
 class BookClubForm(FlaskForm):
     clubName = StringField('Book Club Name', validators=[InputRequired(), Length(min=2, max=100)])
-    meetingFrequency = IntegerField('Meeting Frequency')
+    meetingFrequency = SelectField(u'Meeting Frequency', 
+                                    choices=[('monthly', 'Monthly'),
+                                             ('twice monthly', 'Twice Monthly'),
+                                             ('weekly', 'Weekly')])
     clubGenre = SelectField('Genre', coerce=int, validators=[InputRequired()])
     clubLeaderEmail = StringField('Club Leader Email', validators=[InputRequired(), Email()])
     clubSubmit = SubmitField('Create New Book Club')
 
-class MeetingForm(FlaskForm):
+class NewMeetingForm(FlaskForm):
     clubName = SelectField('Book Club', coerce=int, validators=[InputRequired()])
     meetingDate = DateField('Meeting Date', format='%Y-%m-%d', validators=[InputRequired()])
     meetingTime = DateTimeField('Meeting Time', format='%H:%M')
-    meetingBook = StringField('Meeting Book', validators=[InputRequired()])
+    meetingBook = StringField('Meeting Book')
     meetingLeaderEmail = StringField('Meeting Leader Email', validators=[InputRequired(), Email()])
     meetingSubmit = SubmitField('Schedule Meeting')
 

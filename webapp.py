@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_mysqldb import MySQL
 from db_credentials import host, user, passwd, db
 from forms import *
@@ -53,48 +53,70 @@ def bookclubs():
 @app.route('/meetings', methods=['GET', 'POST'])
 def meetings():
     all_meetings = get_all_meetings()
+    return render_template('meetings.html', 
+                            active={'meetings':True, 'view':True},
+                            all_meetings=all_meetings)
+    
+@app.route('/meetingsnew', methods=['GET', 'POST'])
+def meetingsnew():
     club_names_list = get_club_names()
-    form = MeetingForm()
+    form = NewMeetingForm()
     form.clubName.choices = club_names_list
+
+    return render_template('meetingsnew.html',
+                            form=form,
+                            active={'meetings':True, 'new':True})
+
+
+@app.route('/meetingssignup', methods=['GET', 'POST'])
+def meetingssignup():
+    club_names_list = get_club_names()
     formSelectClub = SelectClub()
     formSelectClub.clubName.choices = club_names_list
     formSignUp = MeetingSignUp()
-    # if request.method == 'POST':
-    #     if formSelectClub.validate_on_submit():
+    club_meetings = []
+    select_club = False
     if request.method == 'POST' and formSelectClub.validate():
-            club = formSelectClub.clubName.data
-            club_meetings = get_club_meetings(club)
-            return render_template('meetings.html', 
-                                       form=form, 
-                            formSelectClub=formSelectClub,
-                            formSignUp=formSignUp,
-                            active={'meetings':True, 'signup':True},
-                            all_meetings=all_meetings,
-                            club_meetings=club_meetings,
-                            SelectClub=True)
-
-    print(formSignUp.meetingID.errors)
+        club = formSelectClub.clubName.data
+        club_meetings = get_club_meetings(club)
+        select_club = True
+    # print('formSignUP valid', formSignUp.validate_on_submit())
     if request.method == 'POST' and formSignUp.validate_on_submit():
         # signUp_meetingID = formSignUp.meetingID.data
         signUp_meetingID = request.form['meetingID']
         signUp_email = request.form['email']
-        print(signUp_meetingID, signUp_email)
-
+        # print(signUp_meetingID, signUp_email)
         cur = mysql.connection.cursor()
+        result_val = cur.execute('SELECT memberID FROM Members WHERE email = %s', [signUp_email])
+        if result_val > 0:
+            memberID = cur.fetchall()[0]['memberID']
+            print(memberID, type(memberID))
+        else:
+            flash(f'Invalid email! Please sign up as a member first.', 'danger')
+            print('memberID not found')
+            return redirect('meetingssignup')
         cur.execute('''INSERT INTO meetings_members (meetingID, memberID) 
-                       VALUES (%s, (SELECT memberID FROM Members WHERE email = %s))''', 
-                       (signUp_meetingID, signUp_email))
+                       VALUES (%s, %s)''', (signUp_meetingID, memberID))
         mysql.connection.commit()
         cur.close()
-        return redirect('/meetings')
+        return redirect('/meetingssignup')
 
-    return render_template('meetings.html', 
-                            form=form, 
+    return render_template('meetingssignup.html',
                             formSelectClub=formSelectClub,
                             formSignUp=formSignUp,
-                            active={'meetings':True, 'view':True},
-                            all_meetings=all_meetings)
-    
+                            active={'meetings':True, 'signup':True},
+                            club_meetings=club_meetings,
+                            select_club=select_club)
+
+@app.route('/attendees', methods=['GET', 'POST'])
+def attendees():
+    club_names_list = get_club_names()
+    formSelectClub = SelectClub()
+    formSelectClub.clubName.choices = club_names_list    
+    return render_template('attendees.html',
+                            formSelectClub=formSelectClub,
+                            active={'meetings':True, 'attendees':True})
+
 @app.route('/books', methods=['POST', 'GET'])
 def books():
     books_form = BooksForm()
