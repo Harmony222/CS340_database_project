@@ -186,7 +186,7 @@ def get_club_meetings(club):
 
 def get_all_members(): 
     db_connection = connect_to_database()
-    query = "SELECT firstName, lastName, email FROM Members"
+    query = "SELECT * FROM Members"
     all_members = execute_query(db_connection, query).fetchall()
     return all_members
 
