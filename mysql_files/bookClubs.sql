@@ -36,7 +36,7 @@ INSERT INTO Members (firstName, lastName, email)
 
 CREATE TABLE Genres (
     genreID int(11) NOT NULL AUTO_INCREMENT,
-    genre varchar(255) NOT NULL,
+    genre varchar(255) UNIQUE NOT NULL,
     PRIMARY KEY (genreID)
 );
 

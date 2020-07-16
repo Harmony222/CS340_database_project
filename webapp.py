@@ -37,7 +37,7 @@ def members():
 
     return render_template('members.html', form=members_form, active={'members':True}, members=all_members)
 
-@app.route('/bookclubs')
+@app.route('/bookclubs', methods=['POST', 'GET'])
 def bookclubs():
     clubs = get_all_clubs()
     genres_list = get_genres()
