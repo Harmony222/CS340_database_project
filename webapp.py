@@ -94,7 +94,7 @@ def meetingssignup():
             memberID = cur.fetchall()[0]['memberID']
             print(memberID, type(memberID))
         else:
-            flash(f'Invalid email! Please sign up as a member first.', 'danger')
+            flash('Invalid email! Please sign up as a member first.', 'danger')
             print('memberID not found')
             return redirect('meetingssignup')
         cur.execute('''INSERT INTO meetings_members (meetingID, memberID) 
@@ -222,14 +222,14 @@ def get_all_meetings():
 
 def get_club_meetings(club):
     cur = mysql.connection.cursor()
-    result_val = cur.execute(f'''
+    result_val = cur.execute('''
         SELECT cm.meetingID, cm.dateTime, b.title, b.author, bc.clubName, m.firstName, m.lastName
         FROM ClubMeetings as cm
         JOIN Books as b ON cm.meetingBookID = b.bookID
         JOIN Members as m on cm.meetingLeaderID = m.memberID
         JOIN BookClubs as bc on cm.bookClubID = bc.bookClubID
-        WHERE cm.dateTime >= CURDATE() AND cm.bookClubID = '{club}'
-        ORDER BY cm.bookClubID, cm.dateTime''')
+        WHERE cm.dateTime >= CURDATE() AND cm.bookClubID = '{}'
+        ORDER BY cm.bookClubID, cm.dateTime'''.format(club))
     if result_val > 0:
         club_meetings = cur.fetchall()
     else:
