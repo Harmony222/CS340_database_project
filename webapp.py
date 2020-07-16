@@ -28,6 +28,7 @@ def members():
         firstName = request.form['firstName']
         lastName = request.form['lastName']
         email = request.form['email']
+        add_members(firstName, lastName, email)
     
     all_members = get_all_members()
     #print("test: ")
@@ -136,9 +137,7 @@ def books():
         title = request.form['title']
         author = request.form['author']
         genre = request.form['genre']
-        print("Title is: ", title)
-        print("Author is: ", author)
-        print("Genre is: ", genre)
+       
     genres_list = get_genres()
     books_form.genre.choices = genres_list
     all_books = get_all_books()
@@ -149,6 +148,9 @@ def books():
 @app.route('/genres', methods=['POST', 'GET'] )
 def genres():
     form = GenresForm()
+    if request.method == 'POST':
+        genre = request.form['genre']
+        add_genre(genre)
     all_genres = get_genres()
     return render_template('genres.html', form=form, active={'index':True}, genres=all_genres)
 
@@ -235,13 +237,38 @@ def get_club_meetings(club):
     return club_meetings
 
 
-def get_all_members(): 
+def get_all_members():
+    '''
+        SELECT query on Members table.
+        Returns tuple, all_members, containing
+        each row of Members table as a tuple.
+    '''
     db_connection = connect_to_database()
     query = "SELECT * FROM Members"
     all_members = execute_query(db_connection, query).fetchall()
     return all_members
 
+def add_members(firstName, lastName, email):
+    '''
+        Executes INSERT query on Members table.
+        Takes firstName, lastName, and email
+        input values from the Add Members form
+    '''
+    db_connection = connect_to_database()
+    query = '''
+            INSERT INTO Members (firstName, lastName, email)
+            VALUES (%s, %s, %s)
+            '''
+    data = (firstName, lastName, email)
+    execute_query(db_connection, query, data)
+
 def get_all_books():
+    '''
+        SELECT query on Books / Genres joined table. 
+        Genre name is displayed instead of genreID.
+        Returns tuple, all_books, containing each row of the
+        table as a tuple. 
+    '''
     db_connection = connect_to_database()
     query = '''SELECT b.bookID, b.title, b.author, g.genre
                 FROM Books AS b
@@ -249,6 +276,21 @@ def get_all_books():
                 ON b.bookGenreID = g.genreID'''
     all_books = execute_query(db_connection, query).fetchall()
     return all_books
+
+def add_genre(genre):
+    '''
+        Executes INSERT query on Genres table.
+        Takes firstName, lastName, and email
+        input values from the Add Members form
+    '''
+    db_connection = connect_to_database()
+    query = '''
+            INSERT INTO Genres (genre)
+            VALUES (%s)
+            '''
+    data = (genre,) # single element tuple needs trailing comma
+    execute_query(db_connection, query, data)
+
 
 
 @app.route('/get_attendees', methods = ['GET', 'POST'])
