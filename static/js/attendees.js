@@ -50,8 +50,8 @@ function get_attendees(allrows, row) {
         .then(function (response) {
             return response.json();
         }).then(function (json) {
-            // console.log('length', json.length)
-            // console.log('GET response text', json);
+            console.log('length', json.length)
+            console.log('GET response', json);
             if (json.length > 0) {
                 let tableDiv = document.getElementById('attendeeTable');
                 tableDiv.classList.remove('hidden')

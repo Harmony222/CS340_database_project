@@ -3,6 +3,7 @@ from flask_mysqldb import MySQL
 from db_credentials import host, user, passwd, db
 from forms import *
 from db_connector import connect_to_database, execute_query
+import MySQLdb
 
 app = Flask(__name__)
 
@@ -45,7 +46,7 @@ def bookclubs():
     form = BookClubForm()
     form.clubGenre.choices = genres_list
     formSignUp = ClubSignUp()
-    formSignUp.clubName.choices = club_names_list
+    formSignUp.clubName.choices = club_names_list #https://stackoverflow.com/questions/46921823/dynamic-choices-wtforms-flask-selectfield
     return render_template('bookclubs.html', 
                             form=form, 
                             formSignUp=formSignUp,
@@ -64,11 +65,9 @@ def meetingsnew():
     club_names_list = get_club_names()
     form = NewMeetingForm()
     form.clubName.choices = club_names_list
-
     return render_template('meetingsnew.html',
                             form=form,
                             active={'meetings':True, 'new':True})
-
 
 @app.route('/meetingssignup', methods=['GET', 'POST'])
 def meetingssignup():
@@ -78,29 +77,36 @@ def meetingssignup():
     formSignUp = MeetingSignUp()
     club_meetings = []
     select_club = False
+
     if request.method == 'POST' and formSelectClub.validate():
         club = formSelectClub.clubName.data
         club_meetings = get_club_meetings(club)
         select_club = True
-    # print('formSignUP valid', formSignUp.validate_on_submit())
+
     if request.method == 'POST' and formSignUp.validate_on_submit():
         # signUp_meetingID = formSignUp.meetingID.data
         signUp_meetingID = request.form['meetingID']
         signUp_email = request.form['email']
-        # print(signUp_meetingID, signUp_email)
-        cur = mysql.connection.cursor()
-        result_val = cur.execute('SELECT memberID FROM Members WHERE email = %s', [signUp_email])
-        if result_val > 0:
-            memberID = cur.fetchall()[0]['memberID']
-            print(memberID, type(memberID))
-        else:
+        print(signUp_meetingID, signUp_email)
+        db_connection = connect_to_database()
+        query = 'SELECT memberID FROM Members WHERE email = %s'
+        data = signUp_email,
+        memberID = execute_query(db_connection, query, data).fetchone()
+        print('memberID', memberID)
+        if not memberID:
             flash('Invalid email! Please sign up as a member first.', 'danger')
             print('memberID not found')
             return redirect('meetingssignup')
-        cur.execute('''INSERT INTO meetings_members (meetingID, memberID) 
-                       VALUES (%s, %s)''', (signUp_meetingID, memberID))
-        mysql.connection.commit()
-        cur.close()
+        try:
+            query = '''
+                    INSERT INTO meetings_members (meetingID, memberID) 
+                    VALUES (%s, %s)
+                    ''' 
+            data = (signUp_meetingID, memberID)
+            execute_query(db_connection, query, data)
+        except MySQLdb.Error as err:
+            flash('Error: {}'.format(err), 'danger')
+            print(err)
         return redirect('/meetingssignup')
 
     return render_template('meetingssignup.html',
@@ -128,6 +134,26 @@ def attendees():
                             club_meetings=club_meetings,
                             select_club=select_club)
 
+@app.route('/get_attendees', methods = ['GET', 'POST'])
+def get_attendees():
+    '''
+    Route called from Meetings/Who's attending page to 
+    retrieve a list of meeting attendees based on meetingID. 
+    meetingID is received in the GET request header.
+    Returns list of attendees for that meeting as a tuple.
+    '''
+    meetingID = request.args['meetingID']
+    # print('meetingID from flask', meetingID)
+    db_connection = connect_to_database()
+    query = '''
+            SELECT mm.meetingID, m.memberID, m.firstName, m.lastName, m.email 
+            FROM Members m
+            JOIN meetings_members mm ON m.memberID = mm.memberID 
+            WHERE mm.meetingID = %s
+            '''
+    attendees = execute_query(db_connection, query, meetingID).fetchall()
+    # print(attendees)
+    return jsonify(attendees)
 
 @app.route('/books', methods=['POST', 'GET'])
 def books():
@@ -137,7 +163,7 @@ def books():
         title = request.form['title']
         author = request.form['author']
         genre = request.form['genre']
-       
+
     genres_list = get_genres()
     books_form.genre.choices = genres_list
     all_books = get_all_books()
@@ -156,24 +182,24 @@ def genres():
 
 
 def get_genres():
-    cur = mysql.connection.cursor()
-    result_val = cur.execute('SELECT * FROM Genres')
-    if result_val > 0:
-        genres_dict = cur.fetchall()
-    genres_list = []
-    for g in genres_dict:
-        genres_list.append((g['genreID'], g['genre'].capitalize())) 
-    return genres_list
+    '''
+    Retrieves all genres from mysql database.
+    Returns a list of all genres.
+    '''
+    db_connection = connect_to_database()
+    query = 'SELECT * FROM Genres'
+    genres = execute_query(db_connection, query).fetchall()
+    return genres
 
 def get_club_names():
-    cur = mysql.connection.cursor()
-    result_val = cur.execute('SELECT bookClubID, clubName FROM BookClubs')
-    if result_val > 0:
-        club_names_dict = cur.fetchall()
-    club_names_list = []
-    for c in club_names_dict:
-        club_names_list.append((c['bookClubID'], c['clubName']))
-    return club_names_list
+    '''
+    Retrieves all club names from mysql database.
+    Returns a list of all club names.
+    '''
+    db_connection = connect_to_database()
+    query = 'SELECT bookClubID, clubName FROM BookClubs'
+    club_names = execute_query(db_connection, query).fetchall()
+    return club_names
 
 def get_book_list():
     cur = mysql.connection.cursor()
@@ -186,54 +212,63 @@ def get_book_list():
     return books_list
 
 def get_all_clubs():
-    cur = mysql.connection.cursor()
-    result_val = cur.execute('''
-        SELECT b.bookClubID, b.clubName, b.meetingFrequency, g.genre, m.firstName, m.lastName, tmp.nextMeeting
-        FROM BookClubs as b
-        JOIN Genres as g ON b.clubGenreID = g.genreID
-        JOIN Members as m ON b.clubLeaderID = m.memberID
-        LEFT JOIN (
-                SELECT tmp.bookClubID, MIN(tmp.dateTime) as nextMeeting
-                FROM (SELECT cm2.bookClubID, cm2.dateTime
-                        FROM ClubMeetings as cm2
-                        WHERE cm2.dateTime > CURDATE()) as tmp
-                        GROUP BY tmp.bookClubID) as tmp ON b.bookClubID = tmp.bookClubID''')
-    if result_val > 0:
-        clubs = cur.fetchall()
-    else:
-        clubs = dict()
+    '''
+    Retrieves all book clubs from mysql database.
+    Returns a list of all book clubs with each club's data in dictionary format.
+    '''
+    db_connection = connect_to_database()
+    query = '''
+            SELECT b.bookClubID, b.clubName, b.meetingFrequency, 
+                   g.genre, m.firstName, m.lastName, tmp.nextMeeting
+            FROM BookClubs as b
+            JOIN Genres as g ON b.clubGenreID = g.genreID
+            JOIN Members as m ON b.clubLeaderID = m.memberID
+            LEFT JOIN (
+                    SELECT tmp.bookClubID, MIN(tmp.dateTime) as nextMeeting
+                    FROM (SELECT cm2.bookClubID, cm2.dateTime
+                          FROM ClubMeetings as cm2
+                          WHERE cm2.dateTime > CURDATE()) as tmp
+                          GROUP BY tmp.bookClubID) as tmp 
+                    ON b.bookClubID = tmp.bookClubID 
+            '''
+    clubs = execute_query(db_connection, query, (), True).fetchall()
     return clubs
 
 def get_all_meetings():
-    cur = mysql.connection.cursor()
-    result_val = cur.execute('''
-        SELECT cm.meetingID, cm.dateTime, b.title, b.author, bc.clubName, m.firstName, m.lastName
-        FROM ClubMeetings as cm
-        JOIN Books as b ON cm.meetingBookID = b.bookID
-        JOIN Members as m on cm.meetingLeaderID = m.memberID
-        JOIN BookClubs as bc on cm.bookClubID = bc.bookClubID
-        WHERE cm.dateTime >= CURDATE()
-        ORDER BY cm.bookClubID, cm.dateTime''')
-    if result_val > 0:
-        meetings = cur.fetchall()
-    else:
-        meetings = dict()
+    '''
+    Retrieves all meetings from mysql database.
+    Returns a list of all meetings with each meeting's data in dictionary format.
+    '''
+    db_connection = connect_to_database()
+    query = '''
+            SELECT cm.meetingID, cm.dateTime, b.title, b.author, 
+                   bc.clubName, m.firstName, m.lastName
+            FROM ClubMeetings as cm
+            JOIN Books as b ON cm.meetingBookID = b.bookID
+            JOIN Members as m on cm.meetingLeaderID = m.memberID
+            JOIN BookClubs as bc on cm.bookClubID = bc.bookClubID
+            WHERE cm.dateTime >= CURDATE()
+            ORDER BY cm.bookClubID, cm.dateTime
+            '''
+    meetings = execute_query(db_connection, query, (), True).fetchall()
     return meetings
 
 def get_club_meetings(club):
-    cur = mysql.connection.cursor()
-    result_val = cur.execute('''
-        SELECT cm.meetingID, cm.dateTime, b.title, b.author, bc.clubName, m.firstName, m.lastName
-        FROM ClubMeetings as cm
-        JOIN Books as b ON cm.meetingBookID = b.bookID
-        JOIN Members as m on cm.meetingLeaderID = m.memberID
-        JOIN BookClubs as bc on cm.bookClubID = bc.bookClubID
-        WHERE cm.dateTime >= CURDATE() AND cm.bookClubID = '{}'
-        ORDER BY cm.bookClubID, cm.dateTime'''.format(club))
-    if result_val > 0:
-        club_meetings = cur.fetchall()
-    else:
-        club_meetings = dict()
+    '''
+    Retrieves meetings for the given club from mysql database.
+    Returns a list of all meetings with each meeting's data in dictionary format.
+    '''
+    db_connection = connect_to_database()
+    query = '''
+            SELECT cm.meetingID, cm.dateTime, b.title, b.author, bc.clubName, m.firstName, m.lastName
+            FROM ClubMeetings as cm
+            JOIN Books as b ON cm.meetingBookID = b.bookID
+            JOIN Members as m on cm.meetingLeaderID = m.memberID
+            JOIN BookClubs as bc on cm.bookClubID = bc.bookClubID
+            WHERE cm.dateTime >= CURDATE() AND cm.bookClubID = '{}'
+            ORDER BY cm.bookClubID, cm.dateTime
+            '''.format(club)
+    club_meetings = execute_query(db_connection, query, (), True).fetchall()
     return club_meetings
 
 
@@ -291,32 +326,6 @@ def add_genre(genre):
     data = (genre,) # single element tuple needs trailing comma
     execute_query(db_connection, query, data)
 
-
-
-@app.route('/get_attendees', methods = ['GET', 'POST'])
-def get_attendees():
-    meetingID = request.args['meetingID']
-    print('meetingID from flask', meetingID)
-    cur = mysql.connection.cursor()
-    result_val = cur.execute('''SELECT mm.meetingID, m.memberID, m.firstName, m.lastName, m.email
-                                FROM Members m
-                                JOIN meetings_members mm ON m.memberID = mm.memberID 
-                                WHERE mm.meetingID = %s''', [meetingID])
-    attendees = []
-    if result_val > 0:
-        attendees = cur.fetchall()
-    else:
-        # handle zero attendees here?
-        pass
-    # print(attendees)
-    # db_connection = connect_to_database()
-    # query = '''SELECT m.firstName, m.lastName, m.email FROM Members m
-    #            JOIN meetings_members mm ON m.memberID = mm.memberID 
-    #            WHERE mm.meetingID = %s'''
-    # attendees = execute_query(db_connection, query, meetingID).fetchall()
-    # print(attendees)
-    # to_return = {'attendees': attendees}
-    return jsonify(attendees)
 
 if __name__ == '__main__':
     app.run(debug=True)

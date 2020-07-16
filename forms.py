@@ -33,6 +33,7 @@ class BooksForm(FlaskForm):
     submit = SubmitField('Add New Book')
 
 class ClubSignUp(FlaskForm):
+    # https://stackoverflow.com/questions/46921823/dynamic-choices-wtforms-flask-selectfield
     clubName = SelectField('Book Club', coerce=int, validators=[InputRequired()])
     email = StringField('Member Email', validators=[InputRequired(), Email()])
     signUpSubmit = SubmitField('Sign Up For Book Club')

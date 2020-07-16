@@ -1,9 +1,6 @@
 console.log("javascript connected");
 
-
-
-
-function selectButtons() {
+function buttons() {
     let allrows = Array.from(document.querySelectorAll('#signUpMeetings tr'))
     // console.log('rows', rows)
     let buttons = Array.from(document.querySelectorAll('#signUpMeetings button'))
@@ -14,6 +11,10 @@ function selectButtons() {
         // console.log('row_id', row_id, 'button', button);
         button.addEventListener('click', () => selectClick(allrows, row));
     };
+    let signUpSubmit = document.getElementById('signUpSubmit')
+    if (signUpSubmit) {
+        signUpSubmit.addEventListener('click', () => signUpClick())
+    };
 };
 
 function selectClick(allrows, row) {
@@ -22,12 +23,24 @@ function selectClick(allrows, row) {
       r.classList.remove('table-primary');
     };
     row.setAttribute('class', 'table-primary');
-    meetingID = document.getElementById('meetingID');
+    let meetingID = document.getElementById('meetingID');
     meetingID.value = row.firstElementChild.innerHTML;
 };
     
+function signUpClick() {
+    let meetingID = document.getElementById('meetingID').value;
+    let err = document.getElementById('selectMeetingError');
+    if (!meetingID) {
+        err.classList.remove('hidden');
+    } else {
+        console.log(meetingID);
+        err.classList.add('hidden');
+    };
 
-document.addEventListener('DOMContentLoaded', selectButtons);
+};
+
+
+document.addEventListener('DOMContentLoaded', buttons);
 
 // https://getbootstrap.com/docs/4.0/components/forms/#validation
 // (function() {

@@ -71,7 +71,7 @@ https://stackoverflow.com/questions/46921823/dynamic-choices-wtforms-flask-selec
                                 <small class="text-muted extra">
                                     Genre not listed? <a class="ml-2" href="{{ url_for('genres') }}">Add new genre.</a>
                                 </small>
-                                <select class="form-control" name="clubGenre">
+                                <select class="form-control genre" name="clubGenre">
                                 {% for option in form.clubGenre %}
                                     {% if loop.first %}
                                         <option value="" disabled selected>Select a genre</option>

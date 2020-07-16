@@ -1,4 +1,5 @@
 import MySQLdb as mariadb
+import MySQLdb.cursors
 from db_credentials import host, user, passwd, db
 
 def connect_to_database(host = host, user = user, passwd = passwd, db = db):
@@ -8,7 +9,7 @@ def connect_to_database(host = host, user = user, passwd = passwd, db = db):
     db_connection = mariadb.connect(host,user,passwd,db)
     return db_connection
 
-def execute_query(db_connection = None, query = None, query_params = ()):
+def execute_query(db_connection = None, query = None, query_params = (), dict = False):
     '''
     executes a given SQL query on the given db connection and returns a Cursor object
     db_connection: a MySQLdb connection object created by connect_to_database()
@@ -27,7 +28,12 @@ def execute_query(db_connection = None, query = None, query_params = ()):
 
     print("Executing %s with %s" % (query, query_params));
     # Create a cursor to execute query. Why? Because apparently they optimize execution by retaining a reference according to PEP0249
-    cursor = db_connection.cursor()
+
+    # https://stackoverflow.com/questions/2180226/python-use-mysqldb-to-import-a-mysql-table-as-a-dictionary
+    if dict:
+        cursor = db_connection.cursor(MySQLdb.cursors.DictCursor)
+    else:
+        cursor = db_connection.cursor()
 
     '''
     params = tuple()
