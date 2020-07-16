@@ -42,3 +42,8 @@ body {
 .genre {
     text-transform: capitalize;
 }
+
+
+.hidden {
+    display: None;
+}

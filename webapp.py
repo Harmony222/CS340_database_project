@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
 from flask_mysqldb import MySQL
 from db_credentials import host, user, passwd, db
 from forms import *
@@ -6,6 +6,7 @@ from db_connector import connect_to_database, execute_query
 
 app = Flask(__name__)
 
+app.config['JSON_SORT_KEYS'] = False
 app.config['MYSQL_HOST'] = host
 app.config['MYSQL_USER'] = user
 app.config['MYSQL_PASSWORD'] = passwd
@@ -108,14 +109,24 @@ def meetingssignup():
                             club_meetings=club_meetings,
                             select_club=select_club)
 
+
 @app.route('/attendees', methods=['GET', 'POST'])
 def attendees():
     club_names_list = get_club_names()
     formSelectClub = SelectClub()
-    formSelectClub.clubName.choices = club_names_list    
+    formSelectClub.clubName.choices = club_names_list  
+    club_meetings = []
+    select_club = False
+    if request.method == 'POST' and formSelectClub.validate():
+        club = formSelectClub.clubName.data
+        club_meetings = get_club_meetings(club)
+        select_club = True  
     return render_template('attendees.html',
                             formSelectClub=formSelectClub,
-                            active={'meetings':True, 'attendees':True})
+                            active={'meetings':True, 'attendees':True},
+                            club_meetings=club_meetings,
+                            select_club=select_club)
+
 
 @app.route('/books', methods=['POST', 'GET'])
 def books():
@@ -240,6 +251,30 @@ def get_all_books():
     return all_books
 
 
+@app.route('/get_attendees', methods = ['GET', 'POST'])
+def get_attendees():
+    meetingID = request.args['meetingID']
+    print('meetingID from flask', meetingID)
+    cur = mysql.connection.cursor()
+    result_val = cur.execute('''SELECT mm.meetingID, m.memberID, m.firstName, m.lastName, m.email
+                                FROM Members m
+                                JOIN meetings_members mm ON m.memberID = mm.memberID 
+                                WHERE mm.meetingID = %s''', [meetingID])
+    attendees = []
+    if result_val > 0:
+        attendees = cur.fetchall()
+    else:
+        # handle zero attendees here?
+        pass
+    # print(attendees)
+    # db_connection = connect_to_database()
+    # query = '''SELECT m.firstName, m.lastName, m.email FROM Members m
+    #            JOIN meetings_members mm ON m.memberID = mm.memberID 
+    #            WHERE mm.meetingID = %s'''
+    # attendees = execute_query(db_connection, query, meetingID).fetchall()
+    # print(attendees)
+    # to_return = {'attendees': attendees}
+    return jsonify(attendees)
 
 if __name__ == '__main__':
     app.run(debug=True)

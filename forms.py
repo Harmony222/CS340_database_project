@@ -40,6 +40,7 @@ class ClubSignUp(FlaskForm):
 class SelectClub(FlaskForm):
     clubName = SelectField('Book Club', coerce=int, validators=[InputRequired()])
     selectClubSubmit = SubmitField('View Upcoming Meetings')
+    attendeeSubmit = SubmitField('View Meetings')
 
 class MeetingSignUp(FlaskForm):
     meetingID = IntegerField('Meeting ID', validators=[InputRequired()])
