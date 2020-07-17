@@ -205,11 +205,20 @@ def books():
 @app.route('/genres', methods=['POST', 'GET'] )
 def genres():
     form = GenresForm()
+    genre_exists = {} # dict which will be sent back to client
     if request.method == 'POST':
         genre = request.form['genre']
-        add_genre(genre)
+        genre = genre.lower() # make input lowercase
+
+        # check if genre exists already, if it does, the front-end will handle this 
+        genre_exists = check_genre(genre, genre_exists)
+        
+        # if not add the genre to Genres table
+        if 'exists' not in genre_exists.keys():
+            add_genre(genre)
+
     all_genres = get_genres()
-    return render_template('genres.html', form=form, active={'index':True}, genres=all_genres)
+    return render_template('genres.html', form=form, active={'index':True}, genres=all_genres, exists = genre_exists)
 
 
 def get_genres():
@@ -346,8 +355,8 @@ def get_all_books():
 def add_genre(genre):
     '''
         Executes INSERT query on Genres table.
-        Takes firstName, lastName, and email
-        input values from the Add Members form
+        Takes genre input values from the 
+        Add Genre form
     '''
     db_connection = connect_to_database()
     query = '''
@@ -357,6 +366,27 @@ def add_genre(genre):
     data = (genre,) # single element tuple needs trailing comma
     execute_query(db_connection, query, data)
 
+def check_genre(genre, genre_exists):
+    '''
+        Checks if the genre already exists in Genres database.
+        Takes parameters: genre - the input value from Add Genres form
+                          genre_exists - empty dictionary initialized in
+                                        the /genres route
+        returns genre_exists
+    '''
+    all_genres = get_genres() 
+    genre_names = []
+
+    # grab only the the genre names from Genres SELECT query 
+    for row in all_genres:
+        genre_names.append(row[1])
+
+    # if the genre exists, create a key, 'exists' with value True
+    if genre in genre_names:
+        genre_exists['exists'] = True
+        return genre_exists
+    else:
+        return genre_exists
 
 if __name__ == '__main__':
     app.run(debug=True)

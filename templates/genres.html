@@ -27,14 +27,31 @@
             <div class="tab-pane fade show active" id="v-pills-add" role="tabpanel" aria-labelledby="v-pills-add-tab">
                 <form method="POST" action="/genres">
                     <legend class="border-bottom mb-4">Add a New Genre</legend>
+                    {% if exists %}
                     <div class="form-group">
                         {{ form.genre.label(class="form-control-label") }}
                         {{ form.genre(class="form-control") }}
                     </div>
+                    <small class="text-danger">*Genre already exists.</small>
+                    <br>
+                    {% else %}
+                    <div class="form-group">
+                        {{ form.genre.label(class="form-control-label") }}
+                        {{ form.genre(class="form-control") }}
+                
+                    </div>
+                    {% endif %}
+
 
       
                     {{ form.genreSubmit(class="btn btn-outline-primary") }}
                 </form>
+
+                <!--{% if exists %} 
+                    <p>Genre exists</p>
+                {% else %}
+                    <p> Genre doesn't exist
+                {% endif %} -->
             </div>
 
             <div class="tab-pane fade" id="v-pills-view" role="tabpanel" aria-labelledby="v-pills-view-tab">
