@@ -46,6 +46,7 @@ function get_attendees(allrows, row) {
     noDiv.setAttribute('class', 'hidden');
     let meetingID = row.firstElementChild.innerHTML;
     console.log('meetingID', meetingID);
+    
     fetch('/get_attendees?meetingID=' + meetingID)
         .then(function (response) {
             return response.json();

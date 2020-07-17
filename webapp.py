@@ -63,11 +63,40 @@ def meetings():
 @app.route('/meetingsnew', methods=['GET', 'POST'])
 def meetingsnew():
     club_names_list = get_club_names()
-    form = NewMeetingForm()
-    form.clubName.choices = club_names_list
+    formNewMeeting = NewMeetingForm()
+    formNewMeeting.clubName.choices = club_names_list
+    formNewMeeting.meetingBook.choices = [('0', 'Please select a book club first.')]
+
+    if request.method == 'POST':
+        print(formNewMeeting.validate())
+        print(formNewMeeting.validate_on_submit())
+        club = request.form['clubName']
+        date = request.form['meetingDate']
+        time = request.form['meetingTime']
+        book = request.form['meetingBook']
+        leader_email = request.form['meetingLeaderEmail']
+        print(club, date, time, book, leader_email)
     return render_template('meetingsnew.html',
-                            form=form,
+                            formNewMeeting=formNewMeeting,
                             active={'meetings':True, 'new':True})
+
+@app.route('/get_books', methods=['GET', 'POST'])
+def get_books():
+    clubID = request.args['clubID']
+    print('clubID', clubID)
+    db_connection = connect_to_database()
+    query = '''
+            SELECT b.bookID, b.title, b.author
+            FROM Books b
+            WHERE b.bookGenreID = (SELECT bc.clubGenreID 
+                                   FROM BookClubs bc 
+                                   WHERE bc.bookClubID = %s)       
+            '''
+    books = execute_query(db_connection, query, (clubID,)).fetchall()
+    print(books)
+    return jsonify(books)
+
+
 
 @app.route('/meetingssignup', methods=['GET', 'POST'])
 def meetingssignup():
@@ -96,7 +125,7 @@ def meetingssignup():
         if not memberID:
             flash('Invalid email! Please sign up as a member first.', 'danger')
             print('memberID not found')
-            return redirect('meetingssignup')
+            return redirect('/meetingssignup')
         try:
             query = '''
                     INSERT INTO meetings_members (meetingID, memberID) 
@@ -107,6 +136,8 @@ def meetingssignup():
         except MySQLdb.Error as err:
             flash('Error: {}'.format(err), 'danger')
             print(err)
+            return redirect('/meetingsignup')
+        flash('Sucessfully signed up for meeting!', 'success')
         return redirect('/meetingssignup')
 
     return render_template('meetingssignup.html',
@@ -143,7 +174,7 @@ def get_attendees():
     Returns list of attendees for that meeting as a tuple.
     '''
     meetingID = request.args['meetingID']
-    # print('meetingID from flask', meetingID)
+    # print('meetingID', meetingID)
     db_connection = connect_to_database()
     query = '''
             SELECT mm.meetingID, m.memberID, m.firstName, m.lastName, m.email 

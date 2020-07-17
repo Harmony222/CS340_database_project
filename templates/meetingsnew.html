@@ -7,14 +7,21 @@
 {% include "partials/meetingssidebar.html" %}
 
 <div class="col-md-8">
-    <div class="meetingForm">
-        <form method="POST" action="">
+    <div class="newMeetingForm">
+        <form method="POST" action="/meetingsnew">
+            {{ formNewMeeting.csrf_token() }}
             <fieldset class="form-group">
+            <!-- </div>
+            {% for field in formNewMeeting.errors %}
+            {% for error in formNewMeeting.errors[field] %}
+                <div class="error">{{ error }}</div>
+            {% endfor %}
+            {% endfor %} -->
                 <legend class="border-bottom mb-4">Schedule a New Club Meeting</legend>
                 <div class="form-group">
-                    {{ form.clubName.label(class="form-control-label") }} 
-                    <select class="form-control" name="clubName">
-                    {% for option in form.clubName %}
+                    {{ formNewMeeting.clubName.label(class="form-control-label") }} 
+                    <select class="form-control" name="clubName" id="clubSelect">
+                    {% for option in formNewMeeting.clubName %}
                         {% if loop.first %}
                             <option value="" disabled selected>Select a book club</option>
                         {% endif %}
@@ -25,33 +32,38 @@
                 <div class="form-group">
                     <div class="row">
                         <div class="col">
-                            {{ form.meetingDate.label(class="form-control-label") }}
-                            {{ form.meetingDate(class="form-control", placeholder="YYYY-MM-DD") }}
+                            {{ formNewMeeting.meetingDate.label(class="form-control-label") }}
+                            {{ formNewMeeting.meetingDate(class="form-control", placeholder="YYYY-MM-DD", type="date") }}
                         </div>
                         <div class="col">
-                            {{ form.meetingTime.label(class="form-control-label") }}
-                            {{ form.meetingTime(class="form-control", placeholder="H:M") }}
+                            {{ formNewMeeting.meetingTime.label(class="form-control-label") }}
+                            {{ formNewMeeting.meetingTime(class="form-control", type="time", placeholder="H:M") }}
                         </div>
                     </div>
                 </div>
+
                 <div class="form-group">
-                    {{ form.meetingBook.label(class="form-control-label") }}
+                    {{ formNewMeeting.meetingBook.label(class="form-control-label") }}
                     <small class="text-muted extra">
                         Book not listed? <a class="ml-2" href="{{ url_for('books') }}">Add new book.</a>
                     </small>
-                    {{ form.meetingBook(class="form-control") }}
+                    <select class="form-control" name="meetingBook" id="bookSelect">
+                    {% for option in formNewMeeting.meetingBook %}
+                        {{ option }}
+                    {% endfor %}
+                    </select>
                 </div>
                 <div class="form-group">
-                    {{ form.meetingLeaderEmail.label(class="form-control-label") }}
-                    {{ form.meetingLeaderEmail(class="form-control") }}
+                    {{ formNewMeeting.meetingLeaderEmail.label(class="form-control-label") }}
+                    {{ formNewMeeting.meetingLeaderEmail(class="form-control") }}
                 </div> 
             </fieldset>
             <div class="form-group">
-                {{ form.meetingSubmit(class="btn btn-outline-primary") }}
+                {{ formNewMeeting.meetingSubmit(class="btn btn-outline-primary") }}
             </div>
         </form>
     </div>            
 </div>
 </div>
-<script src="{{ url_for('static', filename='js/meetings.js') }}"></script>
+<script src="{{ url_for('static', filename='js/meetingsnew.js') }}"></script>
 {% endblock body %}

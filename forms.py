@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, IntegerField, SubmitField, DateField, DateTimeField, SelectField
-from wtforms.validators import InputRequired, Length, Email, equal_to
+from wtforms.validators import InputRequired, Length, Email, equal_to, DataRequired
 
 class BookClubForm(FlaskForm):
     clubName = StringField('Book Club Name', validators=[InputRequired(), Length(min=2, max=100)])
@@ -16,7 +16,7 @@ class NewMeetingForm(FlaskForm):
     clubName = SelectField('Book Club', coerce=int, validators=[InputRequired()])
     meetingDate = DateField('Meeting Date', format='%Y-%m-%d', validators=[InputRequired()])
     meetingTime = DateTimeField('Meeting Time', format='%H:%M')
-    meetingBook = StringField('Meeting Book')
+    meetingBook = SelectField('Meeting Book', coerce=int)
     meetingLeaderEmail = StringField('Meeting Leader Email', validators=[InputRequired(), Email()])
     meetingSubmit = SubmitField('Schedule Meeting')
 
