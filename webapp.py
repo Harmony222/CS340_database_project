@@ -238,7 +238,9 @@ def books():
     if request.method == 'POST':
         title = request.form['title']
         author = request.form['author']
-        genre = request.form['genre']
+        bookGenreID = request.form['genre']
+        add_books(title, author, bookGenreID)
+        
 
     genres_list = get_genres()
     books_form.genre.choices = genres_list
@@ -409,6 +411,22 @@ def get_all_books():
     all_books = execute_query(db_connection, query).fetchall()
     return all_books
 
+def add_books(title, author, bookGenreID):
+    '''
+        Executes INSERT query on Books table.
+        Takes title, author, genre input values
+        from the Add Book form.
+
+    '''
+    db_connection = connect_to_database()
+    query = '''
+            INSERT INTO Books (title, author, bookGenreID)
+            VALUES (%s, %s, %s);
+            '''
+    data = (title,author,bookGenreID) 
+    execute_query(db_connection, query, data)
+
+
 def add_genre(genre):
     '''
         Executes INSERT query on Genres table.
@@ -445,7 +463,9 @@ def check_genre(genre, genre_exists):
 
 def check_email(email, email_exists):
     '''
-
+        ** 
+        maybe this could be merged with validate_member()
+        **
     '''
     db_connection = connect_to_database()
     query = 'SELECT memberID FROM Members WHERE email = %s'
