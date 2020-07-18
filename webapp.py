@@ -36,6 +36,7 @@ def members():
         email_exists = check_email(email, email_exists)
         if 'exists' not in email_exists.keys(): # otherwise make the INSERT query
             add_members(firstName, lastName, email)
+            return redirect('/members')
     
     all_members = get_all_members()
     return render_template('members.html', form=members_form, active={'members':True}, members=all_members, exists=email_exists)
@@ -240,13 +241,11 @@ def books():
         author = request.form['author']
         bookGenreID = request.form['genre']
         add_books(title, author, bookGenreID)
+        return redirect('/books')
         
-
     genres_list = get_genres()
     books_form.genre.choices = genres_list
-    all_books = get_all_books()
-    print(all_books)
-        
+    all_books = get_all_books()    
     return render_template('books.html', form=books_form, active={'books':True}, books = all_books)
 
 # ----------------------- GENRES ROUTE -----------------------------
@@ -264,7 +263,7 @@ def genres():
         # if not add the genre to Genres table
         if 'exists' not in genre_exists.keys():
             add_genre(genre)
-
+            return redirect('/genres')
     all_genres = get_genres()
     return render_template('genres.html', form=form, active={'index':True}, genres=all_genres, exists = genre_exists)
 
