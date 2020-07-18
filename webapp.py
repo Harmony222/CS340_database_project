@@ -63,39 +63,48 @@ def meetings():
 @app.route('/meetingsnew', methods=['GET', 'POST'])
 def meetingsnew():
     club_names_list = get_club_names()
+    formSelectClub = SelectClub()
+    formSelectClub.clubName.choices = club_names_list
     formNewMeeting = NewMeetingForm()
-    formNewMeeting.clubName.choices = club_names_list
-    formNewMeeting.meetingBook.choices = [('0', 'Please select a book club first.')]
+    formNewMeeting.meetingBook.choices = [('0', 'Please select a book club first')]
+    select_club = False
 
-    if request.method == 'POST':
-        print(formNewMeeting.validate())
-        print(formNewMeeting.validate_on_submit())
-        club = request.form['clubName']
-        date = request.form['meetingDate']
-        time = request.form['meetingTime']
-        book = request.form['meetingBook']
+    if request.method == 'POST' and formSelectClub.validate_on_submit():
+        clubID = formSelectClub.clubName.data
+        books = get_books(clubID)
+        formNewMeeting.meetingBook.choices = books
+        select_club = True
+    # print(formNewMeeting.validate_on_submit())
+    if request.method == 'POST' and formNewMeeting.validate_on_submit():
+        clubID = request.form['clubName']
+        # date = request.form['meetingDate']
+        # time = request.form['meetingTime']
+        dateTime = request.form['meetingDate'] + ' ' + request.form['meetingTime']
+        bookID = request.form['meetingBook']
+        if bookID == '-1':
+            bookID = None
         leader_email = request.form['meetingLeaderEmail']
-        print(club, date, time, book, leader_email)
+        print(clubID, dateTime, bookID, leader_email)
+        try:
+            db_connection = connect_to_database()
+            query = '''INSERT INTO ClubMeetings (`dateTime`, bookClubID, 
+                                                meetingBookID, meetingLeaderID)
+                            VALUES (%s, %s, %s, (SELECT memberID FROM Members WHERE email = %s))
+                    '''
+            data = (dateTime, clubID, bookID, leader_email)
+            result = execute_query(db_connection, query, data)
+            print(result)
+        except MySQLdb.Error as err:
+            flash('Error: {}'.format(err), 'danger')
+            print(err)
+            return redirect('/meetingsnew')
+        flash('Sucessfully scheduled a meeting!', 'success')
+        return redirect('/meetingsnew')
     return render_template('meetingsnew.html',
+                            formSelectClub=formSelectClub,
                             formNewMeeting=formNewMeeting,
-                            active={'meetings':True, 'new':True})
-
-@app.route('/get_books', methods=['GET', 'POST'])
-def get_books():
-    clubID = request.args['clubID']
-    print('clubID', clubID)
-    db_connection = connect_to_database()
-    query = '''
-            SELECT b.bookID, b.title, b.author
-            FROM Books b
-            WHERE b.bookGenreID = (SELECT bc.clubGenreID 
-                                   FROM BookClubs bc 
-                                   WHERE bc.bookClubID = %s)       
-            '''
-    books = execute_query(db_connection, query, (clubID,)).fetchall()
-    print(books)
-    return jsonify(books)
-
+                            active={'meetings':True, 'new':True},
+                            select_club=select_club)
 
 
 @app.route('/meetingssignup', methods=['GET', 'POST'])
@@ -136,7 +145,7 @@ def meetingssignup():
         except MySQLdb.Error as err:
             flash('Error: {}'.format(err), 'danger')
             print(err)
-            return redirect('/meetingsignup')
+            return redirect('/meetingssignup')
         flash('Sucessfully signed up for meeting!', 'success')
         return redirect('/meetingssignup')
 
@@ -241,15 +250,26 @@ def get_club_names():
     club_names = execute_query(db_connection, query).fetchall()
     return club_names
 
-def get_book_list():
-    cur = mysql.connection.cursor()
-    result_val = cur.execute('SELECT * FROM Books')
-    if result_val > 0:
-        books_dict = cur.fetchall()
-    books_list = []
-    for b in books_dict:
-        books_list.append((b['bookID'], b['title']))
-    return books_list
+
+def get_books(clubID):
+    '''
+    Retrieve books that are in the genre associated with clubID.
+    Returns a list of tuples (bookiD, book name + author).
+    '''
+    db_connection = connect_to_database()
+    query = '''
+            SELECT b.bookID, b.title, b.author
+            FROM Books b
+            WHERE b.bookGenreID = (SELECT bc.clubGenreID 
+                                   FROM BookClubs bc 
+                                   WHERE bc.bookClubID = %s)     
+            '''
+    books = execute_query(db_connection, query, (clubID,), True).fetchall()
+    book_options = []
+    for book in books:
+        book_options.append((book['bookID'], book['title'] + ' by ' + book['author']))
+    book_options.append((-1, 'None'))
+    return book_options
 
 def get_all_clubs():
     '''

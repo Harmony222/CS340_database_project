@@ -120,12 +120,14 @@ INSERT INTO Books (title, author, bookGenreID)
 CREATE TABLE ClubMeetings (
     meetingID int(11) NOT NULL AUTO_INCREMENT,
     `dateTime` datetime NOT NULL,
-    bookClubID int(11),
-    meetingBookID int(11) NOT NULL,
+    bookClubID int(11) NOT NULL,
+    meetingBookID int(11),
     meetingLeaderID int(11) NOT NULL,
     PRIMARY KEY (meetingID),
     FOREIGN KEY (meetingBookID)
-        REFERENCES Books(bookID),
+        REFERENCES Books(bookID)
+        ON DELETE SET NULL
+        ON UPDATE CASCADE,
     FOREIGN KEY (meetingLeaderID)
         REFERENCES Members(memberID)
 );
@@ -166,3 +168,13 @@ CREATE TABLE meetings_members (
     FOREIGN KEY (memberID)
         REFERENCES Members(memberID)
 );
+
+INSERT INTO meetings_members (meetingID, memberID)
+    VALUES ('3', '1');
+INSERT INTO meetings_members (meetingID, memberID)
+    VALUES ('3', '2');
+INSERT INTO meetings_members (meetingID, memberID)
+    VALUES ('4', '1');
+INSERT INTO meetings_members (meetingID, memberID)
+    VALUES ('4', '4');
+

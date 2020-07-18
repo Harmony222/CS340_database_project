@@ -13,7 +13,8 @@ class BookClubForm(FlaskForm):
     clubSubmit = SubmitField('Create New Book Club')
 
 class NewMeetingForm(FlaskForm):
-    clubName = SelectField('Book Club', coerce=int, validators=[InputRequired()])
+    clubName = IntegerField('Book Club ID', validators=[InputRequired()])
+    # clubName = SelectField('Book Club', coerce=int, validators=[InputRequired()])
     meetingDate = DateField('Meeting Date', format='%Y-%m-%d', validators=[InputRequired()])
     meetingTime = DateTimeField('Meeting Time', format='%H:%M')
     meetingBook = SelectField('Meeting Book', coerce=int)

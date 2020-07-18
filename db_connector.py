@@ -26,7 +26,7 @@ def execute_query(db_connection = None, query = None, query_params = (), dict = 
         print("query is empty! Please pass a SQL query in query")
         return None
 
-    print("Executing %s with %s" % (query, query_params));
+    # print("Executing %s with %s" % (query, query_params));
     # Create a cursor to execute query. Why? Because apparently they optimize execution by retaining a reference according to PEP0249
 
     # https://stackoverflow.com/questions/2180226/python-use-mysqldb-to-import-a-mysql-table-as-a-dictionary
