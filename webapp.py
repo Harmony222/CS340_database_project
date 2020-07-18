@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, Markup
 from flask_mysqldb import MySQL
 from db_credentials import host, user, passwd, db
 from forms import *
@@ -77,14 +77,12 @@ def meetingsnew():
     # print(formNewMeeting.validate_on_submit())
     if request.method == 'POST' and formNewMeeting.validate_on_submit():
         clubID = request.form['clubName']
-        # date = request.form['meetingDate']
-        # time = request.form['meetingTime']
         dateTime = request.form['meetingDate'] + ' ' + request.form['meetingTime']
         bookID = request.form['meetingBook']
         if bookID == '-1':
             bookID = None
         leader_email = request.form['meetingLeaderEmail']
-        print(clubID, dateTime, bookID, leader_email)
+        # print(clubID, dateTime, bookID, leader_email)
         try:
             db_connection = connect_to_database()
             query = '''INSERT INTO ClubMeetings (`dateTime`, bookClubID, 
@@ -93,11 +91,14 @@ def meetingsnew():
                     '''
             data = (dateTime, clubID, bookID, leader_email)
             result = execute_query(db_connection, query, data)
-            print(result)
+            meetingID = execute_query(db_connection, 'SELECT LAST_INSERT_ID()').fetchone()
+            print(meetingID)
         except MySQLdb.Error as err:
             flash('Error: {}'.format(err), 'danger')
             print(err)
             return redirect('/meetingsnew')
+        # if meeting successfully scheduled, add meeting leader as meeting attendee
+        # meeting_signup_member()
         flash('Sucessfully scheduled a meeting!', 'success')
         return redirect('/meetingsnew')
     return render_template('meetingsnew.html',
@@ -125,28 +126,11 @@ def meetingssignup():
         # signUp_meetingID = formSignUp.meetingID.data
         signUp_meetingID = request.form['meetingID']
         signUp_email = request.form['email']
-        print(signUp_meetingID, signUp_email)
-        db_connection = connect_to_database()
-        query = 'SELECT memberID FROM Members WHERE email = %s'
-        data = signUp_email,
-        memberID = execute_query(db_connection, query, data).fetchone()
-        print('memberID', memberID)
+        # print(signUp_meetingID, signUp_email)
+        memberID = validate_member(signUp_email)
         if not memberID:
-            flash('Invalid email! Please sign up as a member first.', 'danger')
-            print('memberID not found')
             return redirect('/meetingssignup')
-        try:
-            query = '''
-                    INSERT INTO meetings_members (meetingID, memberID) 
-                    VALUES (%s, %s)
-                    ''' 
-            data = (signUp_meetingID, memberID)
-            execute_query(db_connection, query, data)
-        except MySQLdb.Error as err:
-            flash('Error: {}'.format(err), 'danger')
-            print(err)
-            return redirect('/meetingssignup')
-        flash('Sucessfully signed up for meeting!', 'success')
+        meeting_signup_member(signUp_meetingID, memberID)
         return redirect('/meetingssignup')
 
     return render_template('meetingssignup.html',
@@ -155,6 +139,45 @@ def meetingssignup():
                             active={'meetings':True, 'signup':True},
                             club_meetings=club_meetings,
                             select_club=select_club)
+
+
+def meeting_signup_member(meetingID, memberID):
+    '''
+    Tries signing up a member to specified meeting. 
+    If successful, inserts into meetings_members, and flashes success message,
+    otherwise flashes error message.
+    '''
+    try:
+        db_connection = connect_to_database()
+        query = '''
+                INSERT INTO meetings_members (meetingID, memberID) 
+                VALUES (%s, %s)
+                ''' 
+        data = (meetingID, memberID)
+        execute_query(db_connection, query, data)
+    except MySQLdb.Error as err:
+        flash('Error: {}'.format(err), 'danger')
+        print(err)
+        return
+    flash('Sucessfully signed up for meeting!', 'success')
+
+
+def validate_member(email):
+    '''
+    Checks to see if email is a Novel Hovel Member. 
+    Returns MemberID if True, otherwise flashes invalid email message and returns False.
+    '''
+    db_connection = connect_to_database()
+    query = 'SELECT memberID FROM Members WHERE email = %s'
+    data = email,
+    memberID = execute_query(db_connection, query, data).fetchone()
+    print('memberID', memberID)
+    if not memberID:
+        # https://stackoverflow.com/questions/21248718/how-to-flashing-a-message-with-link-using-flask-flash
+        flash(Markup('''Invalid email! Please sign up as a Book Club Member first. <a href="{{ url_for('members') }}">Sign up.</a>'''), 'danger')
+        print('memberID not found')
+        return False
+    return memberID
 
 
 @app.route('/attendees', methods=['GET', 'POST'])
@@ -233,20 +256,20 @@ def genres():
 def get_genres():
     '''
     Retrieves all genres from mysql database.
-    Returns a list of all genres.
+    Returns a tuple of all genre data (genreID, genre).
     '''
     db_connection = connect_to_database()
-    query = 'SELECT * FROM Genres'
+    query = 'SELECT * FROM Genres ORDER BY genre'
     genres = execute_query(db_connection, query).fetchall()
     return genres
 
 def get_club_names():
     '''
     Retrieves all club names from mysql database.
-    Returns a list of all club names.
+    Returns a tuple of all club name data (clubID, clubNames).
     '''
     db_connection = connect_to_database()
-    query = 'SELECT bookClubID, clubName FROM BookClubs'
+    query = 'SELECT bookClubID, clubName FROM BookClubs ORDER BY clubName'
     club_names = execute_query(db_connection, query).fetchall()
     return club_names
 

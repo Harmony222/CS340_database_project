@@ -7,7 +7,8 @@ class BookClubForm(FlaskForm):
     meetingFrequency = SelectField(u'Meeting Frequency', 
                                     choices=[('monthly', 'Monthly'),
                                              ('twice monthly', 'Twice Monthly'),
-                                             ('weekly', 'Weekly')])
+                                             ('weekly', 'Weekly'),
+                                             ('None', 'None')])
     clubGenre = SelectField('Genre', coerce=int, validators=[InputRequired()])
     clubLeaderEmail = StringField('Club Leader Email', validators=[InputRequired(), Email()])
     clubSubmit = SubmitField('Create New Book Club')
