@@ -21,23 +21,27 @@ mysql = MySQL(app)
 def index():
     return render_template('index.html', active={'index':True})
 
+
+# ----------------------- MEMBERS ROUTE ----------------------------
 @app.route('/members', methods=['POST', 'GET'])
 def members():
     members_form = MembersForm()
+    email_exists = {}
     # Week 7: Learn using Python and Flask Framework - Inserting Data Using Flask Video
     if request.method == 'POST':
         firstName = request.form['firstName']
         lastName = request.form['lastName']
         email = request.form['email']
-        add_members(firstName, lastName, email)
+        # check if the email exists, if it does, front-end will handle this
+        email_exists = check_email(email, email_exists)
+        if 'exists' not in email_exists.keys(): # otherwise make the INSERT query
+            add_members(firstName, lastName, email)
     
     all_members = get_all_members()
-    #print("test: ")
-    #print(all_members[0][0])
-    #print("********")
+    return render_template('members.html', form=members_form, active={'members':True}, members=all_members, exists=email_exists)
 
-    return render_template('members.html', form=members_form, active={'members':True}, members=all_members)
 
+# ----------------------- BOOKCLUBS ROUTE ---------------------------
 @app.route('/bookclubs', methods=['POST', 'GET'])
 def bookclubs():
     clubs = get_all_clubs()
@@ -53,6 +57,8 @@ def bookclubs():
                             active={'bookclubs':True},
                             clubs=clubs)
 
+
+# -------------------- MEETINGS ROUTE ----------------------------
 @app.route('/meetings', methods=['GET', 'POST'])
 def meetings():
     all_meetings = get_all_meetings()
@@ -60,6 +66,8 @@ def meetings():
                             active={'meetings':True, 'view':True},
                             all_meetings=all_meetings)
     
+
+# -------------------- NEW MEETINGS ROUTE ------------------------
 @app.route('/meetingsnew', methods=['GET', 'POST'])
 def meetingsnew():
     club_names_list = get_club_names()
@@ -108,6 +116,7 @@ def meetingsnew():
                             select_club=select_club)
 
 
+# --------------- MEETINGS SIGN UP ROUTE --------------------------
 @app.route('/meetingssignup', methods=['GET', 'POST'])
 def meetingssignup():
     club_names_list = get_club_names()
@@ -180,6 +189,7 @@ def validate_member(email):
     return memberID
 
 
+# -------------------- ATTENDEES ROUTE --------------------------
 @app.route('/attendees', methods=['GET', 'POST'])
 def attendees():
     club_names_list = get_club_names()
@@ -197,6 +207,8 @@ def attendees():
                             club_meetings=club_meetings,
                             select_club=select_club)
 
+
+# ------------------- GET ATTENDEES ROUTE -----------------------
 @app.route('/get_attendees', methods = ['GET', 'POST'])
 def get_attendees():
     '''
@@ -218,6 +230,7 @@ def get_attendees():
     # print(attendees)
     return jsonify(attendees)
 
+# ----------------------- BOOKS ROUTE ----------------------------
 @app.route('/books', methods=['POST', 'GET'])
 def books():
     books_form = BooksForm()
@@ -234,6 +247,7 @@ def books():
         
     return render_template('books.html', form=books_form, active={'books':True}, books = all_books)
 
+# ----------------------- GENRES ROUTE -----------------------------
 @app.route('/genres', methods=['POST', 'GET'] )
 def genres():
     form = GenresForm()
@@ -426,10 +440,23 @@ def check_genre(genre, genre_exists):
 
     # if the genre exists, create a key, 'exists' with value True
     if genre in genre_names:
-        genre_exists['exists'] = True
-        return genre_exists
-    else:
-        return genre_exists
+        genre_exists['exists'] = True     
+    return genre_exists
+
+def check_email(email, email_exists):
+    '''
+
+    '''
+    db_connection = connect_to_database()
+    query = 'SELECT memberID FROM Members WHERE email = %s'
+    data = email,
+    memberID = execute_query(db_connection, query, data).fetchone()
+    if memberID:
+        email_exists['exists'] = True
+    return email_exists
+    
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)

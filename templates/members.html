@@ -9,6 +9,7 @@
         https://www.youtube.com/watch?v=eu0tg4vgFr4
         https://getbootstrap.com/docs/4.0/components/navs/   -> vertical pills with tabs plugin
         https://mdbootstrap.com/docs/jquery/utilities/borders/
+        https://getbootstrap.com/docs/4.0/components/alerts/
 -->
 <div class="row">
     <div class="col-md-3">
@@ -43,6 +44,11 @@
                         {{ form.email.label(class="form-control-label") }}
                         {{ form.email(class="form-control") }}
                     </div>
+                    {% if exists %}
+                        <div class="alert alert-danger" role="alert">
+                            Email unavailable. Please enter a different email.
+                        </div>
+                    {% endif %}
                     {{ form.submit(class="btn btn-outline-primary") }}
                 </form>
             </div>
