@@ -121,7 +121,7 @@ CREATE TABLE ClubMeetings (
     meetingID int(11) NOT NULL AUTO_INCREMENT,
     `dateTime` datetime NOT NULL,
     bookClubID int(11) NOT NULL,
-    meetingBookID int(11),
+    meetingBookID int(11) UNIQUE,
     meetingLeaderID int(11) NOT NULL,
     PRIMARY KEY (meetingID),
     FOREIGN KEY (meetingBookID)
@@ -164,9 +164,13 @@ CREATE TABLE meetings_members (
     memberID int(11) NOT NULL,
     PRIMARY KEY (meetingID, memberID),
     FOREIGN KEY (meetingID)
-        REFERENCES ClubMeetings(meetingID),
+        REFERENCES ClubMeetings(meetingID)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
     FOREIGN KEY (memberID)
         REFERENCES Members(memberID)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
 );
 
 INSERT INTO meetings_members (meetingID, memberID)

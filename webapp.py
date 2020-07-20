@@ -52,6 +52,28 @@ def bookclubs():
     form.clubGenre.choices = genres_list
     formSignUp = ClubSignUp()
     formSignUp.clubName.choices = club_names_list #https://stackoverflow.com/questions/46921823/dynamic-choices-wtforms-flask-selectfield
+    if request.method == 'POST' and form.validate_on_submit():
+        club_name = request.form['clubName']
+        meeting_frequency = request.form['meetingFrequency']
+        genreID = request.form['clubGenre']
+        leader_email = request.form['clubLeaderEmail']
+        # check if leader is a Novel Hovel Member, if not flash error message
+        leaderID = validate_member(leader_email)
+        if leaderID:
+            try:
+                db_connection = connect_to_database()
+                query = '''
+                        INSERT INTO BookClubs (clubName, meetingFrequency,
+                                               clubGenreID, clubLeaderID)
+                        VALUES (%s, %s, %s, %s)
+                        '''
+                data = (club_name, meeting_frequency, genreID, leaderID)
+                execute_query(db_connection, query, data)
+                flash('Sucessfully created {} Book Club!'.format(club_name), 'success')    
+            except MySQLdb.Error as err:
+                flash('Error: {}'.format(err), 'danger')
+                print(err)
+            return redirect('/bookclubs')                
     return render_template('bookclubs.html', 
                             form=form, 
                             formSignUp=formSignUp,
@@ -92,24 +114,27 @@ def meetingsnew():
             bookID = None
         leader_email = request.form['meetingLeaderEmail']
         # print(clubID, dateTime, bookID, leader_email)
-        try:
-            db_connection = connect_to_database()
-            query = '''INSERT INTO ClubMeetings (`dateTime`, bookClubID, 
-                                                meetingBookID, meetingLeaderID)
-                            VALUES (%s, %s, %s, (SELECT memberID FROM Members WHERE email = %s))
-                    '''
-            data = (dateTime, clubID, bookID, leader_email)
-            result = execute_query(db_connection, query, data)
-            meetingID = execute_query(db_connection, 'SELECT LAST_INSERT_ID()').fetchone()
-            print(meetingID)
-        except MySQLdb.Error as err:
-            flash('Error: {}'.format(err), 'danger')
-            print(err)
-            return redirect('/meetingsnew')
-        # if meeting successfully scheduled, add meeting leader as meeting attendee
-        # meeting_signup_member()
-        flash('Sucessfully scheduled a meeting!', 'success')
-        return redirect('/meetingsnew')
+        leaderID = validate_member(leader_email)
+        if leaderID:
+            try:
+                db_connection = connect_to_database()
+                query = '''
+                        INSERT INTO ClubMeetings (`dateTime`, bookClubID, 
+                                                   meetingBookID, meetingLeaderID)
+                        VALUES (%s, %s, %s, %s)
+                        '''
+                data = (dateTime, clubID, bookID, leaderID)
+                result = execute_query(db_connection, query, data)
+                meetingID = execute_query(db_connection, 'SELECT LAST_INSERT_ID()').fetchone()
+                # Sign leader up as a meeting attendee
+                if meeting_signup_member(meetingID[0], leaderID):
+                    flash('Sucessfully scheduled a meeting!', 'success') 
+                    flash('Added {} as an attendee for this meeting.'.format(leader_email), 'success')
+                    return redirect('/meetingsnew')
+            except MySQLdb.Error as err:
+                flash('Error: {}'.format(err), 'danger')
+                print(err)
+                return redirect('/meetingsnew')
     return render_template('meetingsnew.html',
                             formSelectClub=formSelectClub,
                             formNewMeeting=formNewMeeting,
@@ -140,7 +165,8 @@ def meetingssignup():
         memberID = validate_member(signUp_email)
         if not memberID:
             return redirect('/meetingssignup')
-        meeting_signup_member(signUp_meetingID, memberID)
+        if meeting_signup_member(signUp_meetingID, memberID):
+            flash('Sucessfully signed up for meeting!', 'success')
         return redirect('/meetingssignup')
 
     return render_template('meetingssignup.html',
@@ -168,8 +194,9 @@ def meeting_signup_member(meetingID, memberID):
     except MySQLdb.Error as err:
         flash('Error: {}'.format(err), 'danger')
         print(err)
-        return
-    flash('Sucessfully signed up for meeting!', 'success')
+        return False
+    return True
+    # flash('Sucessfully signed up for meeting!', 'success')
 
 
 def validate_member(email):
@@ -184,7 +211,7 @@ def validate_member(email):
     print('memberID', memberID)
     if not memberID:
         # https://stackoverflow.com/questions/21248718/how-to-flashing-a-message-with-link-using-flask-flash
-        flash(Markup('''Invalid email! Please sign up as a Book Club Member first. <a href="{{ url_for('members') }}">Sign up.</a>'''), 'danger')
+        flash(Markup('''Invalid email! Please sign up as a Novel Hovel Member first. <a href="{{ url_for('members') }}">Sign up.</a>'''), 'danger')
         print('memberID not found')
         return False
     return memberID
@@ -219,7 +246,7 @@ def get_attendees():
     Returns list of attendees for that meeting as a tuple.
     '''
     meetingID = request.args['meetingID']
-    # print('meetingID', meetingID)
+    print('meetingID', meetingID)
     db_connection = connect_to_database()
     query = '''
             SELECT mm.meetingID, m.memberID, m.firstName, m.lastName, m.email 
@@ -227,7 +254,7 @@ def get_attendees():
             JOIN meetings_members mm ON m.memberID = mm.memberID 
             WHERE mm.meetingID = %s
             '''
-    attendees = execute_query(db_connection, query, meetingID).fetchall()
+    attendees = execute_query(db_connection, query,(meetingID,)).fetchall()
     # print(attendees)
     return jsonify(attendees)
 
@@ -342,7 +369,7 @@ def get_all_meetings():
             SELECT cm.meetingID, cm.dateTime, b.title, b.author, 
                    bc.clubName, m.firstName, m.lastName
             FROM ClubMeetings as cm
-            JOIN Books as b ON cm.meetingBookID = b.bookID
+            LEFT JOIN Books as b ON cm.meetingBookID = b.bookID
             JOIN Members as m on cm.meetingLeaderID = m.memberID
             JOIN BookClubs as bc on cm.bookClubID = bc.bookClubID
             WHERE cm.dateTime >= CURDATE()
@@ -360,7 +387,7 @@ def get_club_meetings(club):
     query = '''
             SELECT cm.meetingID, cm.dateTime, b.title, b.author, bc.clubName, m.firstName, m.lastName
             FROM ClubMeetings as cm
-            JOIN Books as b ON cm.meetingBookID = b.bookID
+            LEFT JOIN Books as b ON cm.meetingBookID = b.bookID
             JOIN Members as m on cm.meetingLeaderID = m.memberID
             JOIN BookClubs as bc on cm.bookClubID = bc.bookClubID
             WHERE cm.dateTime >= CURDATE() AND cm.bookClubID = '{}'
