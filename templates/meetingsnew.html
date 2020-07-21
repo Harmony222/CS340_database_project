@@ -35,6 +35,7 @@
                 <form method="POST" action="/meetingsnew">
                     {{ formNewMeeting.csrf_token() }}
                     <fieldset class="form-group">
+                    <!-- https://stackoverflow.com/questions/35527722/why-validation-not-working-on-form-request -->
                     <!-- </div>
                     {% for field in formNewMeeting.errors %}
                     {% for error in formNewMeeting.errors[field] %}

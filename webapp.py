@@ -124,7 +124,8 @@ def meetingsnew():
                         VALUES (%s, %s, %s, %s)
                         '''
                 data = (dateTime, clubID, bookID, leaderID)
-                result = execute_query(db_connection, query, data)
+                # result = execute_query(db_connection, query, data).fetchall()
+                # https://stackoverflow.com/questions/17112852/get-the-new-record-primary-key-id-from-mysql-insert-query
                 meetingID = execute_query(db_connection, 'SELECT LAST_INSERT_ID()').fetchone()
                 # Sign leader up as a meeting attendee
                 if meeting_signup_member(meetingID[0], leaderID):
@@ -208,7 +209,7 @@ def validate_member(email):
     query = 'SELECT memberID FROM Members WHERE email = %s'
     data = email,
     memberID = execute_query(db_connection, query, data).fetchone()
-    print('memberID', memberID)
+    # print('memberID', memberID)
     if not memberID:
         # https://stackoverflow.com/questions/21248718/how-to-flashing-a-message-with-link-using-flask-flash
         flash(Markup('''Invalid email! Please sign up as a Novel Hovel Member first. <a href="{{ url_for('members') }}">Sign up.</a>'''), 'danger')
