@@ -1,4 +1,4 @@
-console.log("javascript connected");
+// console.log("javascript connected");
 
 club_select = document.getElementById('clubSelect');
 console.log(club_select);

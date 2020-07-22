@@ -85,10 +85,44 @@ def bookclubs():
 @app.route('/meetings', methods=['GET', 'POST'])
 def meetings():
     all_meetings = get_all_meetings()
+    club_names_list = get_club_names()
+    formSelectClub = SelectClub()
+    formSelectClub.clubName.choices = club_names_list
+    formModifyMeeting = NewMeetingForm()
+    select_club = False
+    if request.method == 'GET' and request.args:
+        meetingID = request.args['meetingID']
+        print(meetingID)
+        db_connection = connect_to_database()
+        query = '''
+                SELECT meetingID, bookClubID, dateTime, meetingBookID, meetingLeaderID
+                FROM ClubMeetings
+                WHERE meetingID = %s 
+                '''
+        meeting_data = execute_query(db_connection, query, (meetingID,), True).fetchone()
+        print(meeting_data)
+        return jsonify(meeting_data)
+
+    if request.method == 'POST' and formSelectClub.validate_on_submit():
+        clubID = formSelectClub.clubName.data
+        req = request.form
+        print(req)
+        meeting_date = request.form['subFormDate']
+        print(meeting_date)
+        books = get_books(clubID)
+        formModifyMeeting.meetingBook.choices = books
+        select_club = True
+
     return render_template('meetings.html', 
+                            formSelectClub=formSelectClub,
+                            formModifyMeeting=formModifyMeeting,
                             active={'meetings':True, 'view':True},
-                            all_meetings=all_meetings)
-    
+                            all_meetings=all_meetings,
+                            select_club=select_club)
+
+# @app.route('/get_meeting_data', methods=['GET', 'POST'])
+# def get_meeting_data():
+#     meetingID = 
 
 # -------------------- NEW MEETINGS ROUTE ------------------------
 @app.route('/meetingsnew', methods=['GET', 'POST'])
@@ -108,6 +142,7 @@ def meetingsnew():
     # print(formNewMeeting.validate_on_submit())
     if request.method == 'POST' and formNewMeeting.validate_on_submit():
         clubID = request.form['clubName']
+        print(request.form['meetingDate'], request.form['meetingTime'])
         dateTime = request.form['meetingDate'] + ' ' + request.form['meetingTime']
         bookID = request.form['meetingBook']
         if bookID == '-1':
@@ -124,7 +159,7 @@ def meetingsnew():
                         VALUES (%s, %s, %s, %s)
                         '''
                 data = (dateTime, clubID, bookID, leaderID)
-                # result = execute_query(db_connection, query, data).fetchall()
+                execute_query(db_connection, query, data).fetchall()
                 # https://stackoverflow.com/questions/17112852/get-the-new-record-primary-key-id-from-mysql-insert-query
                 meetingID = execute_query(db_connection, 'SELECT LAST_INSERT_ID()').fetchone()
                 # Sign leader up as a meeting attendee

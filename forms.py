@@ -21,6 +21,7 @@ class NewMeetingForm(FlaskForm):
     meetingBook = SelectField('Meeting Book', coerce=int)
     meetingLeaderEmail = StringField('Meeting Leader Email', validators=[InputRequired(), Email()])
     meetingSubmit = SubmitField('Schedule Meeting')
+    modifySubmit = SubmitField('Save Changes')
 
 class MembersForm(FlaskForm):
     firstName = StringField('First Name', validators=[InputRequired(), Length(min=2, max=100)])

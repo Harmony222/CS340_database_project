@@ -14,39 +14,133 @@ https://stackoverflow.com/questions/46921823/dynamic-choices-wtforms-flask-selec
 <div class="row">
 {% include "partials/meetingssidebar.html" %}
     <div class="col-md-9 mainContent">
-        <div class="tab-content" id="v-pills-tabContent">
-            
-            <!-- View All Club Meetings -->
-            <div class="tab-pane fade show {% if active.view %}active{% endif %}" id="v-pills-view" role="tabpanel" aria-labelledby="v-pills-view-tab">
-                <legend>All Future Book Club Meetings</legend>
-                <table class="table">
-                    <thead>
-                        <th hidden>ID</th>
-                        <th>Date/Time</th>
-                        <th>Book Title</th>
-                        <th>Author</th>
-                        <th>Book Club</th>
-                        <th>Meeting Leader</th>
-                        <th></th>
+        <!-- View All Club Meetings -->
+        <div class="tab-pane fade show {% if active.view %}active{% endif %}" id="v-pills-view" role="tabpanel" aria-labelledby="v-pills-view-tab">
+            <legend>All Future Book Club Meetings</legend>
+            <table class="table">
+                <thead>
+                    <th hidden>ID</th>
+                    <th>Date/Time</th>
+                    <th>Book Title</th>
+                    <th>Author</th>
+                    <th>Book Club</th>
+                    <th>Meeting Leader</th>
                     <th></th>
-                    </thead>
-                    <tbody id="meetingsTableBody">
-                        {% for meeting in all_meetings %}
-                        <tr id="{{ meeting.meetingID }}">
-                            <td hidden>{{ meeting.meetingID }}</td>
-                            <td>{{ meeting.dateTime }}</td>
-                            <td>{{ meeting.title }}</td>
-                            <td>{{ meeting.author }}</td>
-                            <td>{{ meeting.clubName }}</td>
-                            <td>{{ meeting.firstName }} {{ meeting.lastName }}</td>
-                            <td><button id="mb{{ meeting.meetingID }}" type="button" class="modify btn btn-primary btn-sm">Modify</button></td>
-                            <td><button id="db{{ meeting.meetingID }}" type="button" class="delete btn btn-secondary btn-sm">Delete</button></td>
-                        </tr>
+                <th></th>
+                </thead>
+                <tbody id="meetingsTableBody">
+                    {% for meeting in all_meetings %}
+                    <tr id="{{ meeting.meetingID }}">
+                        <td hidden>{{ meeting.meetingID }}</td>
+                        <td class='dateTime'>{{ meeting.dateTime }}</td>
+                        <td>{{ meeting.title }}</td>
+                        <td>{{ meeting.author }}</td>
+                        <td>{{ meeting.clubName }}</td>
+                        <td>{{ meeting.firstName }} {{ meeting.lastName }}</td>
+                        <td><button id="mb{{ meeting.meetingID }}" type="button" class="modify btn btn-primary btn-sm">Modify</button></td>
+                        <td><button id="db{{ meeting.meetingID }}" type="button" class="delete btn btn-secondary btn-sm">Delete</button></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="selectClub">
+            <form method="POST" action="/meetings" id="clubSelectForm">
+                {{ formSelectClub.csrf_token() }}
+                {{ formSelectClub.name }}
+                <fieldset class="form-group">
+                    <legend class="border-bottom mb-4">Modify Club Meeting</legend>
+                    <div class="form-group">
+                        {{ formSelectClub.clubName.label(class="form-control-label") }} 
+                        <select class="form-control" name="clubName" id="clubSelect">
+                        {% for option in formSelectClub.clubName %}
+                            {% if loop.first %}
+                                <option value="" disabled selected>Select a book club</option>
+                            {% endif %}
+                            {{ option }}
                         {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>            
+                        </select>
+                    </div>       
+                    <input type="date" name="meetingDate" id="subFormDate">
+                    <input type="time" name="subFormTime" id="subFormTime">
+                    <input type="text" name="subFormBookID" id="subFormBookID">
+                    <input type="text" name="subFormLeaderID" id="subFormLeaderID">
+                </fieldset>
+                <div class="form-group" hidden>
+                    {{ formSelectClub.selectClubSubmit(class="btn btn-outline-primary") }}
+                </div> 
+            </form>
+        </div>
+        <div class="modifyMeetingForm">
+            <form method="PUT" action="/meetings">
+                {{ formModifyMeeting.csrf_token() }}
+                <fieldset class="form-group">
+                <!-- https://stackoverflow.com/questions/35527722/why-validation-not-working-on-form-request -->
+                <!-- </div>
+                {% for field in formModifyMeeting.errors %}
+                {% for error in formModifyMeeting.errors[field] %}
+                    <div class="error">{{ error }}</div>
+                {% endfor %}
+                {% endfor %} -->
+                    <div class="form-group" >
+                        {{ formModifyMeeting.clubName.label(class="form-control-label") }} 
+                        {{ formModifyMeeting.clubName(class="form-control")}}
+                    </div>
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col">
+                                {{ formModifyMeeting.meetingDate.label(class="form-control-label") }}
+                                {{ formModifyMeeting.meetingDate(class="form-control", type="date", id="formDate") }}
+                            </div>
+                            <div class="col">
+                                {{ formModifyMeeting.meetingTime.label(class="form-control-label") }}
+                                {{ formModifyMeeting.meetingTime(class="form-control", type="time", id="formTime") }}
+                            </div>
+                        </div>
+                    </div>
+                    {% if select_club %}
+                    <div class="form-group">
+                        {{ formModifyMeeting.meetingBook.label(class="form-control-label") }}
+                        <small class="text-muted extra">
+                            Book not listed? <a class="ml-2" href="{{ url_for('books') }}">Add new book.</a>
+                        </small>
+                        <select class="form-control" name="meetingBook" id="bookSelect">
+                        {% for option in formModifyMeeting.meetingBook %}
+                            {% if loop.first %}
+                                <option value="" disabled selected>Select a book</option>
+                            {% endif %}
+                            {{ option }}
+                        {% endfor %}
+                        </select>
+                    </div>   
+
+                    {% else %}
+                    
+                    <div class="form-group">
+                        {{ formModifyMeeting.meetingBook.label(class="form-control-label") }}
+                        <small class="text-muted extra">
+                            Book not listed? <a class="ml-2" href="{{ url_for('books') }}">Add new book.</a>
+                        </small>
+                        <select class="form-control" name="meetingBook" id="bookSelect">
+                        {% for option in formModifyMeeting.meetingBook %}
+                            {{ option }}
+                        {% endfor %}
+                        </select>
+                        <small class="text-muted">Book selection is filtered by Book Club genre and includes only those books not already assigned to a meeting.
+                        </small>
+                    </div>
+
+                    {% endif %}
+                    <div class="form-group">
+                        {{ formModifyMeeting.meetingLeaderEmail.label(class="form-control-label") }}
+                        {{ formModifyMeeting.meetingLeaderEmail(class="form-control") }}
+                    </div> 
+                </fieldset>
+                <div class="form-group">
+                    {{ formModifyMeeting.modifySubmit(class="btn btn-outline-primary") }}
+                </div>
+            </form>
+        </div>                
     </div>
 </div>
 <script src="{{ url_for('static', filename='js/meetings.js') }}"></script>

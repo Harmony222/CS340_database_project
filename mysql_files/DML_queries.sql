@@ -75,6 +75,14 @@ JOIN BookClubs as bc on cm.bookClubID = bc.bookClubID
 WHERE cm.dateTime >= CURDATE() AND cm.bookClubID = %clubID_from_dropdown
 ORDER BY cm.bookClubID, cm.dateTime
 
+-- Modify club meeting
+UPDATE ClubMeetings
+SET bookClubID = %bookClubID_dropdown, dateTime = %dateTime, meetingBookID = %bookID_dropdown, meetingLeaderID = %leaderID_from_email 
+WHERE meetingID = %meetingID_from_selected_row
+
+-- Delete club meeting
+DELETE FROM ClubMeetings
+WHERE meetingID = %meetingID_from_selected_row
 
 
 -- BOOKS ----------------------------------------------------------------------------
@@ -99,6 +107,8 @@ SELECT * FROM Genres ORDER BY genre
 -- Add a new genre
 INSERT INTO Genres (genre)
 VALUES (%genre_input)
+
+
 
 -- MISC -----------------------------------------------------------------------------
 
