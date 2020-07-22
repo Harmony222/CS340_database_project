@@ -193,3 +193,27 @@ INSERT INTO meetings_members (meetingID, memberID)
             ('3', '2'),
             ('4', '1'),
             ('4', '4');
+
+CREATE TABLE bookclubs_members (
+    memberID int(11) NOT NULL,
+    bookClubID int(11) NOT NULL,
+    PRIMARY KEY (memberID, bookClubID),
+    FOREIGN KEY (memberID)
+        REFERENCES Members(memberID)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+    FOREIGN KEY (bookClubID)
+        REFERENCES BookClubs(bookClubID)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+);
+
+INSERT INTO bookclubs_members (memberID, bookClubID)
+    VALUES  (4,2),
+            (5,2), 
+            (6,2), 
+            (7,5), 
+            (8,5), 
+            (9,5);
+
+
