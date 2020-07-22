@@ -88,6 +88,9 @@ ON b.bookGenreID = g.genreID
 INSERT INTO Books (title, author, bookGenreID)
 VALUES (%title_input, %author_input, %genreID_dropdown)
 
+-- Delete a book
+DELETE from Books WHERE bookID = %bookID_input
+
 
 -- GENRES ---------------------------------------------------------------------------
 -- Select all genres and order alphabetically
