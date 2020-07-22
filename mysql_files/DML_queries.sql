@@ -1,6 +1,16 @@
+-- Note: The modulo operator, %, is used here to denote variables
+--       holding data from the front-end
+
 -- MEMBERS --------------------------------------------------------------------------
+-- Select all members
+SELECT * FROM Members
 
+-- Add a new member
+INSERT INTO Members (firstName, lastName, email)
+VALUES (%firstName_input, %lastName_input, %email_input)
 
+-- Check if the email from user input is already associated with existing member
+SELECT memberID FROM Members WHERE email = %email_input
 
 
 -- BOOKCLUBS ------------------------------------------------------------------------
@@ -68,14 +78,24 @@ ORDER BY cm.bookClubID, cm.dateTime
 
 
 -- BOOKS ----------------------------------------------------------------------------
+-- Select all books and show the genre name
+SELECT b.bookID, b.title, b.author, g.genre
+FROM Books AS b
+JOIN Genres AS g 
+ON b.bookGenreID = g.genreID
 
-
-
+-- Add a new book
+INSERT INTO Books (title, author, bookGenreID)
+VALUES (%title_input, %author_input, %genreID_dropdown)
 
 
 -- GENRES ---------------------------------------------------------------------------
+-- Select all genres and order alphabetically
+SELECT * FROM Genres ORDER BY genre
 
-
+-- Add a new genre
+INSERT INTO Genres (genre)
+VALUES (%genre_input)
 
 -- MISC -----------------------------------------------------------------------------
 
@@ -91,3 +111,4 @@ FROM Books b
 WHERE b.bookGenreID = (SELECT bc.clubGenreID 
                         FROM BookClubs bc 
                         WHERE bc.bookClubID = %clubID_from_dropdown)  
+
