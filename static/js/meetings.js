@@ -1,63 +1,8 @@
-console.log("javascript connected");
+console.log('Javascript connected')
 
-function buttons() {
-    let allrows = Array.from(document.querySelectorAll('#signUpMeetings tr'))
-    // console.log('rows', rows)
-    let buttons = Array.from(document.querySelectorAll('#signUpMeetings button'))
-    // console.log('buttons', buttons)
-    for (i = 0; i < buttons.length; i++) {
-        let row = allrows[i];
-        let button = buttons[i];
-        // console.log('row_id', row_id, 'button', button);
-        button.addEventListener('click', () => selectClick(allrows, row));
-    };
-    let signUpSubmit = document.getElementById('signUpSubmit')
-    if (signUpSubmit) {
-        signUpSubmit.addEventListener('click', () => signUpClick())
-    };
-};
-
-function selectClick(allrows, row) {
-    // console.log(row);
-    for (let r of allrows) {
-      r.classList.remove('table-primary');
-    };
-    row.setAttribute('class', 'table-primary');
-    let meetingID = document.getElementById('meetingID');
-    meetingID.value = row.firstElementChild.innerHTML;
-};
-    
-function signUpClick() {
-    let meetingID = document.getElementById('meetingID').value;
-    let err = document.getElementById('selectMeetingError');
-    if (!meetingID) {
-        err.classList.remove('hidden');
-    } else {
-        console.log(meetingID);
-        err.classList.add('hidden');
-    };
-
-};
-
-
-document.addEventListener('DOMContentLoaded', buttons);
-
-// https://getbootstrap.com/docs/4.0/components/forms/#validation
-// (function() {
-//     'use strict';
-//     window.addEventListener('load', function() {
-//       // Fetch all the forms we want to apply custom Bootstrap validation styles to
-//       var forms = document.getElementsByClassName('needs-validation');
-//       // Loop over them and prevent submission
-//       var validation = Array.prototype.filter.call(forms, function(form) {
-//         form.addEventListener('submit', function(event) {
-//           if (form.checkValidity() === false) {
-//             event.preventDefault();
-//             event.stopPropagation();
-//           }
-//           form.classList.add('was-validated');
-//         }, false);
-//       });
-//     }, false);
-//   })();
-
+let allRows = Array.from(document.querySelectorAll('#meetingsTableBody tr'));
+console.log(allRows);
+let modifyButton = allRows[0].querySelector('.modify');
+console.log(modifyButton)
+let deleteButton = allRows[0].querySelector('.delete');
+console.log(deleteButton)

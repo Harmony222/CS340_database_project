@@ -219,7 +219,7 @@ def validate_member(email):
 
 
 # -------------------- ATTENDEES ROUTE --------------------------
-@app.route('/attendees', methods=['GET', 'POST'])
+@app.route('/attendees', methods=['GET', 'POST', 'DELETE'])
 def attendees():
     club_names_list = get_club_names()
     formSelectClub = SelectClub()
@@ -230,6 +230,26 @@ def attendees():
         club = formSelectClub.clubName.data
         club_meetings = get_club_meetings(club)
         select_club = True  
+    if request.method == 'DELETE':
+        meetingID = request.args['meetingID']
+        memberID = request.args['memberID']
+        print('meetingID', meetingID, 'memberID', memberID)
+        db_connection = connect_to_database()
+        query = '''
+                DELETE FROM meetings_members
+                WHERE meetingID = %s AND memberID = %s
+                ''' 
+        data = (meetingID, memberID)
+        execute_query(db_connection, query, data)
+        select_query = '''
+                       SELECT * FROM meetings_members
+                       WHERE meetingID = %s AND memberID = %s
+                       '''
+        row = execute_query(db_connection, select_query, data).fetchall()
+        if len(row) == 0:
+            print('attendee succussfully deleted')
+            return 'OK', 200
+
     return render_template('attendees.html',
                             formSelectClub=formSelectClub,
                             active={'meetings':True, 'attendees':True},
@@ -247,7 +267,7 @@ def get_attendees():
     Returns list of attendees for that meeting as a tuple.
     '''
     meetingID = request.args['meetingID']
-    print('meetingID', meetingID)
+    # print('meetingID', meetingID)
     db_connection = connect_to_database()
     query = '''
             SELECT mm.meetingID, m.memberID, m.firstName, m.lastName, m.email 
@@ -255,7 +275,7 @@ def get_attendees():
             JOIN meetings_members mm ON m.memberID = mm.memberID 
             WHERE mm.meetingID = %s
             '''
-    attendees = execute_query(db_connection, query,(meetingID,)).fetchall()
+    attendees = execute_query(db_connection, query, (meetingID,)).fetchall()
     # print(attendees)
     return jsonify(attendees)
 
@@ -320,15 +340,18 @@ def get_club_names():
 def get_books(clubID):
     '''
     Retrieve books that are in the genre associated with clubID.
+    Only selects those books that are NOT already assigned to a meeting. 
     Returns a list of tuples (bookiD, book name + author).
     '''
     db_connection = connect_to_database()
     query = '''
             SELECT b.bookID, b.title, b.author
             FROM Books b
-            WHERE b.bookGenreID = (SELECT bc.clubGenreID 
-                                   FROM BookClubs bc 
-                                   WHERE bc.bookClubID = %s)     
+            WHERE b.bookGenreID = (
+                SELECT bc.clubGenreID 
+                FROM BookClubs bc 
+                WHERE bc.bookClubID = %s)
+                AND b.bookID NOT IN (SELECT cm.meetingBookID FROM ClubMeetings cm)
             '''
     books = execute_query(db_connection, query, (clubID,), True).fetchall()
     book_options = []

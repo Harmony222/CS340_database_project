@@ -41,22 +41,22 @@ function get_attendees(allrows, row) {
     };
     row.setAttribute('class', 'table-primary');
     let tableDiv = document.getElementById('attendeeTable');
-    tableDiv.setAttribute('class', 'hidden');
     let noDiv = document.getElementById('noattendees');
-    noDiv.setAttribute('class', 'hidden');
     let meetingID = row.firstElementChild.innerHTML;
-    console.log('meetingID', meetingID);
+
+    tableDiv.setAttribute('class', 'hidden');
+    noDiv.setAttribute('class', 'hidden');
     
     fetch('/get_attendees?meetingID=' + meetingID)
         .then(function (response) {
             return response.json();
         }).then(function (json) {
-            console.log('length', json.length)
-            console.log('GET response', json);
+            // console.log('length', json.length)
+            // console.log('GET response', json);
             if (json.length > 0) {
                 let tableDiv = document.getElementById('attendeeTable');
                 tableDiv.classList.remove('hidden')
-                let tableBody = document.getElementById('tableBody');
+                let tableBody = document.getElementById('attendeeTableBody');
                 // remove previous table data
                 tableBody.querySelectorAll('*').forEach(n => n.remove());
                 // add new table data
@@ -78,7 +78,8 @@ function get_attendees(allrows, row) {
                     for (let attr in buttonAttributes) {
                         button.setAttribute(attr, buttonAttributes[attr]);
                     };
-                    button.addEventListener('click', () => leaveClick(rowData['meetingID'], rowData['memberID']));
+                    button.addEventListener('click', 
+                        () => leaveClick(newRow, tableBody, rowData[0], rowData[1]));
                     cell.appendChild(button);
                     newRow.appendChild(cell);
                     tableBody.appendChild(newRow);
@@ -91,10 +92,18 @@ function get_attendees(allrows, row) {
         });
 };
 
-function leaveClick(meetingID, memberID) {
-    console.log('leaveClick meetingID', meetingID, 'memberID', memberID);
-};
 
+function leaveClick(rowToDelete, tableBody, meetingID, memberID) {
+    // console.log('leaveClick meetingID', meetingID, 'memberID', memberID);
+    fetch('/attendees?meetingID=' + meetingID + '&memberID=' + memberID, {
+        method: 'DELETE'
+    }).then(function (response) {
+        return response.text();
+        }).then(function (text) {
+            console.log(text);
+            tableBody.removeChild(rowToDelete);
+    });
+};
 
 
 

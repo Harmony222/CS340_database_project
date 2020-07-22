@@ -30,17 +30,17 @@ https://stackoverflow.com/questions/46921823/dynamic-choices-wtforms-flask-selec
                         <th></th>
                     <th></th>
                     </thead>
-                    <tbody>
+                    <tbody id="meetingsTableBody">
                         {% for meeting in all_meetings %}
-                        <tr id="all{{ meeting.meetingID }}">
-                            <td hidden>{{ meeting.meetingID}}</td>
+                        <tr id="{{ meeting.meetingID }}">
+                            <td hidden>{{ meeting.meetingID }}</td>
                             <td>{{ meeting.dateTime }}</td>
                             <td>{{ meeting.title }}</td>
                             <td>{{ meeting.author }}</td>
                             <td>{{ meeting.clubName }}</td>
                             <td>{{ meeting.firstName }} {{ meeting.lastName }}</td>
-                            <td><button type="button" class="btn btn-primary btn-sm">Modify</button></td>
-                            <td><button type="button" class="btn btn-secondary btn-sm">Delete</button></td>
+                            <td><button id="mb{{ meeting.meetingID }}" type="button" class="modify btn btn-primary btn-sm">Modify</button></td>
+                            <td><button id="db{{ meeting.meetingID }}" type="button" class="delete btn btn-secondary btn-sm">Delete</button></td>
                         </tr>
                         {% endfor %}
                     </tbody>

@@ -52,6 +52,10 @@ FROM Members m
 JOIN meetings_members mm ON m.memberID = mm.memberID 
 WHERE mm.meetingID = %meetingID_from_get_request
 
+-- Remove attendee from meeting
+DELETE FROM meetings_members
+WHERE meetingID = %meetingID_from_selection AND memberID = %memberID_from_selection
+
 -- Select all meetings for the specified book club
 SELECT cm.meetingID, cm.dateTime, b.title, b.author, bc.clubName, m.firstName, m.lastName
 FROM ClubMeetings as cm

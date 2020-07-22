@@ -15,24 +15,16 @@ CREATE TABLE Members (
 );
 
 INSERT INTO Members (firstName, lastName, email)
-    VALUES ('Inigo', 'Montoya', 'inigo.montoya@florian.com');
-INSERT INTO Members (firstName, lastName, email)
-    VALUES ('Jay', 'Gatsby', 'jgats@westegg.org');
-INSERT INTO Members (firstName, lastName, email)
-    VALUES ('Veruca', 'Salt', 'veruca.salt@wonka.edu');
-INSERT INTO Members (firstName, lastName, email)
-    VALUES ('Atticus', 'Finch', 'attifinch@maycomb.com');
-INSERT INTO Members (firstName, lastName, email)
-    VALUES ('Hester', 'Prynne', 'h.prynne@pearl.edu');
-INSERT INTO Members (firstName, lastName, email)
-    VALUES ('John', 'Watson', 'watsonj@bakerst.net');
-INSERT INTO Members (firstName, lastName, email)
-    VALUES ('Annabel', 'Lee', 'ann.lee@poe.org');
-INSERT INTO Members (firstName, lastName, email)
-    VALUES ('Elizabeth', 'Bennet', 'lizzyb@longbourn.net');
-INSERT INTO Members (firstName, lastName, email)
-    VALUES ('Lyra', 'Belacqua', 'lyra@oxford.edu');
-
+    VALUES ('Inigo', 'Montoya', 'inigo.montoya@florian.com'),
+           ('Jay', 'Gatsby', 'jgats@westegg.org'),
+           ('Veruca', 'Salt', 'veruca.salt@wonka.edu'),
+           ('Atticus', 'Finch', 'attifinch@maycomb.com'),
+           ('Hester', 'Prynne', 'h.prynne@pearl.edu'),
+           ('John', 'Watson', 'watsonj@bakerst.net'),
+           ('Annabel', 'Lee', 'ann.lee@poe.org'),
+           ('Elizabeth', 'Bennet', 'lizzyb@longbourn.net'),
+           ('Lyra', 'Belacqua', 'lyra@oxford.edu'),
+           ('Ada', 'Lovelace', 'adalove@ae.org');
 
 CREATE TABLE Genres (
     genreID int(11) NOT NULL AUTO_INCREMENT,
@@ -40,15 +32,15 @@ CREATE TABLE Genres (
     PRIMARY KEY (genreID)
 );
 
-INSERT INTO Genres (genre) VALUES ('classic');
-INSERT INTO Genres (genre) VALUES ('graphic novel');
-INSERT INTO Genres (genre) VALUES ('mystery');
-INSERT INTO Genres (genre) VALUES ('science fiction');
-INSERT INTO Genres (genre) VALUES ('history');
-INSERT INTO Genres (genre) VALUES ('short story');
-INSERT INTO Genres (genre) VALUES ('biography');
-INSERT INTO Genres (genre) VALUES ('poetry');
-INSERT INTO Genres (genre) VALUES ('children');
+INSERT INTO Genres (genre) VALUES ('classic'),
+                                  ('graphic novel'),
+                                  ('mystery'),
+                                  ('science fiction'),
+                                  ('history'),
+                                  ('short story'),
+                                  ('biography'),
+                                  ('poetry'),
+                                  ('children');
 
 
 CREATE TABLE BookClubs (
@@ -68,23 +60,23 @@ INSERT INTO BookClubs (clubName, meetingFrequency, clubGenreID, clubLeaderID)
     VALUES ('But I Progress Book Club', 
             'monthly', 
             (SELECT genreID FROM Genres WHERE genre = 'short story'),
-            (SELECT memberID FROM Members WHERE email = 'attifinch@maycomb.com'));
-INSERT INTO BookClubs (clubName, meetingFrequency, clubGenreID, clubLeaderID)
-    VALUES ('The Book Was Better',
+            (SELECT memberID FROM Members WHERE email = 'attifinch@maycomb.com')),
+            ('The Book Was Better',
             'twice monthly',
             (SELECT genreID FROM Genres WHERE genre = 'mystery'),
-            (SELECT memberID FROM Members WHERE email = 'watsonj@bakerst.net'));
-INSERT INTO BookClubs (clubName, meetingFrequency, clubGenreID, clubLeaderID)
-    VALUES ('Get Lit Book Club', 
+            (SELECT memberID FROM Members WHERE email = 'watsonj@bakerst.net')),
+            ('Get Lit Book Club', 
             'monthly',
             (SELECT genreID FROM Genres WHERE genre = 'classic'),
-            (SELECT memberID FROM Members WHERE email = 'h.prynne@pearl.edu'));
-INSERT INTO BookClubs (clubName, meetingFrequency, clubGenreID, clubLeaderID)
-    VALUES ('Beyond Words Book Club',
+            (SELECT memberID FROM Members WHERE email = 'h.prynne@pearl.edu')),
+            ('Beyond Words Book Club',
             'weekly',
             (SELECT genreID FROM Genres WHERE genre = 'poetry'),
-            (SELECT memberID FROM Members WHERE email = 'ann.lee@poe.org'));
-
+            (SELECT memberID FROM Members WHERE email = 'ann.lee@poe.org')),
+            ('Summer Book Club',
+            'twice monthly',
+            (SELECT genreID FROM Genres WHERE genre = 'history'),
+            (SELECT memberID FROM Members WHERE email = 'adalove@ae.org'));
 
 CREATE TABLE Books (
     bookID int(11) NOT NULL AUTO_INCREMENT,
@@ -99,23 +91,50 @@ CREATE TABLE Books (
 INSERT INTO Books (title, author, bookGenreID)
     VALUES ('Florida', 
             'Lauren Groff', 
-            (SELECT genreID FROM Genres WHERE genre = 'short story'));
-INSERT INTO Books (title, author, bookGenreID)
-    VALUES ('Nine Stories',
+            (SELECT genreID FROM Genres WHERE genre = 'short story')),
+            ('Nine Stories',
             'J.D. Salinger',
-            (SELECT genreID FROM Genres WHERE genre = 'short story'));
-INSERT INTO Books (title, author, bookGenreID)
-    VALUES ('Stone Mattress',
+            (SELECT genreID FROM Genres WHERE genre = 'short story')),
+            ('Stone Mattress',
             'Margaret Atwood',
-            (SELECT genreID FROM Genres WHERE genre = 'short story'));
-INSERT INTO Books (title, author, bookGenreID)
-    VALUES ('A Farewell to Arms',
+            (SELECT genreID FROM Genres WHERE genre = 'short story')),
+            ('Trigger Warning',
+            'Neil Gaiman',
+            (SELECT genreID FROM Genres WHERE genre = 'short story')),
+            ('A Farewell to Arms',
             'Ernest Hemingway',
-            (SELECT genreID FROM Genres WHERE genre = 'classic'));
-INSERT INTO Books (title, author, bookGenreID)
-    VALUES ('The Stranger',
-           'Albert Camus',
-           (SELECT genreID FROM Genres WHERE genre = 'classic'));
+            (SELECT genreID FROM Genres WHERE genre = 'classic')),
+            ('The Stranger',
+            'Albert Camus',
+            (SELECT genreID FROM Genres WHERE genre = 'classic')),
+            ('Murder at the Vicarage',
+            'Agatha Christie',
+            (SELECT genreID FROM Genres WHERE genre = 'mystery')),
+            ('The Girl With the Dragon Tattoo',
+            'Stieg Larsson',
+            (SELECT genreID FROM Genres WHERE genre = 'mystery')),
+            ('Still Life',
+            'Louise Penny',
+            (SELECT genreID FROM Genres WHERE genre = 'mystery')),
+            ('The Great Influenza: The Story of the Deadliest Pandemic in History',
+            'John M. Barry',
+            (SELECT genreID FROM Genres WHERE genre = 'history')),
+            ('This Republic of Suffering: Death and the American Civil War',
+            'Drew Gilpin Faust',
+            (SELECT genreID FROM Genres WHERE genre = 'history')),
+            ('The Poems of Robert Frost: Poetry for the Ages',
+            'Robert Frost',
+            (SELECT genreID FROM Genres WHERE genre = 'poetry')),
+            ('Owls and Other Fantasies: Poems and Essays',
+            'Mary Oliver',
+            (SELECT genreID FROM Genres WHERE genre = 'poetry')),
+            ('The Dream of a Common Language: Poems 1974-1977',
+            'Adrienne Rich',
+            (SELECT genreID FROM Genres WHERE genre = 'poetry')),
+            ('Four Quartets',
+            'T.S. Eliot',
+            (SELECT genreID FROM Genres WHERE genre = 'poetry'));
+
 
 CREATE TABLE ClubMeetings (
     meetingID int(11) NOT NULL AUTO_INCREMENT,
@@ -136,24 +155,20 @@ INSERT INTO ClubMeetings (`dateTime`, bookClubID, meetingBookID, meetingLeaderID
     VALUES ('2020-06-20 19:30',
             (SELECT bookClubID FROM BookClubs WHERE clubName = 'But I Progress Book Club'),
             (SELECT bookID FROM Books WHERE title = 'Stone Mattress'),
-            (SELECT memberID FROM Members WHERE email = 'attifinch@maycomb.com'));
-INSERT INTO ClubMeetings (`dateTime`, bookClubID, meetingBookID, meetingLeaderID)
-    VALUES ('2020-09-20 19:30',
+            (SELECT memberID FROM Members WHERE email = 'attifinch@maycomb.com')),
+            ('2020-09-20 19:30',
             (SELECT bookClubID FROM BookClubs WHERE clubName = 'But I Progress Book Club'),
             (SELECT bookID FROM Books WHERE title = 'Nine Stories'),
-            (SELECT memberID FROM Members WHERE email = 'inigo.montoya@florian.com'));
-INSERT INTO ClubMeetings (`dateTime`, bookClubID, meetingBookID, meetingLeaderID)
-    VALUES ('2020-08-20 19:30',
+            (SELECT memberID FROM Members WHERE email = 'inigo.montoya@florian.com')),
+            ('2020-08-20 19:30',
             (SELECT bookClubID FROM BookClubs WHERE clubName = 'But I Progress Book Club'),
             (SELECT bookID FROM Books WHERE title = 'Florida'),
-            (SELECT memberID FROM Members WHERE email = 'jgats@westegg.org'));
-INSERT INTO ClubMeetings (`dateTime`, bookClubID, meetingBookID, meetingLeaderID)
-    VALUES ('2020-8-27 18:00',
+            (SELECT memberID FROM Members WHERE email = 'jgats@westegg.org')),
+            ('2020-8-27 18:00',
             (SELECT bookClubID FROM BookClubs WHERE clubName = 'Get Lit Book Club'),
             (SELECT bookID FROM Books WHERE title = 'A Farewell to Arms'),
-            (SELECT memberID FROM Members WHERE email = 'veruca.salt@wonka.edu'));
-INSERT INTO ClubMeetings (`dateTime`, bookClubID, meetingBookID, meetingLeaderID)
-    VALUES ('2020-9-24 18:00',
+            (SELECT memberID FROM Members WHERE email = 'veruca.salt@wonka.edu')),
+            ('2020-9-24 18:00',
             (SELECT bookClubID FROM BookClubs WHERE clubName = 'Get Lit Book Club'),
             (SELECT bookID FROM Books WHERE title = 'The Stranger'),
             (SELECT memberID FROM Members WHERE email = 'lizzyb@longbourn.net'));
@@ -174,11 +189,7 @@ CREATE TABLE meetings_members (
 );
 
 INSERT INTO meetings_members (meetingID, memberID)
-    VALUES ('3', '1');
-INSERT INTO meetings_members (meetingID, memberID)
-    VALUES ('3', '2');
-INSERT INTO meetings_members (meetingID, memberID)
-    VALUES ('4', '1');
-INSERT INTO meetings_members (meetingID, memberID)
-    VALUES ('4', '4');
-
+    VALUES  ('3', '1'),
+            ('3', '2'),
+            ('4', '1'),
+            ('4', '4');

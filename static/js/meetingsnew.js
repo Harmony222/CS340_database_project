@@ -8,8 +8,6 @@ function getBooks() {
     clubID = this.value;
     console.log('clubID', clubID);
     document.getElementById('clubSelectForm').submit();
-
-
 };
 
 // function getBooks() {
