@@ -69,6 +69,15 @@ def bookclubs():
                         '''
                 data = (club_name, meeting_frequency, genreID, leaderID)
                 execute_query(db_connection, query, data)
+
+                # Club Leader must be added to bookclubs_members intersection table
+                query = '''
+                        SELECT bookClubID FROM BookClubs WHERE clubName = %s
+                        '''
+                data = (club_name,)
+                clubID = execute_query(db_connection, query, data).fetchone()
+                addMember_bookClub(clubID, leader_email)
+
                 flash('Sucessfully created {} Book Club!'.format(club_name), 'success')    
             except MySQLdb.Error as err:
                 flash('Error: {}'.format(err), 'danger')
@@ -666,6 +675,8 @@ def addMember_bookClub(clubName, email):
             '''
     data = (memberID, clubName)
     execute_query(db_connection, query, data)
+
+
     
 
 
