@@ -1,0 +1,51 @@
+{% extends "layout.html" %}
+{% block title %}Novel Hovel Book Clubs Page{% endblock title %}
+
+{% block body %}
+<div class="row">
+    <div class="col-md-3">
+        <h5 class="side_nav_header">Book Clubs</h5>
+        <div class="nav flex-column nav-pills side_nav" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+            <a class="nav-link" id="v-pills-view-tab" data-toggle="pill" href="#v-pills-view" role="tab" aria-controls="v-pills-view-tab" aria-selected="true">View all book clubs</a>
+            <a class="nav-link" id="v-pills-new-tab" data-toggle="pill" href="#v-pills-new" role="tab" aria-controls="v-pills-new-tab" aria-selected="false">Create a new book club</a>
+            <a class="nav-link" id="v-pills-signup-tab" data-toggle="pill" href="#v-pills-signup" role="tab" aria-controls="v-pills-signup-tab" aria-selected="false">Sign up for a book club</a>
+            <a class="nav-link active" href="{{ url_for('bookclubsignup') }}">Test Sign Up</a>
+        </div>
+    </div>
+    <div class="col-md-9 mainContent">
+    <div class="tab-content" id="v-pills-tabContent">
+<!-- Sign Up For A Book Club -->
+    <div class="tab-pane show active" id="v-pills-signup" role="tabpanel" aria-labelledby="v-pills-signup-tab">
+        <div class="col-md-8">
+            <div class="clubSignUpForm">
+                <form method="POST" action="">
+                    <fieldset class="form-group">
+                        <legend class="border-bottom mb-4">Sign Up For A Book Club</legend>
+                        <div class="form-group">
+                            {{ formSignUp.clubName.label(class="form-control-label") }} 
+                            <select class="form-control" name="clubName">
+                            {% for option in formSignUp.clubName %}
+                                {% if loop.first %}
+                                    <option value="" disabled selected>Select a book club</option>
+                                {% endif %}
+                                {{ option }}
+                            {% endfor %}
+                            </select>
+                        </div>       
+                        <div class="form-group">
+                            {{ formSignUp.email.label(class="form-control-label") }}
+                            {{ formSignUp.email(class="form-control") }}
+                        </div>         
+                    </fieldset>
+                    <div class="form-group">
+                        {{ formSignUp.signUpSubmit(class="btn btn-outline-primary") }}
+                    </div>
+                </form>
+            </div> 
+        </div>
+        
+    </div>
+    </div>
+    </div>
+</div>
+{% endblock body %}

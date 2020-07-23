@@ -80,6 +80,41 @@ def bookclubs():
                             active={'bookclubs':True},
                             clubs=clubs)
 
+# ----------------- BOOKCLUB SIGNUP ROUTE ------------------------
+@app.route('/bookclubsignup', methods=['GET','POST'])
+def bookclubsignup():
+    club_names_list = get_club_names()
+    formSignUp = ClubSignUp()
+    formSignUp.clubName.choices = club_names_list #https://stackoverflow.com/questions/46921823/dynamic-choices-wtforms-flask-selectfield
+    if request.method == 'POST':
+        clubName = request.form['clubName']
+        email = request.form['email']
+        #print("club: ", clubName)
+        #print("email: ", email)
+        addMember_bookClub(clubName, email)
+    return render_template('bookclubsignup.html', formSignUp=formSignUp, active={'bookclubsignup':True})
+
+# ------------- VIEW BOOKCLUB MEMBERS ROUTE ----------------------
+@app.route('/view_clubMembers/<int:id>')
+def view_clubMembers(id):
+    '''
+        
+    '''
+    db_connection = connect_to_database()
+    query = ''' 
+        SELECT tmp.firstName as `First Name`, tmp.lastName as `Last Name` 
+        FROM (SELECT bc.bookClubId, m.firstName, m.lastName 
+        FROM BookClubs as bc 
+        JOIN bookclubs_members as bm 
+        ON bc.bookClubID = bm.bookClubId 
+        JOIN Members as m 
+        ON m.memberID = bm.memberID) as tmp 
+        WHERE bookClubId = %s
+        '''
+    data = (id,)
+    club_members = execute_query(db_connection, query, data).fetchall()
+    #print(result)
+    return render_template('bookclubmembers.html', active={'view_clubMembers':True}, club_members=club_members)
 
 # -------------------- MEETINGS ROUTE ----------------------------
 @app.route('/meetings', methods=['GET', 'POST', 'PUT'])
@@ -621,6 +656,16 @@ def check_email(email, email_exists):
     if memberID:
         email_exists['exists'] = True
     return email_exists
+
+def addMember_bookClub(clubName, email):
+    memberID = validate_member(email)
+    db_connection = connect_to_database()
+    query = '''
+            INSERT INTO bookclubs_members (memberID, bookClubID)
+            VALUES (%s, %s)
+            '''
+    data = (memberID, clubName)
+    execute_query(db_connection, query, data)
     
 
 
