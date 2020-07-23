@@ -67,7 +67,7 @@ https://stackoverflow.com/questions/46921823/dynamic-choices-wtforms-flask-selec
                     <!-- <legend class="border-bottom mb-4">Modify Club Meeting</legend> -->
 
                     <div class="form-group">
-                        <input type="text" name="meetingID" id="formMeetingID">                        
+                        <input type="text" name="meetingID" id="formMeetingID" hidden>                        
                         <select class="form-control" name="clubName" id="clubSelect" required>
                         {% for club_name in club_names %}
                             {% if loop.first %}

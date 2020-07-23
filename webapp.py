@@ -425,22 +425,26 @@ def get_books(clubID, selected=False):
     Returns a list of tuples (bookiD, book name + author).
     Add on selected book if a bookID is passed to function (used for modify meeting).
     '''
+    print('clubID', clubID)
     db_connection = connect_to_database()
     query = '''
             SELECT b.bookID, b.title, b.author
             FROM Books b
-            WHERE b.bookGenreID = (
+            WHERE b.bookID NOT IN (
+                SELECT cm.meetingBookID 
+                FROM ClubMeetings cm 
+                WHERE cm.meetingBookID IS NOT NULL)
+            AND b.bookGenreID = (
                 SELECT bc.clubGenreID 
                 FROM BookClubs bc 
                 WHERE bc.bookClubID = %s)
-                AND b.bookID NOT IN (SELECT cm.meetingBookID FROM ClubMeetings cm)
             '''
     books = execute_query(db_connection, query, (clubID,), True).fetchall()
     book_options = []
     for book in books:
         book_options.append((book['bookID'], book['title'] + ' by ' + book['author']))
     book_options.append((-1, 'None'))
-    # print(book_options)
+    print('book_options', book_options)
     if selected:
         query = '''
                 SELECT b.bookID, b.title, b.author
@@ -448,7 +452,7 @@ def get_books(clubID, selected=False):
                 WHERE b.bookID = %s 
                 '''
         selected_book = execute_query(db_connection, query, (selected,), True).fetchone()
-        # print('selected_book', selected_book)
+        print('selected_book', selected_book)
         book_options.insert(0, (selected_book['bookID'], 
                 selected_book['title'] + ' by ' + selected_book['author']))
     return book_options
