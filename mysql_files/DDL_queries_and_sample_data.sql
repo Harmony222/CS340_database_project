@@ -1,4 +1,5 @@
 DROP TABLE IF EXISTS meetings_members;
+DROP TABLE IF EXISTS bookclubs_members;
 DROP TABLE IF EXISTS ClubMeetings;
 DROP TABLE IF EXISTS BookClubs;
 DROP TABLE IF EXISTS Books;

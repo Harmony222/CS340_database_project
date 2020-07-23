@@ -82,17 +82,15 @@ def bookclubs():
 
 
 # -------------------- MEETINGS ROUTE ----------------------------
-@app.route('/meetings', methods=['GET', 'POST'])
+@app.route('/meetings', methods=['GET', 'POST', 'PUT'])
 def meetings():
     all_meetings = get_all_meetings()
     club_names_list = get_club_names()
-    formSelectClub = SelectClub()
-    formSelectClub.clubName.choices = club_names_list
-    formModifyMeeting = NewMeetingForm()
+    # print(club_names_list)
     select_club = False
     if request.method == 'GET' and request.args:
         meetingID = request.args['meetingID']
-        print(meetingID)
+        # print(meetingID)
         db_connection = connect_to_database()
         query = '''
                 SELECT meetingID, bookClubID, dateTime, meetingBookID, meetingLeaderID
@@ -100,29 +98,63 @@ def meetings():
                 WHERE meetingID = %s 
                 '''
         meeting_data = execute_query(db_connection, query, (meetingID,), True).fetchone()
-        print(meeting_data)
-        return jsonify(meeting_data)
-
-    if request.method == 'POST' and formSelectClub.validate_on_submit():
-        clubID = formSelectClub.clubName.data
-        req = request.form
-        print(req)
-        meeting_date = request.form['subFormDate']
-        print(meeting_date)
-        books = get_books(clubID)
-        formModifyMeeting.meetingBook.choices = books
-        select_club = True
+        # print(meeting_data)
+        leaderID = meeting_data['meetingLeaderID']
+        query = '''
+                SELECT email FROM Members WHERE memberID = %s
+                '''
+        leader_email = execute_query(db_connection, query, (leaderID,), True).fetchone()
+        # print(leader_email)
+        books = get_books(meeting_data['bookClubID'], selected=meeting_data['meetingBookID'])
+        # print(books)
+        modify_data = {
+            'meeting_data' : meeting_data,
+            'leader_email' : leader_email,
+            'books' : books
+        }
+        return jsonify(modify_data)
+    if request.method == 'POST':
+        print(request.form)
+        form_data = request.form
+        meetingID = form_data['meetingID']
+        clubID = form_data['clubName']
+        dateTime = form_data['meetingDate'] + ' ' + form_data['meetingTime']
+        bookID = form_data['meetingBook']
+        if bookID == '-1':
+            bookID = None
+        leaderID = validate_member(form_data['meetingLeaderEmail'])
+        print(meetingID, clubID, dateTime, bookID, leaderID)
+        if leaderID:
+            try:
+                db_connection = connect_to_database()
+                query = '''
+                        UPDATE ClubMeetings
+                        SET bookClubID = %s, `dateTime` = %s, meetingBookId = %s, 
+                            meetingLeaderID = %s
+                        WHERE meetingID = %s
+                        '''
+                data = (clubID, dateTime, bookID, leaderID, meetingID)
+                execute_query(db_connection, query, data).fetchall()
+                # Sign leader up as a meeting attendee
+                flash('Successfully modified meeting!', 'success') 
+                # flash('Added {} as an attendee for this meeting.'.format(leader_email), 'success')
+                return redirect('/meetings')
+            except MySQLdb.Error as err:
+                flash('Error: {}'.format(err), 'danger')
+                print(err)
+                return redirect('/meetings')        
 
     return render_template('meetings.html', 
-                            formSelectClub=formSelectClub,
-                            formModifyMeeting=formModifyMeeting,
+                            club_names=club_names_list,
                             active={'meetings':True, 'view':True},
                             all_meetings=all_meetings,
                             select_club=select_club)
 
-# @app.route('/get_meeting_data', methods=['GET', 'POST'])
-# def get_meeting_data():
-#     meetingID = 
+@app.route('/get_books_in_genre', methods=['GET', 'POST'])
+def get_books_in_genre():
+    clubID = request.args['clubID']
+    books = get_books(clubID)
+    return jsonify(books)
 
 # -------------------- NEW MEETINGS ROUTE ------------------------
 @app.route('/meetingsnew', methods=['GET', 'POST'])
@@ -142,8 +174,8 @@ def meetingsnew():
     # print(formNewMeeting.validate_on_submit())
     if request.method == 'POST' and formNewMeeting.validate_on_submit():
         clubID = request.form['clubName']
-        print(request.form['meetingDate'], request.form['meetingTime'])
         dateTime = request.form['meetingDate'] + ' ' + request.form['meetingTime']
+
         bookID = request.form['meetingBook']
         if bookID == '-1':
             bookID = None
@@ -159,12 +191,12 @@ def meetingsnew():
                         VALUES (%s, %s, %s, %s)
                         '''
                 data = (dateTime, clubID, bookID, leaderID)
-                execute_query(db_connection, query, data).fetchall()
+                execute_query(db_connection, query, data)
                 # https://stackoverflow.com/questions/17112852/get-the-new-record-primary-key-id-from-mysql-insert-query
                 meetingID = execute_query(db_connection, 'SELECT LAST_INSERT_ID()').fetchone()
                 # Sign leader up as a meeting attendee
                 if meeting_signup_member(meetingID[0], leaderID):
-                    flash('Sucessfully scheduled a meeting!', 'success') 
+                    flash('Successfully scheduled a meeting!', 'success') 
                     flash('Added {} as an attendee for this meeting.'.format(leader_email), 'success')
                     return redirect('/meetingsnew')
             except MySQLdb.Error as err:
@@ -268,7 +300,7 @@ def attendees():
     if request.method == 'DELETE':
         meetingID = request.args['meetingID']
         memberID = request.args['memberID']
-        print('meetingID', meetingID, 'memberID', memberID)
+        # print('meetingID', meetingID, 'memberID', memberID)
         db_connection = connect_to_database()
         query = '''
                 DELETE FROM meetings_members
@@ -372,11 +404,12 @@ def get_club_names():
     return club_names
 
 
-def get_books(clubID):
+def get_books(clubID, selected=False):
     '''
     Retrieve books that are in the genre associated with clubID.
     Only selects those books that are NOT already assigned to a meeting. 
     Returns a list of tuples (bookiD, book name + author).
+    Add on selected book if a bookID is passed to function (used for modify meeting).
     '''
     db_connection = connect_to_database()
     query = '''
@@ -393,6 +426,17 @@ def get_books(clubID):
     for book in books:
         book_options.append((book['bookID'], book['title'] + ' by ' + book['author']))
     book_options.append((-1, 'None'))
+    # print(book_options)
+    if selected:
+        query = '''
+                SELECT b.bookID, b.title, b.author
+                FROM Books b
+                WHERE b.bookID = %s 
+                '''
+        selected_book = execute_query(db_connection, query, (selected,), True).fetchone()
+        # print('selected_book', selected_book)
+        book_options.insert(0, (selected_book['bookID'], 
+                selected_book['title'] + ' by ' + selected_book['author']))
     return book_options
 
 def get_all_clubs():

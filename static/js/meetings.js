@@ -1,26 +1,51 @@
-console.log('Javascript connected')
+// console.log('Javascript connected')
 
 club_select = document.getElementById('clubSelect');
-console.log(club_select);
 club_select.addEventListener('change', getBooks);
 
 function getBooks() {
     clubID = this.value;
-    console.log('clubID', clubID);
-    document.getElementById('clubSelectForm').submit();
+    // console.log('clubID', clubID);
+    fetch('/get_books_in_genre?clubID=' + clubID)
+        .then(function (response) {
+            return response.json();
+        }).then(function (json) {
+            // console.log('GET response', json);
+            if (json.length > 0) {
+                set_book_select(json);
+            };
+        });
 };
 
-// // Add id
-// let options = Array.from(document.querySelectorAll('#clubSelect option'));
-// console.log('options', options);
-// for (let option of options) {
-//     console.log(option.value);
-//     option.setAttribute('id', 'opt' + option.value);
-// };
+function set_book_select(json, selected_book) {
+    // console.log(json, selected_book)
+    let bookSelect = document.getElementById('bookSelect');
+    bookSelect.querySelectorAll('*').forEach(n => n.remove());
+    let firstOption = document.createElement('option');
+    firstOption.selected = true;    
+    if (selected_book) {
+        firstOption.setAttribute('value', selected_book[0]);
+        firstOption.textContent = selected_book[1];
+        bookSelect.appendChild(firstOption)
+    } else {
+        firstOption.disabled = true;
+        firstOption.setAttribute('value', '');
+        firstOption.textContent = 'Select a book';
+        bookSelect.appendChild(firstOption);
+    };
+
+    for (i = 0; i < json.length; i++) {
+        let newOption = document.createElement('option');
+        let bookData = json[i];
+        newOption.setAttribute('value', bookData[0]);
+        newOption.textContent = bookData[1];
+        bookSelect.appendChild(newOption);
+    }; 
+}
 
 function buttons() {
     let allRows = Array.from(document.querySelectorAll('#meetingsTableBody tr'));
-    console.log(allRows);
+    // console.log(allRows);
     for (i = 0; i < allRows.length; i++) {
         let row = allRows[i];
         // console.log(row);
@@ -33,53 +58,34 @@ function buttons() {
 document.addEventListener('DOMContentLoaded', buttons);
 
 function modifyClick(row, modifyButton) {
-    console.log(row, modifyButton);
+    // console.log(row, modifyButton);
     meetingID = row.id;
     fetch('/meetings?meetingID=' + meetingID)
         .then(function (response) {
             return response.json();
         }).then(function (json) {
-            console.log('GET response', json);
-            console.log(json.bookClubID);
-            console.log(json.dateTime);
-            console.log(typeof json.dateTime);
-            let dateTime = new Date(json.dateTime);
-            let date = dateTime.getDate();
-            let time = dateTime.getTime();
-            console.log(date, time);
-
-            let dateString = convertDateString(dateTime);
-            console.log(dateString);
-            console.log(dateTime.toLocaleTimeString('it-IT'));
-            console.log(dateTime.getUTCHours());
-            console.log(dateTime.getMinutes());
+            // console.log('GET response', json);
+            let formMeetingID = document.getElementById('formMeetingID');
+            formMeetingID.value = meetingID
             let selectClub = document.getElementById('clubSelect');
-            selectClub.value = json.bookClubID;
-            let subFormDate = document.getElementById('subFormDate');
-
-            // document.getElementById('clubSelectForm').submit();
+            selectClub.value = json.meeting_data.bookClubID;
+            let dateTime = new Date(json.meeting_data.dateTime);
+            let dateString = convertDateString(dateTime);
+            let timeString = convertTimeString(dateTime);
+            // console.log(dateString, timeString);
+            let formDate = document.getElementById('formDate');
+            formDate.value = dateString;
+            let formTime = document.getElementById('formTime');
+            formTime.value = timeString;
+            selected_book = json.books[0];
+            books = json.books.slice(1);
+            // console.log(selected_book, books);
+            set_book_select(books, selected_book);
+            let formBookID = document.getElementById('bookSelect');
+            formBookID.value = json.meeting_data.meetingBookID;
+            let formLeaderID = document.getElementById('formLeaderEmail');
+            formLeaderID.value = json.leader_email.email;
         });
-
-    // meetingID = row.id;
-    // let dateTime = row.querySelector('.dateTime').textContent;
-    // console.log(dateTime);
-    // let date = dateTime.slice(0, 10);
-    // let time = dateTime.slice(11);
-    // console.log(date);
-    // console.log(time);
-    // let formDate = document.getElementById('subFormDate');
-    // formDate.value = date;
-    // let formTime = document.getElementById('formTime');
-    // formTime.value = time;
-    // let options = Array.from(document.querySelectorAll('#clubSelect option')); 
-    // for (let option of options) {
-    //     option.setAttribute('selected', false);
-    //     // console.log('option value', option.value)
-    //     if (option.value === meetingID) {
-    //         option.setAttribute('selected', true);
-    //         document.getElementById('clubSelectForm').submit();
-    //     };
-    // };
 };
 
 function convertDateString(date) {
@@ -91,6 +97,12 @@ function convertDateString(date) {
     if (day < 10) {
       var dayStr = '0' + day.toString();
     } else {dayStr = day.toString()}
-    let dateString = monthStr + '-' + dayStr + '-' + date.getFullYear().toString();
+    let dateString = date.getFullYear().toString() + '-' + monthStr + '-' + dayStr;
     return dateString;
-  }
+};
+
+function convertTimeString(dateTime) {
+    let hourStr = dateTime.getUTCHours();
+    let minutesStr = dateTime.getMinutes();
+    return hourStr + ':' + minutesStr + ':00';
+};
