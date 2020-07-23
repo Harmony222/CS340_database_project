@@ -207,7 +207,7 @@ CREATE TABLE `bookclubs_members` (
 
 LOCK TABLES `bookclubs_members` WRITE;
 /*!40000 ALTER TABLE `bookclubs_members` DISABLE KEYS */;
-INSERT INTO `bookclubs_members` VALUES (4,2),(5,2),(6,2),(7,5),(8,5),(9,5);
+INSERT INTO `bookclubs_members` VALUES (4,1),(6,2),(5,3),(7,4),(10,5);
 /*!40000 ALTER TABLE `bookclubs_members` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;

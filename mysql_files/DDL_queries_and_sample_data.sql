@@ -210,11 +210,11 @@ CREATE TABLE bookclubs_members (
 );
 
 INSERT INTO bookclubs_members (memberID, bookClubID)
-    VALUES  (4,2),
-            (5,2), 
+    VALUES  (4,1),
             (6,2), 
-            (7,5), 
-            (8,5), 
-            (9,5);
+            (5,3), 
+            (7,4), 
+            (10,5);
+          
 
 
