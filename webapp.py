@@ -331,6 +331,20 @@ def books():
     all_books = get_all_books()    
     return render_template('books.html', form=books_form, active={'books':True}, books = all_books)
 
+# ---------------------- DELETE BOOK ROUTE ------------------------
+@app.route('/delete_book/<int:id>')
+def delete_book(id):
+    '''
+        REFERENCE: Week 7: UPDATE & DELETE functionality using Flask
+        id is grabbed from the respective table row in the View
+        Books table.
+    '''
+    db_connection = connect_to_database()
+    query = "DELETE from Books WHERE bookID = %s"
+    data = (id,)
+    execute_query(db_connection, query, data)
+    return redirect('/books')
+
 # ----------------------- GENRES ROUTE -----------------------------
 @app.route('/genres', methods=['POST', 'GET'] )
 def genres():
