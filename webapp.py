@@ -158,7 +158,7 @@ def meetings():
         }
         return jsonify(modify_data)
     if request.method == 'POST':
-        print(request.form)
+        # print(request.form)
         form_data = request.form
         meetingID = form_data['meetingID']
         clubID = form_data['clubName']
@@ -167,7 +167,7 @@ def meetings():
         if bookID == '-1':
             bookID = None
         leaderID = validate_member(form_data['meetingLeaderEmail'])
-        print(meetingID, clubID, dateTime, bookID, leaderID)
+        # print(meetingID, clubID, dateTime, bookID, leaderID)
         if leaderID:
             try:
                 db_connection = connect_to_database()
@@ -197,7 +197,7 @@ def meetings():
 @app.route('/get_books_in_genre', methods=['GET', 'POST'])
 def get_books_in_genre():
     clubID = request.args['clubID']
-    books = get_books(clubID)
+    books = get_books(clubID)['book_options']
     return jsonify(books)
 
 # -------------------- NEW MEETINGS ROUTE ------------------------
@@ -212,7 +212,7 @@ def meetingsnew():
 
     if request.method == 'POST' and formSelectClub.validate_on_submit():
         clubID = formSelectClub.clubName.data
-        books = get_books(clubID)
+        books = get_books(clubID)['book_options']
         formNewMeeting.meetingBook.choices = books
         select_club = True
     # print(formNewMeeting.validate_on_submit())
@@ -440,7 +440,7 @@ def genres():
     all_genres = get_genres()
     return render_template('genres.html', form=form, active={'index':True}, genres=all_genres, exists = genre_exists)
 
-
+# ------------------------- MISC HELPER FUNCTIONS ---------------------------
 def get_genres():
     '''
     Retrieves all genres from mysql database.
@@ -461,7 +461,6 @@ def get_club_names():
     club_names = execute_query(db_connection, query).fetchall()
     return club_names
 
-
 def get_books(clubID, selected=False):
     '''
     Retrieve books that are in the genre associated with clubID.
@@ -469,7 +468,7 @@ def get_books(clubID, selected=False):
     Returns a list of tuples (bookiD, book name + author).
     Add on selected book if a bookID is passed to function (used for modify meeting).
     '''
-    print('clubID', clubID)
+    # print('clubID', clubID)
     db_connection = connect_to_database()
     query = '''
             SELECT b.bookID, b.title, b.author
@@ -488,7 +487,9 @@ def get_books(clubID, selected=False):
     for book in books:
         book_options.append((book['bookID'], book['title'] + ' by ' + book['author']))
     book_options.append((-1, 'None'))
-    print('book_options', book_options)
+    selected_book = False
+    if selected is None:
+        selected_book = (-1, 'None')
     if selected:
         query = '''
                 SELECT b.bookID, b.title, b.author
@@ -496,14 +497,15 @@ def get_books(clubID, selected=False):
                 WHERE b.bookID = %s 
                 '''
         selected_book = execute_query(db_connection, query, (selected,), True).fetchone()
-        print('selected_book', selected_book)
-        book_options.insert(0, (selected_book['bookID'], 
-                selected_book['title'] + ' by ' + selected_book['author']))
-    return book_options
+        # print('selected_book', selected_book)
+        selected_book = (selected_book['bookID'], 
+                selected_book['title'] + ' by ' + selected_book['author'])
+    return {'selected_book': selected_book, 'book_options': book_options}
 
 def get_all_clubs():
     '''
-    Retrieves all book clubs from mysql database.
+    Retrieves all book clubs from mysql database pluse the next book club
+    meeting date.
     Returns a list of all book clubs with each club's data in dictionary format.
     '''
     db_connection = connect_to_database()

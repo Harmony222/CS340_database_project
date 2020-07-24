@@ -128,10 +128,22 @@ SELECT * FROM Genres ORDER BY genre
 -- Get book club names - used for dropdown menus
 SELECT bookClubID, clubName FROM BookClubs ORDER BY clubName
 
--- Get books (title and author) - used for dropdown menus in meeting signup
+-- Get books (title and author) - used for dropdown menu in meeting signup
+-- and for dropdown menu in modify meeting. Only retrieves books in the 
+-- specified genre and those that are not already assigned to a meeting
 SELECT b.bookID, b.title, b.author
 FROM Books b
-WHERE b.bookGenreID = (SELECT bc.clubGenreID 
-                        FROM BookClubs bc 
-                        WHERE bc.bookClubID = %clubID_from_dropdown)  
+WHERE b.bookID NOT IN (
+    SELECT cm.meetingBookID 
+    FROM ClubMeetings cm 
+    WHERE cm.meetingBookID IS NOT NULL)
+AND b.bookGenreID = (
+    SELECT bc.clubGenreID 
+    FROM BookClubs bc 
+    WHERE bc.bookClubID = %bookClubID_dropdown)
 
+-- Get selected book (title and author) - used to get the book info that is 
+-- assigned to a particular meeting in order to add to modify drop down menu
+SELECT b.bookID, b.title, b.author
+FROM Books b
+WHERE b.bookID = %bookID_from_selected_meeting

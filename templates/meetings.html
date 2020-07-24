@@ -44,11 +44,7 @@ https://stackoverflow.com/questions/46921823/dynamic-choices-wtforms-flask-selec
                 </tbody>
             </table>
         </div>
-<!-- Button trigger modal -->
-<!-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
-    Launch demo modal
-  </button> -->
-  
+  <!-- https://getbootstrap.com/docs/4.5/components/modal/ -->
   <!-- Modal -->
   <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -94,7 +90,7 @@ https://stackoverflow.com/questions/46921823/dynamic-choices-wtforms-flask-selec
                             <small class="text-muted extra">
                                 Book not listed? <a class="ml-2" href="{{ url_for('books') }}">Add new book.</a>
                             </small>
-                        <select class="form-control" name="meetingBook" id="bookSelect">
+                        <select class="form-control" name="meetingBook" id="bookSelect" required>
                             <option value="" disabled selected>Select a book</option>
                         </select>
                             <small class="text-muted">Book selection is filtered by Book Club genre and includes only those books not already assigned to a meeting.
