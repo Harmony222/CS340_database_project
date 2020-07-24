@@ -25,7 +25,9 @@ INSERT INTO Members (firstName, lastName, email)
            ('Annabel', 'Lee', 'ann.lee@poe.org'),
            ('Elizabeth', 'Bennet', 'lizzyb@longbourn.net'),
            ('Lyra', 'Belacqua', 'lyra@oxford.edu'),
-           ('Ada', 'Lovelace', 'adalove@ae.org');
+           ('Ada', 'Lovelace', 'adalove@ae.org'),
+           ('Charlie', 'Marlow', 'charlie.marlow@congo.com'),
+           ('Molly', 'Bloom', 'mbloom@dublin.org');
 
 CREATE TABLE Genres (
     genreID int(11) NOT NULL AUTO_INCREMENT,
@@ -105,6 +107,15 @@ INSERT INTO Books (title, author, bookGenreID)
             ('A Farewell to Arms',
             'Ernest Hemingway',
             (SELECT genreID FROM Genres WHERE genre = 'classic')),
+            ('Pride and Prejudice',
+            'Jane Austen',
+            (SELECT genreID FROM Genres WHERE genre = 'classic')),
+            ('Crime and Punishment',
+            'Fyodor Dostoevsky',
+            (SELECT genreID FROM Genres WHERE genre = 'classic')),
+            ('The Grapes of Wrath',
+            'John Steinbeck',
+            (SELECT genreID FROM Genres WHERE genre = 'classic')),
             ('The Stranger',
             'Albert Camus',
             (SELECT genreID FROM Genres WHERE genre = 'classic')),
@@ -165,6 +176,10 @@ INSERT INTO ClubMeetings (`dateTime`, bookClubID, meetingBookID, meetingLeaderID
             (SELECT bookClubID FROM BookClubs WHERE clubName = 'But I Progress Book Club'),
             (SELECT bookID FROM Books WHERE title = 'Florida'),
             (SELECT memberID FROM Members WHERE email = 'jgats@westegg.org')),
+            ('2020-08-25 17:00',
+            (SELECT bookClubID FROM BookClubs WHERE clubName = 'Beyond Words Book Club'),
+            (SELECT bookID FROM Books WHERE title = 'The Dream of a Common Language: Poems 1974-1977'),
+            (SELECT memberID FROM Members WHERE email = 'ann.lee@poe.org')),
             ('2020-8-27 18:00',
             (SELECT bookClubID FROM BookClubs WHERE clubName = 'Get Lit Book Club'),
             (SELECT bookID FROM Books WHERE title = 'A Farewell to Arms'),

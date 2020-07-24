@@ -61,7 +61,7 @@ CREATE TABLE `Books` (
   PRIMARY KEY (`bookID`),
   KEY `bookGenreID` (`bookGenreID`),
   CONSTRAINT `Books_ibfk_1` FOREIGN KEY (`bookGenreID`) REFERENCES `Genres` (`genreID`)
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -70,7 +70,7 @@ CREATE TABLE `Books` (
 
 LOCK TABLES `Books` WRITE;
 /*!40000 ALTER TABLE `Books` DISABLE KEYS */;
-INSERT INTO `Books` VALUES (1,'Florida','Lauren Groff',6),(2,'Nine Stories','J.D. Salinger',6),(3,'Stone Mattress','Margaret Atwood',6),(4,'Trigger Warning','Neil Gaiman',6),(5,'A Farewell to Arms','Ernest Hemingway',1),(6,'The Stranger','Albert Camus',1),(7,'Murder at the Vicarage','Agatha Christie',3),(8,'The Girl With the Dragon Tattoo','Stieg Larsson',3),(9,'Still Life','Louise Penny',3),(10,'The Great Influenza: The Story of the Deadliest Pandemic in History','John M. Barry',5),(11,'This Republic of Suffering: Death and the American Civil War','Drew Gilpin Faust',5),(12,'The Poems of Robert Frost: Poetry for the Ages','Robert Frost',8),(13,'Owls and Other Fantasies: Poems and Essays','Mary Oliver',8),(14,'The Dream of a Common Language: Poems 1974-1977','Adrienne Rich',8),(15,'Four Quartets','T.S. Eliot',8);
+INSERT INTO `Books` VALUES (1,'Florida','Lauren Groff',6),(2,'Nine Stories','J.D. Salinger',6),(3,'Stone Mattress','Margaret Atwood',6),(4,'Trigger Warning','Neil Gaiman',6),(5,'A Farewell to Arms','Ernest Hemingway',1),(6,'Pride and Prejudice','Jane Austen',1),(7,'Crime and Punishment','Fyodor Dostoevsky',1),(8,'The Grapes of Wrath','John Steinbeck',1),(9,'The Stranger','Albert Camus',1),(10,'Murder at the Vicarage','Agatha Christie',3),(11,'The Girl With the Dragon Tattoo','Stieg Larsson',3),(12,'Still Life','Louise Penny',3),(13,'The Great Influenza: The Story of the Deadliest Pandemic in History','John M. Barry',5),(14,'This Republic of Suffering: Death and the American Civil War','Drew Gilpin Faust',5),(15,'The Poems of Robert Frost: Poetry for the Ages','Robert Frost',8),(16,'Owls and Other Fantasies: Poems and Essays','Mary Oliver',8),(17,'The Dream of a Common Language: Poems 1974-1977','Adrienne Rich',8),(18,'Four Quartets','T.S. Eliot',8);
 /*!40000 ALTER TABLE `Books` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -92,7 +92,7 @@ CREATE TABLE `ClubMeetings` (
   KEY `meetingLeaderID` (`meetingLeaderID`),
   CONSTRAINT `ClubMeetings_ibfk_1` FOREIGN KEY (`meetingBookID`) REFERENCES `Books` (`bookID`) ON DELETE SET NULL ON UPDATE CASCADE,
   CONSTRAINT `ClubMeetings_ibfk_2` FOREIGN KEY (`meetingLeaderID`) REFERENCES `Members` (`memberID`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -101,7 +101,7 @@ CREATE TABLE `ClubMeetings` (
 
 LOCK TABLES `ClubMeetings` WRITE;
 /*!40000 ALTER TABLE `ClubMeetings` DISABLE KEYS */;
-INSERT INTO `ClubMeetings` VALUES (1,'2020-06-20 19:30:00',1,3,4),(2,'2020-09-20 19:30:00',1,2,1),(3,'2020-08-20 19:30:00',1,1,2),(4,'2020-08-27 18:00:00',3,5,3),(5,'2020-09-24 18:00:00',3,6,8);
+INSERT INTO `ClubMeetings` VALUES (1,'2020-06-20 19:30:00',1,3,4),(2,'2020-09-20 19:30:00',1,2,1),(3,'2020-08-20 19:30:00',1,1,2),(4,'2020-08-25 17:00:00',4,17,7),(5,'2020-08-27 18:00:00',3,5,3),(6,'2020-09-24 18:00:00',3,9,8);
 /*!40000 ALTER TABLE `ClubMeetings` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -144,7 +144,7 @@ CREATE TABLE `Members` (
   `email` varchar(255) NOT NULL,
   PRIMARY KEY (`memberID`),
   UNIQUE KEY `email` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -153,7 +153,7 @@ CREATE TABLE `Members` (
 
 LOCK TABLES `Members` WRITE;
 /*!40000 ALTER TABLE `Members` DISABLE KEYS */;
-INSERT INTO `Members` VALUES (1,'Inigo','Montoya','inigo.montoya@florian.com'),(2,'Jay','Gatsby','jgats@westegg.org'),(3,'Veruca','Salt','veruca.salt@wonka.edu'),(4,'Atticus','Finch','attifinch@maycomb.com'),(5,'Hester','Prynne','h.prynne@pearl.edu'),(6,'John','Watson','watsonj@bakerst.net'),(7,'Annabel','Lee','ann.lee@poe.org'),(8,'Elizabeth','Bennet','lizzyb@longbourn.net'),(9,'Lyra','Belacqua','lyra@oxford.edu'),(10,'Ada','Lovelace','adalove@ae.org');
+INSERT INTO `Members` VALUES (1,'Inigo','Montoya','inigo.montoya@florian.com'),(2,'Jay','Gatsby','jgats@westegg.org'),(3,'Veruca','Salt','veruca.salt@wonka.edu'),(4,'Atticus','Finch','attifinch@maycomb.com'),(5,'Hester','Prynne','h.prynne@pearl.edu'),(6,'John','Watson','watsonj@bakerst.net'),(7,'Annabel','Lee','ann.lee@poe.org'),(8,'Elizabeth','Bennet','lizzyb@longbourn.net'),(9,'Lyra','Belacqua','lyra@oxford.edu'),(10,'Ada','Lovelace','adalove@ae.org'),(11,'Charlie','Marlow','charlie.marlow@congo.com'),(12,'Molly','Bloom','mbloom@dublin.org');
 /*!40000 ALTER TABLE `Members` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -207,7 +207,7 @@ CREATE TABLE `bookclubs_members` (
 
 LOCK TABLES `bookclubs_members` WRITE;
 /*!40000 ALTER TABLE `bookclubs_members` DISABLE KEYS */;
-INSERT INTO `bookclubs_members` VALUES (4,1),(6,2),(5,3),(7,4),(10,5);
+INSERT INTO `bookclubs_members` VALUES (4,1),(5,3),(6,2),(7,4),(10,5);
 /*!40000 ALTER TABLE `bookclubs_members` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -220,4 +220,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-07-22 12:06:06
+-- Dump completed on 2020-07-24  9:54:56
