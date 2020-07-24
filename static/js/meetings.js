@@ -120,6 +120,6 @@ function convertTimeString(dateTime) {
     let minutes = dateTime.getMinutes();
     if (minutes < 10) {
         minutesStr = '0' + minutes.toString()
-    }
+    } else { minutesStr = minutes.toString() }
     return hourStr + ':' + minutesStr + ':00';
 };
