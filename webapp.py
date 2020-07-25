@@ -122,8 +122,13 @@ def view_clubMembers(id):
         '''
     data = (id,)
     club_members = execute_query(db_connection, query, data).fetchall()
+    query = '''
+            SELECT clubName FROM BookClubs WHERE bookClubID = %s
+            '''
+    clubName = execute_query(db_connection, query, data).fetchone()
+    clubName = clubName[0]
     #print(result)
-    return render_template('bookclubmembers.html', active={'view_clubMembers':True}, club_members=club_members)
+    return render_template('bookclubmembers.html', active={'view_clubMembers':True}, club_members=club_members, clubName = clubName)
 
 # -------------------- MEETINGS ROUTE ----------------------------
 @app.route('/meetings', methods=['GET', 'POST', 'PUT'])

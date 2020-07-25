@@ -4,18 +4,15 @@
 {% block body %}
 <div class="row">
     <div class="col-md-3">
-        <h5 class="side_nav_header">Book Clubs</h5>
+        <h5 class="side_nav_header">{{ clubName }}</h5>
         <div class="nav flex-column nav-pills side_nav" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-            <a class="nav-link" id="v-pills-view-tab" data-toggle="pill" href="#v-pills-view" role="tab" aria-controls="v-pills-view-tab" aria-selected="true">View all book clubs</a>
-            <a class="nav-link" id="v-pills-new-tab" data-toggle="pill" href="#v-pills-new" role="tab" aria-controls="v-pills-new-tab" aria-selected="false">Create a new book club</a>
-            <a class="nav-link" id="v-pills-signup-tab" data-toggle="pill" href="#v-pills-signup" role="tab" aria-controls="v-pills-signup-tab" aria-selected="false">Sign up for a book club</a>
-            <a class="nav-link active" href="{{ url_for('bookclubsignup') }}">Test Sign Up</a>
+            <a class="nav-link active" id="v-pills-view-tab"  href="/bookclubs" role="tab" aria-controls="v-pills-view-tab" aria-selected="true">Return to BookClubs page</a>
         </div>
     </div>
 
     <div class="col-md-9 mainContent">
         <div class="tab-pane fade show active" id="v-pills-view" role="tabpanel" aria-labelledby="v-pills-view-tab">
-            <legend class="border-bottom mb-4">View Members of club</legend>
+            <legend class="border-bottom mb-4">Members of the {{ clubName }}</legend>
                 <table class = "table">
                     <thead>
                         <th>First Name</th>
