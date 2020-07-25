@@ -46,11 +46,7 @@
                         {{ form.email.label(class="form-control-label") }}
                         {{ form.email(class="form-control") }}
                     </div>
-                    {% if exists %}
-                        <div class="alert alert-danger" role="alert">
-                            Email unavailable. Please enter a different email.
-                        </div>
-                    {% endif %}
+             
                     {{ form.submit(class="btn btn-outline-primary") }}
                 </form>
             </div>

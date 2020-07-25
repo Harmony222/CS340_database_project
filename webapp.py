@@ -26,20 +26,20 @@ def index():
 @app.route('/members', methods=['POST', 'GET'])
 def members():
     members_form = MembersForm()
-    email_exists = {}
     # Week 7: Learn using Python and Flask Framework - Inserting Data Using Flask Video
     if request.method == 'POST':
         firstName = request.form['firstName']
         lastName = request.form['lastName']
         email = request.form['email']
-        # check if the email exists, if it does, front-end will handle this
-        email_exists = check_email(email, email_exists)
-        if 'exists' not in email_exists.keys(): # otherwise make the INSERT query
+        try:
             add_members(firstName, lastName, email)
-            return redirect('/members')
+            flash('Welcome to Novel Hovel, {}!'.format(firstName), 'success')
+            #return redirect('/members')
+        except:
+            flash('Email unavailable. Please enter a different email.', 'danger')
     
     all_members = get_all_members()
-    return render_template('members.html', form=members_form, active={'members':True}, members=all_members, exists=email_exists)
+    return render_template('members.html', form=members_form, active={'members':True}, members=all_members)
 
 
 # ----------------------- BOOKCLUBS ROUTE ---------------------------
@@ -98,9 +98,11 @@ def bookclubsignup():
     if request.method == 'POST':
         clubName = request.form['clubName']
         email = request.form['email']
-        #print("club: ", clubName)
-        #print("email: ", email)
-        addMember_bookClub(clubName, email)
+        try:
+            addMember_bookClub(clubName, email)
+            flash('Welcome to the club!', 'success')
+        except:
+            flash('You already signed up this club!', 'danger')
     return render_template('bookclubsignup.html', formSignUp=formSignUp, active={'bookclubsignup':True})
 
 # ------------- VIEW BOOKCLUB MEMBERS ROUTE ----------------------
@@ -404,8 +406,12 @@ def books():
         title = request.form['title']
         author = request.form['author']
         bookGenreID = request.form['genre']
-        add_books(title, author, bookGenreID)
-        return redirect('/books')
+        try:
+            add_books(title, author, bookGenreID)
+            flash('Successfully added {} by {}!'.format(title, author), 'success')
+            #return redirect('/books')
+        except:
+            flash('The book already exists. Please add a new book.', 'danger')
         
     genres_list = get_genres()
     books_form.genre.choices = genres_list
@@ -430,20 +436,18 @@ def delete_book(id):
 @app.route('/genres', methods=['POST', 'GET'] )
 def genres():
     form = GenresForm()
-    genre_exists = {} # dict which will be sent back to client
     if request.method == 'POST':
         genre = request.form['genre']
         genre = genre.lower() # make input lowercase
-
-        # check if genre exists already, if it does, the front-end will handle this 
-        genre_exists = check_genre(genre, genre_exists)
-        
-        # if not add the genre to Genres table
-        if 'exists' not in genre_exists.keys():
+        try:
             add_genre(genre)
-            return redirect('/genres')
+            flash('Successfully added {} genre!'.format(genre), 'success')
+            #return redirect('/genres')
+        except:
+            flash('Genre already exists. Please enter a new genre.', 'danger')
+
     all_genres = get_genres()
-    return render_template('genres.html', form=form, active={'index':True}, genres=all_genres, exists = genre_exists)
+    return render_template('genres.html', form=form, active={'index':True}, genres=all_genres)
 
 # ------------------------- MISC HELPER FUNCTIONS ---------------------------
 def get_genres():
@@ -639,40 +643,6 @@ def add_genre(genre):
     data = (genre,) # single element tuple needs trailing comma
     execute_query(db_connection, query, data)
 
-def check_genre(genre, genre_exists):
-    '''
-        Checks if the genre already exists in Genres database.
-        Takes parameters: genre - the input value from Add Genres form
-                          genre_exists - empty dictionary initialized in
-                                        the /genres route
-        returns genre_exists
-    '''
-    all_genres = get_genres() 
-    genre_names = []
-
-    # grab only the the genre names from Genres SELECT query 
-    for row in all_genres:
-        genre_names.append(row[1])
-
-    # if the genre exists, create a key, 'exists' with value True
-    if genre in genre_names:
-        genre_exists['exists'] = True     
-    return genre_exists
-
-def check_email(email, email_exists):
-    '''
-        ** 
-        maybe this could be merged with validate_member()
-        **
-    '''
-    db_connection = connect_to_database()
-    query = 'SELECT memberID FROM Members WHERE email = %s'
-    data = email,
-    memberID = execute_query(db_connection, query, data).fetchone()
-    if memberID:
-        email_exists['exists'] = True
-    return email_exists
-
 def addMember_bookClub(clubName, email):
     memberID = validate_member(email)
     db_connection = connect_to_database()
@@ -685,8 +655,6 @@ def addMember_bookClub(clubName, email):
 
 
     
-
-
 
 if __name__ == '__main__':
     app.run(debug=True)
