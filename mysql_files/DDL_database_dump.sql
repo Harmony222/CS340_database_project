@@ -60,7 +60,8 @@ CREATE TABLE `Books` (
   `bookGenreID` int(11) NOT NULL,
   PRIMARY KEY (`bookID`),
   KEY `bookGenreID` (`bookGenreID`),
-  CONSTRAINT `Books_ibfk_1` FOREIGN KEY (`bookGenreID`) REFERENCES `Genres` (`genreID`)
+  CONSTRAINT `Books_ibfk_1` FOREIGN KEY (`bookGenreID`) REFERENCES `Genres` (`genreID`),
+  CONSTRAINT `book_info` UNIQUE (`title`, `author`, `bookGenreID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 

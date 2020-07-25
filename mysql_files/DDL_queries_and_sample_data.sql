@@ -88,7 +88,8 @@ CREATE TABLE Books (
     bookGenreID int(11) NOT NULL,
     PRIMARY KEY (bookID),
     FOREIGN KEY (bookGenreID)
-        REFERENCES Genres(genreID)
+        REFERENCES Genres(genreID),
+    CONSTRAINT `book_info` UNIQUE (`title`, `author`, `bookGenreID`)
 );
 
 INSERT INTO Books (title, author, bookGenreID)
