@@ -133,7 +133,7 @@ def view_clubMembers(id):
     return render_template('bookclubmembers.html', active={'view_clubMembers':True}, club_members=club_members, clubName = clubName)
 
 # -------------------- MEETINGS ROUTE ----------------------------
-@app.route('/meetings', methods=['GET', 'POST', 'PUT'])
+@app.route('/meetings', methods=['GET', 'POST', 'PUT', 'DELETE'])
 def meetings():
     all_meetings = get_all_meetings()
     club_names_list = get_club_names()
@@ -176,6 +176,7 @@ def meetings():
         leaderID = validate_member(form_data['meetingLeaderEmail'])
         # print(meetingID, clubID, dateTime, bookID, leaderID)
         if leaderID:
+            # if leader email is valid, run query to update meeting
             try:
                 db_connection = connect_to_database()
                 query = '''
@@ -188,13 +189,13 @@ def meetings():
                 execute_query(db_connection, query, data).fetchall()
                 # Sign leader up as a meeting attendee
                 flash('Successfully modified meeting!', 'success') 
-                # flash('Added {} as an attendee for this meeting.'.format(leader_email), 'success')
                 return redirect('/meetings')
             except MySQLdb.Error as err:
                 flash('Error: {}'.format(err), 'danger')
                 print(err)
                 return redirect('/meetings')        
-
+    if request.method == 'DELETE':
+        print('delete test')
     return render_template('meetings.html', 
                             club_names=club_names_list,
                             active={'meetings':True, 'view':True},
@@ -206,6 +207,24 @@ def get_books_in_genre():
     clubID = request.args['clubID']
     books = get_books(clubID)['book_options']
     return jsonify(books)
+
+# -------------------- DELETE MEETING ROUTE ----------------------
+@app.route('/meetings_delete', methods=['GET', 'POST'])
+def meetings_delete():
+    if request.method == 'POST':
+        print(request.form)
+        meetingID = request.form['meetingID']
+        try:
+            db_connection = connect_to_database()
+            query = '''
+                    DELETE FROM ClubMeetings WHERE meetingID = %s
+                    '''
+            execute_query(db_connection, query, (meetingID,))
+            flash('Successfully deleted meeting!', 'success')
+        except MySQLdb.Error as err:
+            flash('Error: {}'.format(err), 'danger')
+            print(err)
+        return redirect('meetings')
 
 # -------------------- NEW MEETINGS ROUTE ------------------------
 @app.route('/meetingsnew', methods=['GET', 'POST'])

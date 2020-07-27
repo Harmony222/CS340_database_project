@@ -47,3 +47,7 @@ body {
 .hidden {
     display: None;
 }
+
+.modal-footer {
+    justify-content: start;
+}

@@ -34,6 +34,7 @@ https://stackoverflow.com/questions/46921823/dynamic-choices-wtforms-flask-selec
                         <th>Meeting Frequency</th>
                         <th>Next Meeting</th>
                         <th>Club Leader</th>
+                        <th></th>
                     </thead>
                     <tbody>
                         {% for club in clubs %}
@@ -41,7 +42,7 @@ https://stackoverflow.com/questions/46921823/dynamic-choices-wtforms-flask-selec
                             <td hidden>{{ club.bookClubID }}</td>
                             <td class="genre">{{ club.genre }}</td>
                             <td>{{ club.clubName }}</td>
-                            <td>{{ club.meetingFrequency }}</td>
+                            <td>{{ club.meetingFrequency|capitalize }}</td>
                             <td>{{ club.nextMeeting }}</td>
                             <td>{{ club.firstName }} {{ club.lastName }}</td>
                             <td>
@@ -52,7 +53,6 @@ https://stackoverflow.com/questions/46921823/dynamic-choices-wtforms-flask-selec
                         {% endfor %}
                     </tbody>
                 </table>
-                <h4>Update and Delete functionality can also go here (if implemented).</h4>
             </div>
     
             <!-- Create a New Book Club -->

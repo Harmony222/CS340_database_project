@@ -38,12 +38,15 @@ function set_book_select(json, selected_book) {
             bookSelect.appendChild(firstOption)
         };
     } else {
+        // if a book is not selected, set first option as 'select a book'
+        // and set as disabled
         firstOption.disabled = true;
         firstOption.setAttribute('value', '');
         firstOption.textContent = 'Select a book';
         bookSelect.appendChild(firstOption);
     };
 
+    // add each option from json data
     for (i = 0; i < json.length; i++) {
         let newOption = document.createElement('option');
         let bookData = json[i];
@@ -61,7 +64,8 @@ function buttons() {
         // console.log(row);
         let modifyButton = row.querySelector('.modify');
         let deleteButton = row.querySelector('.delete');
-        modifyButton.addEventListener('click', () => modifyClick(row, modifyButton))
+        modifyButton.addEventListener('click', () => modifyClick(row, modifyButton));
+        deleteButton.addEventListener('click', () => deleteClick(row, deleteButton));
     };
 };
 
@@ -116,10 +120,29 @@ function convertDateString(date) {
 
 // converts time to string in format HH:MM:00
 function convertTimeString(dateTime) {
-    let hourStr = dateTime.getUTCHours();
+    let hour = dateTime.getUTCHours();
     let minutes = dateTime.getMinutes();
+    if (hour < 10) {
+        hourStr = '0' + hour.toString()
+    } else {hourStr = hour.toString()}
     if (minutes < 10) {
         minutesStr = '0' + minutes.toString()
     } else { minutesStr = minutes.toString() }
     return hourStr + ':' + minutesStr + ':00';
+};
+
+function deleteClick(row, deleteButton) {
+    // clone row and then add row to the modal delete table
+    // console.log(row, deleteButton);
+    meetingID = row.id;
+    deleteRow = row.cloneNode(true);
+    deleteRow.setAttribute('id', 'None')
+    formMeetingID = document.getElementById('deleteMeetingID');
+    formMeetingID.value = meetingID
+    deleteTableBody = document.getElementById('deleteTableBody');
+    // if exists, remove any current rows in modal delete table 
+    deleteTableBody.querySelectorAll('*').forEach(n => n.remove());
+    deleteTableBody.appendChild(deleteRow);
+    deleteRow.removeChild(deleteRow.lastElementChild);
+    deleteRow.removeChild(deleteRow.lastElementChild);
 };

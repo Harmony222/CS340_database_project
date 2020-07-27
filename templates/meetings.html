@@ -37,8 +37,8 @@ https://stackoverflow.com/questions/46921823/dynamic-choices-wtforms-flask-selec
                         <td>{{ meeting.author }}</td>
                         <td>{{ meeting.clubName }}</td>
                         <td>{{ meeting.firstName }} {{ meeting.lastName }}</td>
-                        <td><button id="mb{{ meeting.meetingID }}" type="button" class="modify btn btn-primary btn-sm" data-toggle="modal" data-target="#exampleModal">Modify</button></td>
-                        <td><button id="db{{ meeting.meetingID }}" type="button" class="delete btn btn-secondary btn-sm">Delete</button></td>
+                        <td><button id="mb{{ meeting.meetingID }}" type="button" class="modify btn btn-primary btn-sm" data-toggle="modal" data-target="#modifyModal">Modify</button></td>
+                        <td><button id="db{{ meeting.meetingID }}" type="button" class="delete btn btn-secondary btn-sm" data-toggle="modal" data-target="#deleteModal">Delete</button></td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -46,79 +46,111 @@ https://stackoverflow.com/questions/46921823/dynamic-choices-wtforms-flask-selec
         </div>
   <!-- https://getbootstrap.com/docs/4.5/components/modal/ -->
   <!-- Modal -->
-  <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal fade" id="modifyModal" tabindex="-1" role="dialog" aria-labelledby="modifyModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Modify Club Meeting</h5>
+          <h5 class="modal-title" id="modifyModalLabel">Modify Club Meeting</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
         <div class="modal-body">
-
-        <div>
-            <form method="POST" action="/meetings" id="modifyForm">
-                <fieldset class="form-group">
-                    <!-- <legend class="border-bottom mb-4">Modify Club Meeting</legend> -->
-
-                    <div class="form-group">
-                        <input type="text" name="meetingID" id="formMeetingID" hidden>                        
-                        <select class="form-control" name="clubName" id="clubSelect" required>
-                        {% for club_name in club_names %}
-                            {% if loop.first %}
-                                <option value="" disabled selected>Select a book club</option>
-                            {% endif %}
-                            <option value = '{{ club_name[0] }}'>{{ club_name[1] }} </option>
-                        {% endfor %}
-                        </select>
-                    </div>       
-                    <div class="form-group">
-                        <div class="row">
-                            <div class="col">
-                                <label class="form-control-label" for="meetingDate">Meeting Date</label>
-                                <input type="date" class="form-control" name="meetingDate" id="formDate" required>
-                            </div>
-                            <div class="col">
-                                <label class="form-control-label" for="meetingTime">Meeting Time</label>
-                                <input type="time" class="form-control" name="meetingTime" id="formTime" required>
+            <div>
+                <form method="POST" action="/meetings" id="modifyForm">
+                    <fieldset class="form-group">
+                        <div class="form-group">
+                            <input type="text" name="meetingID" id="formMeetingID" hidden>                        
+                            <select class="form-control" name="clubName" id="clubSelect" required>
+                            {% for club_name in club_names %}
+                                {% if loop.first %}
+                                    <option value="" disabled selected>Select a book club</option>
+                                {% endif %}
+                                <option value = '{{ club_name[0] }}'>{{ club_name[1] }} </option>
+                            {% endfor %}
+                            </select>
+                        </div>       
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col">
+                                    <label class="form-control-label" for="meetingDate">Meeting Date</label>
+                                    <input type="date" class="form-control" name="meetingDate" id="formDate" required>
+                                </div>
+                                <div class="col">
+                                    <label class="form-control-label" for="meetingTime">Meeting Time</label>
+                                    <input type="time" class="form-control" name="meetingTime" id="formTime" required>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-control-label" for="meetingBook">Meeting Book</label>
-                            <small class="text-muted extra">
-                                Book not listed? <a class="ml-2" href="{{ url_for('books') }}">Add new book.</a>
-                            </small>
-                        <select class="form-control" name="meetingBook" id="bookSelect" required>
-                            <option value="" disabled selected>Select a book</option>
-                        </select>
-                            <small class="text-muted">Book selection is filtered by Book Club genre and includes only those books not already assigned to a meeting.
-                            </small>
-                    </div>   
-                    <div class="form-group">
-                        <label class="form-control-label" for="meetingLeaderEmail">Meeting Leader Email</label>
-                        <input type="email" class="form-control" name="meetingLeaderEmail" id="formLeaderEmail" required>
-                    </div> 
+                        <div class="form-group">
+                            <label class="form-control-label" for="meetingBook">Meeting Book</label>
+                                <small class="text-muted extra">
+                                    Book not listed? <a class="ml-2" href="{{ url_for('books') }}">Add new book.</a>
+                                </small>
+                            <select class="form-control" name="meetingBook" id="bookSelect" required>
+                                <option value="" disabled selected>Select a book</option>
+                            </select>
+                                <small class="text-muted">Book selection is filtered by Book Club genre and includes only those books not already assigned to a meeting.
+                                </small>
+                        </div>   
+                        <div class="form-group">
+                            <label class="form-control-label" for="meetingLeaderEmail">Meeting Leader Email</label>
+                            <input type="email" class="form-control" name="meetingLeaderEmail" id="formLeaderEmail" required>
+                        </div> 
+                    </fieldset>
+            </div>        
+        </div>
+        <div class="modal-footer">
                 <div class="form-group">
                     <input type="submit" class="btn btn-outline-primary" id="modifySubmit" Name="modifySubmit" value="Save Changes">
                 </div>
-                </fieldset>
-            </form>
-        </div>        
-
-
-
-          
-        </div>
-        <div class="modal-footer">
+                </form>
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-          <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
         </div>
       </div>
     </div>
   </div>
-        
+
+  
+  <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modifyModalLabel">Are you sure you would like to delete this meeting?</h5>       
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <table class="table">
+                <thead>
+                    <th hidden>ID</th>
+                    <th>Date/Time</th>
+                    <th>Book Title</th>
+                    <th>Author</th>
+                    <th>Book Club</th>
+                    <th>Meeting Leader</th>
+                </thead>
+                <tbody id="deleteTableBody">
+                </tbody>    
+            </table>   
+            <div>
+                <form method="POST" action="/meetings_delete" id="deleteForm">
+                    <input type="text" name="meetingID" id="deleteMeetingID" hidden>                        
+            </div>        
+        </div>
+        <div class="modal-footer">
+                <div class="form-group">
+                    <input type="submit" class="btn btn-warning" id="deleteSubmit" Name="deleteSubmit" value="Delete Meeting">
+                </div>
+                </form>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
     </div>
 </div>
 <script src="{{ url_for('static', filename='js/meetings.js') }}"></script>
