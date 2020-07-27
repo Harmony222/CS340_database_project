@@ -426,11 +426,19 @@ def delete_book(id):
         id is grabbed from the respective table row in the View
         Books table.
     '''
-    db_connection = connect_to_database()
-    query = "DELETE from Books WHERE bookID = %s"
-    data = (id,)
-    execute_query(db_connection, query, data)
+    try:
+        db_connection = connect_to_database()
+        query = "SELECT title from Books WHERE bookID = %s"
+        data = (id,)
+        title = execute_query(db_connection, query, data).fetchone()
+        title = title[0]
+        query = "DELETE from Books WHERE bookID = %s"
+        execute_query(db_connection, query, data)
+        flash('{} has been deleted!'.format(title), 'success')
+    except:
+        flash('An error has occurred. Please try again', 'danger')
     return redirect('/books')
+    
 
 # ----------------------- GENRES ROUTE -----------------------------
 @app.route('/genres', methods=['POST', 'GET'] )
