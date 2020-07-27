@@ -24,7 +24,7 @@ DROP TABLE IF EXISTS `BookClubs`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `BookClubs` (
   `bookClubID` int(11) NOT NULL AUTO_INCREMENT,
-  `clubName` varchar(255) NOT NULL,
+  `clubName` varchar(255) NOT NULL UNIQUE,
   `meetingFrequency` varchar(255) DEFAULT NULL,
   `clubGenreID` int(11) NOT NULL,
   `clubLeaderID` int(11) NOT NULL,
