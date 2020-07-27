@@ -8,44 +8,28 @@
 <div class="col-md-9 mainContent">
     <div class="row">
         <div class="col-md-8">
-            <div class="selectClub">
-                <form method="POST" action="/meetingsnew" id="clubSelectForm">
-                    {{ formSelectClub.csrf_token() }}
-                    {{ formSelectClub.name }}
-                    <!-- <fieldset class="form-group"> -->
-                        <legend class="border-bottom mb-4">Schedule a New Club Meeting</legend>
-                        <div class="form-group">
-                            {{ formSelectClub.clubName.label(class="form-control-label") }} 
-                            <select class="form-control" name="clubName" id="clubSelect">
-                            {% for option in formSelectClub.clubName %}
-                                {% if loop.first %}
-                                    <option value="" disabled selected>Select a book club</option>
-                                {% endif %}
-                                {{ option }}
-                            {% endfor %}
-                            </select>
-                        </div>       
-                    <!-- </fieldset> -->
-                    <div class="form-group" hidden>
-                        {{ formSelectClub.selectClubSubmit(class="btn btn-outline-primary") }}
-                    </div> 
-                </form>
-            </div>
             <div class="newMeetingForm">
                 <form method="POST" action="/meetingsnew">
                     {{ formNewMeeting.csrf_token() }}
-                    <fieldset class="form-group">
+                    <legend class="border-bottom mb-4">Schedule a New Club Meeting</legend>
                     <!-- https://stackoverflow.com/questions/35527722/why-validation-not-working-on-form-request -->
-                    <!-- </div>
-                    {% for field in formNewMeeting.errors %}
+                    <!-- {% for field in formNewMeeting.errors %}
                     {% for error in formNewMeeting.errors[field] %}
                         <div class="error">{{ error }}</div>
                     {% endfor %}
                     {% endfor %} -->
-                        <div class="form-group" hidden>
-                            {{ formNewMeeting.clubName.label(class="form-control-label") }} 
-                            {{ formNewMeeting.clubName(class="form-control")}}
-                        </div>
+                    <div class="form-group">
+                        {{ formNewMeeting.clubName.label(class="form-control-label") }} 
+                        <select class="form-control" name="clubName" id="clubSelect">
+                        {% for option in formNewMeeting.clubName %}
+                            {% if loop.first %}
+                                <option value="" disabled selected>Select a book club</option>
+                            {% endif %}
+                            {{ option }}
+                        {% endfor %}
+                        </select>
+                    </div>
+                    <fieldset id="postClubName" disabled>
                         <div class="form-group">
                             <div class="row">
                                 <div class="col">
@@ -58,47 +42,25 @@
                                 </div>
                             </div>
                         </div>
-                        {% if select_club %}
                         <div class="form-group">
-                            {{ formNewMeeting.meetingBook.label(class="form-control-label") }}
+                            <label class="form-control-label" for="meetingBook">Meeting Book</label>
                             <small class="text-muted extra">
                                 Book not listed? <a class="ml-2" href="{{ url_for('books') }}">Add new book.</a>
                             </small>
                             <select class="form-control" name="meetingBook" id="bookSelect" required>
-                            {% for option in formNewMeeting.meetingBook %}
-                                {% if loop.first %}
-                                    <option value="" disabled selected>Select a book</option>
-                                {% endif %}
-                                {{ option }}
-                            {% endfor %}
-                            </select>
-                        </div>   
-
-                        {% else %}
-                        
-                        <div class="form-group">
-                            {{ formNewMeeting.meetingBook.label(class="form-control-label") }}
-                            <small class="text-muted extra">
-                                Book not listed? <a class="ml-2" href="{{ url_for('books') }}">Add new book.</a>
-                            </small>
-                            <select class="form-control" name="meetingBook" id="bookSelect">
-                            {% for option in formNewMeeting.meetingBook %}
-                                {{ option }}
-                            {% endfor %}
+                                <option value="" disabled selected>Please select a book club first</option>
                             </select>
                             <small class="text-muted">Book selection is filtered by Book Club genre and includes only those books not already assigned to a meeting.
                             </small>
-                        </div>
-
-                        {% endif %}
+                        </div>                        
                         <div class="form-group">
                             {{ formNewMeeting.meetingLeaderEmail.label(class="form-control-label") }}
                             {{ formNewMeeting.meetingLeaderEmail(class="form-control") }}
                         </div> 
+                        <div class="form-group">
+                            {{ formNewMeeting.meetingSubmit(class="btn btn-outline-primary") }}
+                        </div>
                     </fieldset>
-                    <div class="form-group">
-                        {{ formNewMeeting.meetingSubmit(class="btn btn-outline-primary") }}
-                    </div>
                 </form>
             </div>            
         </div>

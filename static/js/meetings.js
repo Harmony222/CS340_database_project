@@ -54,7 +54,7 @@ function set_book_select(json, selected_book) {
         newOption.textContent = bookData[1];
         bookSelect.appendChild(newOption);
     }; 
-}
+};
 
 function buttons() {
     let allRows = Array.from(document.querySelectorAll('#meetingsTableBody tr'));

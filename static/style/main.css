@@ -51,3 +51,7 @@ body {
 .modal-footer {
     justify-content: start;
 }
+
+.flashSideBar {
+    margin-top: 1.5rem;
+}

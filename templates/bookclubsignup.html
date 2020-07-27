@@ -3,21 +3,12 @@
 
 {% block body %}
 <div class="row">
-    <div class="col-md-3">
-        <h5 class="side_nav_header">Book Clubs</h5>
-        <div class="nav flex-column nav-pills side_nav" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-            <a class="nav-link" id="v-pills-view-tab"  href="/bookclubs#v-pills-view" role="tab" aria-controls="v-pills-view-tab" aria-selected="true">View all book clubs</a>
-            <a class="nav-link" id="v-pills-new-tab"  href="/bookclubs#v-pills-new" role="tab" aria-controls="v-pills-new-tab" aria-selected="false">Create a new book club</a>
-            <a class="nav-link active" href="{{ url_for('bookclubsignup') }}">Sign Up for a book club</a>
-        </div>
-    </div>
+    {% include "partials/bookclubssidebar.html" %}
     <div class="col-md-9 mainContent">
-    <div class="tab-content" id="v-pills-tabContent">
-<!-- Sign Up For A Book Club -->
-    <div class="tab-pane show active" id="v-pills-signup" role="tabpanel" aria-labelledby="v-pills-signup-tab">
+    <!-- Sign Up For A Book Club -->
         <div class="col-md-8">
             <div class="clubSignUpForm">
-                <form method="POST" action="">
+                <form method="POST" action="/bookclubsignup">
                     <fieldset class="form-group">
                         <legend class="border-bottom mb-4">Sign Up For A Book Club</legend>
                         <div class="form-group">
@@ -42,9 +33,7 @@
                 </form>
             </div> 
         </div>
-        
     </div>
-    </div>
-    </div>
+    
 </div>
 {% endblock body %}

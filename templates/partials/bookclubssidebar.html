@@ -1,0 +1,8 @@
+<div class="col-md-3">
+    <h5 class="side_nav_header">Book Clubs</h5>
+    <div class="nav flex-column nav-pills side_nav">
+        <a class="nav-link {% if active.bookclubs %}active{% endif %}" href="{{ url_for('bookclubs') }}">View all book clubs</a>
+        <a class="nav-link {% if active.bookclubsnew %}active{% endif %}" href="{{ url_for('bookclubsnew') }}">Create a new book club</a>
+        <a class="nav-link {% if active.bookclubsignup %}active{% endif %}" href="{{ url_for('bookclubsignup') }}">Sign up for a book club</a>
+    </div>
+</div> 

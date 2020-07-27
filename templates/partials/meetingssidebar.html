@@ -6,4 +6,18 @@
         <a class="nav-link {% if active.signup %}active{% endif %}" href="{{ url_for('meetingssignup') }}">Sign up for a meeting</a>
         <a class="nav-link {% if active.attendees %}active{% endif %}" href="{{ url_for('attendees') }}">Who's attending?</a>
     </div>
+{% if active.view %}
+    <div class="flex-column flashSideBar">
+        <!--FLASH messages reference: https://www.youtube.com/watch?v=cYWiDiIUxQc&t=30 -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">
+                    {{ message }} 
+                </div>
+            {% endfor %}
+        {% endif %}
+        {% endwith %}
+    </div>
+{% endif %}
 </div> 

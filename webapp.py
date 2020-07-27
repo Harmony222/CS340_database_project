@@ -46,6 +46,14 @@ def members():
 @app.route('/bookclubs', methods=['POST', 'GET'])
 def bookclubs():
     clubs = get_all_clubs()
+    return render_template('bookclubs.html',
+                            active={'bookclubs':True},
+                            clubs=clubs)
+
+
+# ----------------- CREATE NEW BOOKCLUB ROUTE --------------------
+@app.route('/bookclubsnew', methods=['GET','POST'])
+def bookclubsnew():
     genres_list = get_genres()
     club_names_list = get_club_names()
     form = BookClubForm()
@@ -67,6 +75,7 @@ def bookclubs():
                                                clubGenreID, clubLeaderID)
                         VALUES (%s, %s, %s, %s)
                         '''
+                        
                 data = (club_name, meeting_frequency, genreID, leaderID)
                 execute_query(db_connection, query, data)
 
@@ -85,11 +94,12 @@ def bookclubs():
             return redirect('/bookclubs')
         else:
             pass
-    return render_template('bookclubs.html', 
+    
+    return render_template('bookclubsnew.html', 
                             form=form, 
                             formSignUp=formSignUp,
-                            active={'bookclubs':True},
-                            clubs=clubs)
+                            active={'bookclubsnew':True})
+
 
 # ----------------- BOOKCLUB SIGNUP ROUTE ------------------------
 @app.route('/bookclubsignup', methods=['GET','POST'])
@@ -238,19 +248,21 @@ def meetingsnew():
     formSelectClub = SelectClub()
     formSelectClub.clubName.choices = club_names_list
     formNewMeeting = NewMeetingForm()
-    formNewMeeting.meetingBook.choices = [('0', 'Please select a book club first')]
+    formNewMeeting.clubName.choices = club_names_list
+    # formNewMeeting.meetingBook.choices = [('0', 'Please select a book club first')]
     select_club = False
+    form_disabled = 'disabled'
 
     if request.method == 'POST' and formSelectClub.validate_on_submit():
         clubID = formSelectClub.clubName.data
         books = get_books(clubID)['book_options']
         formNewMeeting.meetingBook.choices = books
         select_club = True
-    # print(formNewMeeting.validate_on_submit())
+        form_disabled = None
+    print(formNewMeeting.validate_on_submit())
     if request.method == 'POST' and formNewMeeting.validate_on_submit():
         clubID = request.form['clubName']
         dateTime = request.form['meetingDate'] + ' ' + request.form['meetingTime']
-
         bookID = request.form['meetingBook']
         if bookID == '-1':
             bookID = None
@@ -270,7 +282,7 @@ def meetingsnew():
                 # https://stackoverflow.com/questions/17112852/get-the-new-record-primary-key-id-from-mysql-insert-query
                 meetingID = execute_query(db_connection, 'SELECT LAST_INSERT_ID()').fetchone()
                 # Sign leader up as a meeting attendee
-                if meeting_signup_member(meetingID[0], leaderID):
+                if meeting_signup_member(meetingID[0], leaderID, leader_email):
                     flash('Successfully scheduled a meeting!', 'success') 
                     flash('Added {} as an attendee for this meeting.'.format(leader_email), 'success')
                     return redirect('/meetingsnew')
@@ -278,11 +290,14 @@ def meetingsnew():
                 flash('Error: {}'.format(err), 'danger')
                 print(err)
                 return redirect('/meetingsnew')
+        else:
+            return redirect(request.referrer) 
     return render_template('meetingsnew.html',
                             formSelectClub=formSelectClub,
                             formNewMeeting=formNewMeeting,
                             active={'meetings':True, 'new':True},
-                            select_club=select_club)
+                            select_club=select_club,
+                            form_disabled=form_disabled)
 
 
 # --------------- MEETINGS SIGN UP ROUTE --------------------------
@@ -308,7 +323,7 @@ def meetingssignup():
         memberID = validate_member(signUp_email)
         if not memberID:
             return redirect('/meetingssignup')
-        if meeting_signup_member(signUp_meetingID, memberID):
+        if meeting_signup_member(signUp_meetingID, memberID, signUp_email):
             flash('Sucessfully signed up for meeting!', 'success')
         return redirect('/meetingssignup')
 
@@ -320,7 +335,7 @@ def meetingssignup():
                             select_club=select_club)
 
 
-def meeting_signup_member(meetingID, memberID):
+def meeting_signup_member(meetingID, memberID, email):
     '''
     Tries signing up a member to specified meeting. 
     If successful, inserts into meetings_members, and flashes success message,
@@ -335,11 +350,16 @@ def meeting_signup_member(meetingID, memberID):
         data = (meetingID, memberID)
         execute_query(db_connection, query, data)
     except MySQLdb.Error as err:
-        flash('Error: {}'.format(err), 'danger')
         print(err)
+        if err.args[0] == 1062:
+            flash('''
+                  Member with email {} is already signed up 
+                  for that meeting.
+                  '''.format(email), 'danger')
+        else:
+            flash('Error: {}'.format(err), 'danger')
         return False
     return True
-    # flash('Sucessfully signed up for meeting!', 'success')
 
 
 def validate_member(email):
@@ -354,7 +374,11 @@ def validate_member(email):
     # print('memberID', memberID)
     if not memberID:
         # https://stackoverflow.com/questions/21248718/how-to-flashing-a-message-with-link-using-flask-flash
-        flash(Markup('''Invalid email! Please sign up as a Novel Hovel Member first. <a href="{{ url_for('members') }}">Sign up.</a>'''), 'danger')
+        flash(Markup('''
+                     Invalid email! Please sign up as a Novel 
+                     Hovel Member first. <a href="/members">
+                     Sign up.</a>
+                     '''), 'danger')
         print('memberID not found')
         return False
     return memberID
