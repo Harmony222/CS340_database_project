@@ -12,7 +12,7 @@
                 <form method="POST" action="/meetingsnew" id="clubSelectForm">
                     {{ formSelectClub.csrf_token() }}
                     {{ formSelectClub.name }}
-                    <fieldset class="form-group">
+                    <!-- <fieldset class="form-group"> -->
                         <legend class="border-bottom mb-4">Schedule a New Club Meeting</legend>
                         <div class="form-group">
                             {{ formSelectClub.clubName.label(class="form-control-label") }} 
@@ -25,7 +25,7 @@
                             {% endfor %}
                             </select>
                         </div>       
-                    </fieldset>
+                    <!-- </fieldset> -->
                     <div class="form-group" hidden>
                         {{ formSelectClub.selectClubSubmit(class="btn btn-outline-primary") }}
                     </div> 
@@ -64,7 +64,7 @@
                             <small class="text-muted extra">
                                 Book not listed? <a class="ml-2" href="{{ url_for('books') }}">Add new book.</a>
                             </small>
-                            <select class="form-control" name="meetingBook" id="bookSelect">
+                            <select class="form-control" name="meetingBook" id="bookSelect" required>
                             {% for option in formNewMeeting.meetingBook %}
                                 {% if loop.first %}
                                     <option value="" disabled selected>Select a book</option>

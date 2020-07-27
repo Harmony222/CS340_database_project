@@ -82,7 +82,9 @@ def bookclubs():
             except MySQLdb.Error as err:
                 flash('Error: {}'.format(err), 'danger')
                 print(err)
-            return redirect('/bookclubs')                
+            return redirect('/bookclubs')
+        else:
+            pass
     return render_template('bookclubs.html', 
                             form=form, 
                             formSignUp=formSignUp,
@@ -140,8 +142,9 @@ def meetings():
     # print(club_names_list)
     select_club = False
     if request.method == 'GET' and request.args:
+        # Get data for meeting to be modified so that it can be used
+        # in the modify form
         meetingID = request.args['meetingID']
-        # print(meetingID)
         db_connection = connect_to_database()
         query = '''
                 SELECT meetingID, bookClubID, dateTime, meetingBookID, meetingLeaderID
@@ -149,13 +152,13 @@ def meetings():
                 WHERE meetingID = %s 
                 '''
         meeting_data = execute_query(db_connection, query, (meetingID,), True).fetchone()
-        # print(meeting_data)
         leaderID = meeting_data['meetingLeaderID']
         query = '''
                 SELECT email FROM Members WHERE memberID = %s
                 '''
         leader_email = execute_query(db_connection, query, (leaderID,), True).fetchone()
-        # print(leader_email)
+        # get the list of books in that book club's genre plus the book that
+        # is currently selected by that book club (or None if no book)
         books = get_books(meeting_data['bookClubID'], selected=meeting_data['meetingBookID'])
         # print(books)
         modify_data = {
@@ -165,6 +168,8 @@ def meetings():
         }
         return jsonify(modify_data)
     if request.method == 'POST':
+        # Modify club meeting form - get data from request and execute
+        # MySQL query to update the club meeting
         # print(request.form)
         form_data = request.form
         meetingID = form_data['meetingID']

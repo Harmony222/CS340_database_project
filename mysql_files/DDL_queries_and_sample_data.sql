@@ -48,7 +48,7 @@ INSERT INTO Genres (genre) VALUES ('classic'),
 
 CREATE TABLE BookClubs (
     bookClubID int(11) NOT NULL AUTO_INCREMENT,
-    clubName varchar(255) NOT NULL,
+    clubName varchar(255) NOT NULL UNIQUE,
     meetingFrequency varchar(255),
     clubGenreID int(11) NOT NULL,
     clubLeaderID int(11) NOT NULL,
