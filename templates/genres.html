@@ -23,21 +23,20 @@
     <div class="col-md-9">
         <div class="tab-content" id="v-pills-tabContent">
             <div class="tab-pane fade" id="v-pills-add" role="tabpanel" aria-labelledby="v-pills-add-tab">
-                <form method="POST" action="/genres">
-                    <legend class="border-bottom mb-4">Add a New Genre</legend>
-                    <div class="form-group">
-                        {{ form.genre.label(class="form-control-label") }}
-                        {{ form.genre(class="form-control") }}
-                
+                <div class="row">
+                    <div class="col-md-8">
+                        <form method="POST" action="/genres">
+                            <legend class="border-bottom mb-4">Add a New Genre</legend>
+                            <div class="form-group">
+                                {{ form.genre.label(class="form-control-label") }}
+                                {{ form.genre(class="form-control") }}
+                        
+                            </div>
+                            
+                            {{ form.genreSubmit(class="btn btn-outline-primary") }}
+                        </form>
                     </div>
-                    {%if exists %}
-                        <div class="alert alert-danger" role="alert">
-                            Genre already exists.
-                        </div>
-                    {% endif %}
-                    
-                    {{ form.genreSubmit(class="btn btn-outline-primary") }}
-                </form>
+                </div>
 
             </div>
 
@@ -55,9 +54,7 @@
                     </tr>
                     {% endfor %}
                 </table>
-                <br>
-                <p>GET Request Here. Update and Delete functionality here (if implemented).</p>
-                <p> will put a search bar here?</p>
+                
             </div>
         
         
