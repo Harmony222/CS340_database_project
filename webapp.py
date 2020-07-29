@@ -134,16 +134,10 @@ def bookclubsignup():
             if memberID == False: # validate_member() returns error message if memberID == False
                 return render_template('bookclubsignup.html', formSignUp=formSignUp, active={'bookclubsignup':True})
             else:
-                db_connection = connect_to_database()
-                query = '''
-                        INSERT INTO bookclubs_members (memberID, bookClubID)
-                        VALUES (%s, %s)
-                        '''
-                data = (memberID, clubName)
-                execute_query(db_connection, query, data)
+                addMember_bookClub(clubName, email)
                 flash('Welcome to the club!', 'success')
         except:
-            flash('You already signed up this club!', 'danger')
+            flash('You already signed up for this club!', 'danger')
     return render_template('bookclubsignup.html', formSignUp=formSignUp, active={'bookclubs':True, 'bookclubsignup':True})
 
 # ------------- VIEW BOOKCLUB MEMBERS ROUTE ----------------------
@@ -674,7 +668,15 @@ def get_club_meetings(club):
     club_meetings = execute_query(db_connection, query, (), True).fetchall()
     return club_meetings
 
-
+def addMember_bookClub(clubName, email):
+    memberID = validate_member(email)
+    db_connection = connect_to_database()
+    query = '''
+            INSERT INTO bookclubs_members (memberID, bookClubID)
+            VALUES (%s, %s)
+            '''
+    data = (memberID, clubName)
+    execute_query(db_connection, query, data)
 
 if __name__ == '__main__':
     app.run(debug=True)
