@@ -32,7 +32,13 @@ def members():
         lastName = request.form['lastName']
         email = request.form['email']
         try:
-            add_members(firstName, lastName, email)
+            db_connection = connect_to_database()
+            query = '''
+                    INSERT INTO Members (firstName, lastName, email)
+                    VALUES (%s, %s, %s)
+                    '''
+            data = (firstName, lastName, email)
+            execute_query(db_connection, query, data)
             flash('Welcome to Novel Hovel, {}!'.format(firstName), 'success')
             #return redirect('/members')
         except:
@@ -111,8 +117,18 @@ def bookclubsignup():
         clubName = request.form['clubName']
         email = request.form['email']
         try:
-            addMember_bookClub(clubName, email)
-            flash('Welcome to the club!', 'success')
+            memberID = validate_member(email)
+            if memberID == False: # validate_member() returns error message if memberID == False
+                return render_template('bookclubsignup.html', formSignUp=formSignUp, active={'bookclubsignup':True})
+            else:
+                db_connection = connect_to_database()
+                query = '''
+                        INSERT INTO bookclubs_members (memberID, bookClubID)
+                        VALUES (%s, %s)
+                        '''
+                data = (memberID, clubName)
+                execute_query(db_connection, query, data)
+                flash('Welcome to the club!', 'success')
         except:
             flash('You already signed up this club!', 'danger')
     return render_template('bookclubsignup.html', formSignUp=formSignUp, active={'bookclubsignup':True})
@@ -120,9 +136,6 @@ def bookclubsignup():
 # ------------- VIEW BOOKCLUB MEMBERS ROUTE ----------------------
 @app.route('/view_clubMembers/<int:id>')
 def view_clubMembers(id):
-    '''
-        
-    '''
     db_connection = connect_to_database()
     query = ''' 
         SELECT m.firstName as `First Name`, m.lastName as `Last Name` 
@@ -452,7 +465,13 @@ def books():
         author = request.form['author']
         bookGenreID = request.form['genre']
         try:
-            add_books(title, author, bookGenreID)
+            db_connection = connect_to_database()
+            query = '''
+                    INSERT INTO Books (title, author, bookGenreID)
+                    VALUES (%s, %s, %s);
+                    '''
+            data = (title,author,bookGenreID) 
+            execute_query(db_connection, query, data)
             flash('Successfully added {} by {}!'.format(title, author), 'success')
             #return redirect('/books')
         except:
@@ -493,7 +512,13 @@ def genres():
         genre = request.form['genre']
         genre = genre.lower() # make input lowercase
         try:
-            add_genre(genre)
+            db_connection = connect_to_database()
+            query = '''
+                    INSERT INTO Genres (genre)
+                    VALUES (%s)
+                    '''
+            data = (genre,) # single element tuple needs trailing comma
+            execute_query(db_connection, query, data)
             flash('Successfully added {} genre!'.format(genre), 'success')
             #return redirect('/genres')
         except:
@@ -637,19 +662,6 @@ def get_all_members():
     all_members = execute_query(db_connection, query).fetchall()
     return all_members
 
-def add_members(firstName, lastName, email):
-    '''
-        Executes INSERT query on Members table.
-        Takes firstName, lastName, and email
-        input values from the Add Members form
-    '''
-    db_connection = connect_to_database()
-    query = '''
-            INSERT INTO Members (firstName, lastName, email)
-            VALUES (%s, %s, %s)
-            '''
-    data = (firstName, lastName, email)
-    execute_query(db_connection, query, data)
 
 def get_all_books():
     '''
@@ -666,48 +678,7 @@ def get_all_books():
     all_books = execute_query(db_connection, query).fetchall()
     return all_books
 
-def add_books(title, author, bookGenreID):
-    '''
-        Executes INSERT query on Books table.
-        Takes title, author, genre input values
-        from the Add Book form.
 
-    '''
-    db_connection = connect_to_database()
-    query = '''
-            INSERT INTO Books (title, author, bookGenreID)
-            VALUES (%s, %s, %s);
-            '''
-    data = (title,author,bookGenreID) 
-    execute_query(db_connection, query, data)
-
-
-def add_genre(genre):
-    '''
-        Executes INSERT query on Genres table.
-        Takes genre input values from the 
-        Add Genre form
-    '''
-    db_connection = connect_to_database()
-    query = '''
-            INSERT INTO Genres (genre)
-            VALUES (%s)
-            '''
-    data = (genre,) # single element tuple needs trailing comma
-    execute_query(db_connection, query, data)
-
-def addMember_bookClub(clubName, email):
-    memberID = validate_member(email)
-    db_connection = connect_to_database()
-    query = '''
-            INSERT INTO bookclubs_members (memberID, bookClubID)
-            VALUES (%s, %s)
-            '''
-    data = (memberID, clubName)
-    execute_query(db_connection, query, data)
-
-
-    
 
 if __name__ == '__main__':
     app.run(debug=True)
