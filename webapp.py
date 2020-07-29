@@ -48,6 +48,16 @@ def members():
     return render_template('members.html', form=members_form, active={'members':True}, members=all_members)
 
 
+def get_all_members():
+    '''
+        SELECT query on Members table. Returns tuple, all_members, containing
+        each row of Members table as a tuple.
+    '''
+    db_connection = connect_to_database()
+    query = "SELECT * FROM Members"
+    all_members = execute_query(db_connection, query).fetchall()
+    return all_members
+
 # ----------------------- BOOKCLUBS ROUTE ---------------------------
 @app.route('/bookclubs', methods=['POST', 'GET'])
 def bookclubs():
@@ -480,6 +490,21 @@ def books():
     all_books = get_all_books()    
     return render_template('books.html', form=books_form, active={'books':True}, books = all_books)
 
+
+def get_all_books():
+    '''
+        SELECT query on Books / Genres joined table. Genre name is displayed 
+        instead of genreID. Returns tuple, all_books, containing each row of the
+        table as a tuple. 
+    '''
+    db_connection = connect_to_database()
+    query = '''SELECT b.bookID, b.title, b.author, g.genre
+                FROM Books AS b
+                JOIN Genres AS g 
+                ON b.bookGenreID = g.genreID'''
+    all_books = execute_query(db_connection, query).fetchall()
+    return all_books
+
 # ---------------------- DELETE BOOK ROUTE ------------------------
 @app.route('/delete_book/<int:id>')
 def delete_book(id):
@@ -524,6 +549,7 @@ def genres():
 
     all_genres = get_genres()
     return render_template('genres.html', form=form, active={'index':True}, genres=all_genres)
+
 
 # ------------------------- MISC HELPER FUNCTIONS ---------------------------
 def get_genres():
@@ -647,34 +673,6 @@ def get_club_meetings(club):
             '''.format(club)
     club_meetings = execute_query(db_connection, query, (), True).fetchall()
     return club_meetings
-
-
-def get_all_members():
-    '''
-        SELECT query on Members table.
-        Returns tuple, all_members, containing
-        each row of Members table as a tuple.
-    '''
-    db_connection = connect_to_database()
-    query = "SELECT * FROM Members"
-    all_members = execute_query(db_connection, query).fetchall()
-    return all_members
-
-
-def get_all_books():
-    '''
-        SELECT query on Books / Genres joined table. 
-        Genre name is displayed instead of genreID.
-        Returns tuple, all_books, containing each row of the
-        table as a tuple. 
-    '''
-    db_connection = connect_to_database()
-    query = '''SELECT b.bookID, b.title, b.author, g.genre
-                FROM Books AS b
-                JOIN Genres AS g 
-                ON b.bookGenreID = g.genreID'''
-    all_books = execute_query(db_connection, query).fetchall()
-    return all_books
 
 
 
