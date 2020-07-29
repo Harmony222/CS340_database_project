@@ -89,12 +89,15 @@ def bookclubsnew():
 
                 flash('Sucessfully created {} Book Club!'.format(club_name), 'success')    
             except MySQLdb.Error as err:
-                flash('Error: {}'.format(err), 'danger')
                 print(err)
-            return redirect('/bookclubs')
-        else:
-            pass
-    
+                if err.args[0] == 1062:
+                    flash('''
+                          A book club already exists with that name, please choose
+                          another name.
+                          ''', 'danger')
+                else:
+                    flash('Error: {}'.format(err), 'danger')
+                # return redirect('/bookclubsnew')
     return render_template('bookclubsnew.html', 
                             active={'bookclubs': True, 'bookclubsnew':True},
                             form=form, 
@@ -206,8 +209,6 @@ def meetings():
                 flash('Error: {}'.format(err), 'danger')
                 print(err)
                 return redirect('/meetings')        
-    if request.method == 'DELETE':
-        print('delete test')
     return render_template('meetings.html', 
                             club_names=club_names_list,
                             active={'meetings':True, 'view':True},
@@ -224,7 +225,7 @@ def get_books_in_genre():
 @app.route('/meetings_delete', methods=['GET', 'POST'])
 def meetings_delete():
     if request.method == 'POST':
-        print(request.form)
+        # print(request.form)
         meetingID = request.form['meetingID']
         try:
             db_connection = connect_to_database()
@@ -256,7 +257,7 @@ def meetingsnew():
         formNewMeeting.meetingBook.choices = books
         select_club = True
         form_disabled = None
-    print(formNewMeeting.validate_on_submit())
+    # print(formNewMeeting.validate_on_submit())
     if request.method == 'POST' and formNewMeeting.validate_on_submit():
         clubID = request.form['clubName']
         dateTime = request.form['meetingDate'] + ' ' + request.form['meetingTime']
@@ -282,13 +283,10 @@ def meetingsnew():
                 if meeting_signup_member(meetingID[0], leaderID, leader_email):
                     flash('Successfully scheduled a meeting!', 'success') 
                     flash('Added {} as an attendee for this meeting.'.format(leader_email), 'success')
-                    return redirect('/meetingsnew')
             except MySQLdb.Error as err:
                 flash('Error: {}'.format(err), 'danger')
                 print(err)
-                return redirect('/meetingsnew')
-        else:
-            return redirect(request.referrer) 
+        return redirect('/meetingsnew')
     return render_template('meetingsnew.html',
                             formSelectClub=formSelectClub,
                             formNewMeeting=formNewMeeting,
