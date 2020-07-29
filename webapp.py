@@ -47,7 +47,7 @@ def members():
 def bookclubs():
     clubs = get_all_clubs()
     return render_template('bookclubs.html',
-                            active={'bookclubs':True},
+                            active={'bookclubs':True, 'view':True},
                             clubs=clubs)
 
 
@@ -96,9 +96,9 @@ def bookclubsnew():
             pass
     
     return render_template('bookclubsnew.html', 
+                            active={'bookclubs': True, 'bookclubsnew':True},
                             form=form, 
-                            formSignUp=formSignUp,
-                            active={'bookclubsnew':True})
+                            formSignUp=formSignUp)
 
 
 # ----------------- BOOKCLUB SIGNUP ROUTE ------------------------
@@ -115,7 +115,7 @@ def bookclubsignup():
             flash('Welcome to the club!', 'success')
         except:
             flash('You already signed up this club!', 'danger')
-    return render_template('bookclubsignup.html', formSignUp=formSignUp, active={'bookclubsignup':True})
+    return render_template('bookclubsignup.html', formSignUp=formSignUp, active={'bookclubs':True, 'bookclubsignup':True})
 
 # ------------- VIEW BOOKCLUB MEMBERS ROUTE ----------------------
 @app.route('/view_clubMembers/<int:id>')
