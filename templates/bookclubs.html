@@ -14,21 +14,21 @@ https://stackoverflow.com/questions/46921823/dynamic-choices-wtforms-flask-selec
 <div class="row">
     {% include "partials/bookclubssidebar.html" %}
     <div class="col-md-9 mainContent">
-            <!-- View All Book Clubs -->
-            <div class="tab-pane fade show active" id="v-pills-view" role="tabpanel" aria-labelledby="v-pills-view-tab">
-                <legend>Book Club Information</legend>
-                <table class="table">
-                    <thead>
-                        <th hidden>ID</th>
-                        <th>Genre</th>
-                        <th>Book Club Name</th>
-                        <th>Meeting Frequency</th>
-                        <th>Next Meeting</th>
-                        <th>Club Leader</th>
-                        <th></th>
+        <!-- View All Book Clubs -->
+        <div class="tab-pane fade show active" id="v-pills-view" role="tabpanel" aria-labelledby="v-pills-view-tab">
+            <legend>Book Club Information</legend>
+            <table class="table">
+                <thead>
+                    <th hidden>ID</th>
+                    <th>Genre</th>
+                    <th>Book Club Name</th>
+                    <th>Meeting Frequency</th>
+                    <th>Next Meeting</th>
+                    <th>Club Leader</th>
+                    <th></th>
                 </thead>
                 <tbody>
-                    {% for club in clubs %}
+                {% for club in clubs %}
                     <tr id="{{ club.bookClubID }}">
                         <td hidden>{{ club.bookClubID }}</td>
                         <td class="genre">{{ club.genre }}</td>
@@ -44,9 +44,6 @@ https://stackoverflow.com/questions/46921823/dynamic-choices-wtforms-flask-selec
                     {% endfor %}
                 </tbody>
             </table>
-          
-    
-           
         </div>
     </div>
 </div>
