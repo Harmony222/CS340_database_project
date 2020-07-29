@@ -9,9 +9,6 @@ SELECT * FROM Members
 INSERT INTO Members (firstName, lastName, email)
 VALUES (%firstName_input, %lastName_input, %email_input)
 
--- Check if the email from user input is already associated with existing member
-SELECT memberID FROM Members WHERE email = %email_input
-
 
 -- BOOKCLUBS ------------------------------------------------------------------------
 -- Select all book clubs plus the next book club meeting date
