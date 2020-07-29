@@ -33,15 +33,11 @@ INSERT INTO BookClubs (clubName, meetingFrequency, clubGenreID, clubLeaderID)
 VALUES (%club_name, %meeting_frequency_dropdown, %genreID_dropdown, %leaderID_from_function_that_validates_email)
 
 -- View members of a book club
-
-SELECT tmp.firstName as `First Name`, tmp.lastName as `Last Name` 
-FROM   (SELECT bc.bookClubId, m.firstName, m.lastName 
-        FROM BookClubs as bc 
-        JOIN bookclubs_members as bm 
-        ON bc.bookClubID = bm.bookClubId 
-        JOIN Members as m 
-        ON m.memberID = bm.memberID) as tmp 
-WHERE bookClubId = %bookClubId
+SELECT m.firstName as `First Name`, m.lastName as `Last Name` 
+FROM Members as m 
+JOIN bookclubs_members as bcm 
+ON m.memberID = bcm.memberID 
+WHERE bcm.bookClubID = %bookClubID
 
 
 -- MEETINGS -------------------------------------------------------------------------

@@ -125,14 +125,11 @@ def view_clubMembers(id):
     '''
     db_connection = connect_to_database()
     query = ''' 
-        SELECT tmp.firstName as `First Name`, tmp.lastName as `Last Name` 
-        FROM (SELECT bc.bookClubId, m.firstName, m.lastName 
-        FROM BookClubs as bc 
-        JOIN bookclubs_members as bm 
-        ON bc.bookClubID = bm.bookClubId 
-        JOIN Members as m 
-        ON m.memberID = bm.memberID) as tmp 
-        WHERE bookClubId = %s
+        SELECT m.firstName as `First Name`, m.lastName as `Last Name` 
+        FROM Members as m 
+        JOIN bookclubs_members as bcm 
+        ON m.memberID = bcm.memberID 
+        WHERE bcm.bookClubID = %s
         '''
     data = (id,)
     club_members = execute_query(db_connection, query, data).fetchall()
