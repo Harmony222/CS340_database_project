@@ -23,6 +23,12 @@ def index():
 
 
 # ----------------------- MEMBERS ROUTE ----------------------------
+'''
+/members route executes INSERT query into the Members table for a
+new member. It also executes a SELECT query to view all Members
+by calling get_all_members() helper function.
+'''
+
 @app.route('/members', methods=['POST', 'GET'])
 def members():
     members_form = MembersForm()
@@ -40,8 +46,7 @@ def members():
             data = (firstName, lastName, email)
             execute_query(db_connection, query, data)
             flash('Welcome to Novel Hovel, {}!'.format(firstName), 'success')
-            #return redirect('/members')
-        except:
+        except: # email attribute is UNIQUE so must have error handling for this
             flash('Email unavailable. Please enter a different email.', 'danger')
     
     all_members = get_all_members()
@@ -121,6 +126,11 @@ def bookclubsnew():
 
 
 # ----------------- BOOKCLUB SIGNUP ROUTE ------------------------
+'''
+/bookclubsignup route executes an INSERT query using the addMember_bookClub()
+helper function into the bookclubs_members intersection table. The table is for 
+our BookClubs and Members M:M relationship. 
+'''
 @app.route('/bookclubsignup', methods=['GET','POST'])
 def bookclubsignup():
     club_names_list = get_club_names()
@@ -129,18 +139,22 @@ def bookclubsignup():
     if request.method == 'POST':
         clubName = request.form['clubName']
         email = request.form['email']
+        memberID = validate_member(email)
+        if memberID == False: # validate_member() returns error message if email not in Members table
+            return render_template('bookclubsignup.html', formSignUp=formSignUp, active={'bookclubsignup':True})
         try:
-            memberID = validate_member(email)
-            if memberID == False: # validate_member() returns error message if memberID == False
-                return render_template('bookclubsignup.html', formSignUp=formSignUp, active={'bookclubsignup':True})
-            else:
-                addMember_bookClub(clubName, email)
-                flash('Welcome to the club!', 'success')
+            addMember_bookClub(clubName, email)
+            flash('Welcome to the club!', 'success')
         except:
             flash('You already signed up for this club!', 'danger')
     return render_template('bookclubsignup.html', formSignUp=formSignUp, active={'bookclubs':True, 'bookclubsignup':True})
 
 # ------------- VIEW BOOKCLUB MEMBERS ROUTE ----------------------
+'''
+/view_clubMembers routes executes a SELECT query on the bookclubs_members
+intersection table (the table for our BookClubs / Members M:M relationship)
+and returns the first and last names of members in the selected bookclub.
+'''
 @app.route('/view_clubMembers/<int:id>')
 def view_clubMembers(id):
     db_connection = connect_to_database()
@@ -158,7 +172,6 @@ def view_clubMembers(id):
             '''
     clubName = execute_query(db_connection, query, data).fetchone()
     clubName = clubName[0]
-    #print(result)
     return render_template('bookclubmembers.html', active={'view_clubMembers':True}, club_members=club_members, clubName = clubName)
 
 # -------------------- MEETINGS ROUTE ----------------------------
@@ -500,13 +513,14 @@ def get_all_books():
     return all_books
 
 # ---------------------- DELETE BOOK ROUTE ------------------------
+'''
+/delete_book route executes a DELETE query on the Books table. Deleting
+books is part of the NULLable relationship between Books and Meetings.
+
+REFERENCE: Week 7: UPDATE & DELETE functionality using Flask
+'''
 @app.route('/delete_book/<int:id>')
 def delete_book(id):
-    '''
-        REFERENCE: Week 7: UPDATE & DELETE functionality using Flask
-        id is grabbed from the respective table row in the View
-        Books table.
-    '''
     try:
         db_connection = connect_to_database()
         query = "SELECT title from Books WHERE bookID = %s"
