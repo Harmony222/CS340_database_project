@@ -2,56 +2,84 @@
 {% block title %}Novel Hovel Index Page{% endblock title %}
 
 {% block body %}
+<div class="row">
+
+    <div class="col-md-10 indexContent">
     <h2>Novel Hovel Index Page</h2>
+    <p>
+        The Novel Hovel is a quaint local bookstore with a long-standing reputation 
+        for hosting the most organized and sensational (in-person!) book clubs. 
+        Then COVID happened. In order for the Novel Hovel to continue to serve its 
+        customers, the company is in need of a database driven website to reestablish 
+        a connection with its community. Novel Hovel organizes and hosts an average 
+        of 8 book club meetings per month and engages more than 300 community members.
+    </p>
+    </p>
+        Novel Hovel’s needs include the ability to:
+        <ul>
+            <li>Maintain a record of members and member contact information</li>
+            <li>Have a system to oversee all the different book clubs managed by Novel Hovel including their theme, books, meeting frequency, etc</li>
+            <li>Keep track of which members are part of which book club(s)</li>
+            <li>Know when a book club meeting is happening and which members are signed up to attend</li>
+            <li>Allow members to sign up for book clubs and meetings</li>
+        </ul>
+
+    </p>
     <h4>Outline</h4>
         <ul>
             <li><a href="{{ url_for('members') }}">Members</a></li>
                 <ul>
-                    <li>Become a member - INSERT - required</li>
-                    <li>View members - SELECT query required (could view members specific to a book club or meeting)</li>
-                    <li>UPDATE - optional</li>
-                    <li>DELETE - optional</li>
+                    <li>View all members - SELECT FROM Members</li>
+                    <li>Become a member - INSERT INTO Members</li>
                 </ul>
             <li><a href="{{ url_for('bookclubs') }}">Book Clubs</a></li>
                 <ul>
-                    <li>View Book Clubs - SELECT query required (displays all book clubs)</li>
+                    <li>View all book clubs - SELECT FROM BookClubs</li>
                     <ul>
-                        <li>UPDATE - optional</li>
-                        <li>DELETE - optional</li>
+                        <li>View members for specific book club - SELECT FROM Members</li>
                     </ul>
-                    <li>Create a new book club - INSERT - required</li>
-                    <li>Sign up for a book club - part of one of our M:M relationships - INSERT required if we keep as M:M relationship</li>
+                    <li>Create a new book club - INSERT INTO BookClubs</li>
+                    <li>Sign up for a book club - INSERT INTO bookclubs_members (M:M relationship)</li>
                 </ul>
             <li><a href="{{ url_for('meetings') }}">Meetings</a></li>
                 <ul>
-                    <li>View meetings - SELECT query required (display all future meetings)</li>
+                    <li>View all future meetings - SELECT FROM Meetings</li>
                     <ul>
-                        <li>UPDATE - required (one entity UPDATE is required)</li>
-                        <li>DELETE - required (one entity DELETE is required)</li>
+                        <li>UPDATE ClubMeetings</li>
+                        <li>DELETE FROM ClubMeetings</li>
                     </ul>
-                    <li>Schedule a new meeting - INSERT - required</li>
-                    <li>Sign up for a meeting - part of one of our M:M relationships - INSERT required</li>
-                    <li>View members attending a meeting. 
-                        <ul>
-                            <li>Remove member from a meeting - DELETE required for one of our M:M relationships</li>
-                        </ul>
+                    <li>Schedule a new meeting - INSERT INTO Meetings</li>
+                    <ul>
+                        <li>Dynamic drop down menu of books filtered by genre, 
+                            also only includes those books not already assigned 
+                            to a meeting - SELECT FROM Books</li>
+                    </ul>
+                    <li>Sign up for a meeting - INSERT INTO meetings_members (M:M relationship)</li>
+                    <ul>
+                        <li>Club meetings list dynamically created from book club dropdown menu - SELECT FROM ClubMeetings</li>
+                    </ul>
+                    <li>View members attending a meeting - SELECT FROM Members
+                    <ul>
+                        <li>Remove member from a meeting - DELETE FROM meetings_members (M:M relationship delete)</li>
+                        <li>Club meetings list dynamically created from book club dropdown menu - SELECT FROM ClubMeetings</li>
+                        <li>Meeting attendee list dynamically created from members joined with meetings_members - SELECT FROM Members</li>
+                    </ul>
                     </li>
                 </ul>
             <li><a href="{{ url_for('books') }}">Books</a></li>
                 <ul>
-                    <li>Add a book - INSERT - required</li>
-                    <li>View books - SELECT query required (could implement when creating a book club to narrow down book results by genre)</li>
+                    <li>View all books - SELECT FROM Books</li>
                     <ul>
-                        <li>DELETE - can delete a book, if a book is selected for a book club meeting, the club meeting book will be "NULL" </li>
+                        <li>DELETE FROM Books - if a book selected for a ClubMeeting is deleted, meetingBookID will be "NULL" </li>
                     </ul>   
-                    <li>UPDATE - optional</li>
+                    <li>Add a book - INSERT INTO Books</li>
                 </ul>
             <li><a href="{{ url_for('genres') }}">Genres</a></li>
                 <ul>
-                    <li>Add a genre - INSERT</li>
-                    <li>View genres - SELECT query will used in the BookClubs and ClubMeetings create new forms</li>
-                    <li>UPDATE - optional</li>
-                    <li>DELETE - optional</li>
+                    <li>View all genres - SELECT FROM Genres</li>
+                    <li>Add a genre - INSERT INTO Genres</li>
                 </ul>
         </ul>
+    </div>
+</div>
 {% endblock body %}

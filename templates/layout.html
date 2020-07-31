@@ -24,6 +24,7 @@
             <a class="nav-item nav-link {% if active.bookclubs %}active{% endif %} " href="{{ url_for('bookclubs') }}">Book Clubs</a>
             <a class="nav-item nav-link {% if active.meetings %}active{% endif %}" href="{{ url_for('meetings') }}">Meetings</a>
             <a class="nav-item nav-link {% if active.books %}active{% endif %}" href="{{ url_for('books') }}">Books</a>
+            <a class="nav-item nav-link {% if active.genres %}active{% endif %}" href="{{url_for('genres') }}">Genres</a>
           </div>
         </div>
       </div>
