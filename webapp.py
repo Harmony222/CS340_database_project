@@ -562,7 +562,7 @@ def genres():
             flash('Genre already exists. Please enter a new genre.', 'danger')
 
     all_genres = get_genres()
-    return render_template('genres.html', form=form, active={'index':True}, genres=all_genres)
+    return render_template('genres.html', form=form, active={'genres':True}, genres=all_genres)
 
 
 # ------------------------- MISC HELPER FUNCTIONS ---------------------------
