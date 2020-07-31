@@ -80,7 +80,7 @@ ORDER BY cm.bookClubID, cm.dateTime;
 
 -- Modify club meeting
 UPDATE ClubMeetings
-SET bookClubID = %bookClubID_dropdown, dateTime = %dateTime, meetingBookID = %bookID_dropdown, meetingLeaderID = %leaderID_from_email 
+SET bookClubID = %bookClubID_dropdown, `dateTime` = %dateTime, meetingBookID = %bookID_dropdown, meetingLeaderID = %leaderID_from_email 
 WHERE meetingID = %meetingID_from_selected_row;
 
 -- Delete club meeting
