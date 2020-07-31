@@ -24,11 +24,8 @@ def index():
 
 # ----------------------- MEMBERS ROUTE ----------------------------
 '''
-/members route executes INSERT query into the Members table for a
-new member. It also executes a SELECT query to view all Members
-by calling get_all_members() helper function.
-'''
 
+'''
 @app.route('/members', methods=['POST', 'GET'])
 def members():
     members_form = MembersForm()
@@ -64,6 +61,9 @@ def get_all_members():
     return all_members
 
 # ----------------------- BOOKCLUBS ROUTE ---------------------------
+'''
+
+'''
 @app.route('/bookclubs', methods=['POST', 'GET'])
 def bookclubs():
     clubs = get_all_clubs()
@@ -73,6 +73,9 @@ def bookclubs():
 
 
 # ----------------- CREATE NEW BOOKCLUB ROUTE --------------------
+'''
+
+'''
 @app.route('/bookclubsnew', methods=['GET','POST'])
 def bookclubsnew():
     genres_list = get_genres()
@@ -100,7 +103,7 @@ def bookclubsnew():
                 data = (club_name, meeting_frequency, genreID, leaderID)
                 execute_query(db_connection, query, data)
 
-                # Club Leader must be added to bookclubs_members intersection table
+                # Club Leader must now be added to bookclubs_members intersection table
                 query = '''
                         SELECT bookClubID FROM BookClubs WHERE clubName = %s
                         '''
@@ -127,9 +130,7 @@ def bookclubsnew():
 
 # ----------------- BOOKCLUB SIGNUP ROUTE ------------------------
 '''
-/bookclubsignup route executes an INSERT query using the addMember_bookClub()
-helper function into the bookclubs_members intersection table. The table is for 
-our BookClubs and Members M:M relationship. 
+
 '''
 @app.route('/bookclubsignup', methods=['GET','POST'])
 def bookclubsignup():
@@ -151,9 +152,7 @@ def bookclubsignup():
 
 # ------------- VIEW BOOKCLUB MEMBERS ROUTE ----------------------
 '''
-/view_clubMembers routes executes a SELECT query on the bookclubs_members
-intersection table (the table for our BookClubs / Members M:M relationship)
-and returns the first and last names of members in the selected bookclub.
+
 '''
 @app.route('/view_clubMembers/<int:id>')
 def view_clubMembers(id):
@@ -167,6 +166,8 @@ def view_clubMembers(id):
         '''
     data = (id,)
     club_members = execute_query(db_connection, query, data).fetchall()
+
+    # grab the club name for welcome message 
     query = '''
             SELECT clubName FROM BookClubs WHERE bookClubID = %s
             '''
@@ -252,6 +253,9 @@ def get_books_in_genre():
     return jsonify(books)
 
 # -------------------- DELETE MEETING ROUTE ----------------------
+'''
+
+'''
 @app.route('/meetings_delete', methods=['GET', 'POST'])
 def meetings_delete():
     if request.method == 'POST':
@@ -536,6 +540,9 @@ def delete_book(id):
     
 
 # ----------------------- GENRES ROUTE -----------------------------
+'''
+
+'''
 @app.route('/genres', methods=['POST', 'GET'] )
 def genres():
     form = GenresForm()
@@ -551,7 +558,6 @@ def genres():
             data = (genre,) # single element tuple needs trailing comma
             execute_query(db_connection, query, data)
             flash('Successfully added {} genre!'.format(genre), 'success')
-            #return redirect('/genres')
         except:
             flash('Genre already exists. Please enter a new genre.', 'danger')
 
@@ -683,6 +689,10 @@ def get_club_meetings(club):
     return club_meetings
 
 def addMember_bookClub(clubName, email):
+    '''
+    Executes INSERT query into bookclubs_members intersection
+    table when members sign up for a bookclub
+    '''
     memberID = validate_member(email)
     db_connection = connect_to_database()
     query = '''
