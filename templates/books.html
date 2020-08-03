@@ -19,7 +19,21 @@
             <a class="nav-link active" id="v-pills-view-tab" data-toggle="pill" href="#v-pills-view" role="tab" aria-controls="v-pills-view" aria-selected="true">View all Books</a>
             <a class="nav-link" id="v-pills-add-tab" data-toggle="pill" href="#v-pills-add" role="tab" aria-controls="v-pills-add" aria-selected="false">Add a Book</a>
         </nav>
+
+        <div class="flex-column flashSideBar">
+            <!--FLASH messages reference: https://www.youtube.com/watch?v=cYWiDiIUxQc&t=30 -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }} 
+                    </div>
+                {% endfor %}
+            {% endif %}
+            {% endwith %}
+        </div>
     </div>
+
     <div class="col-md-9">
         <div class="tab-content" id="v-pills-tabContent">
             <div class="tab-pane fade" id="v-pills-add" role="tabpanel" aria-labelledby="v-pills-add-tab">

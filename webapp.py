@@ -24,7 +24,8 @@ def index():
 
 # ----------------------- MEMBERS ROUTE ----------------------------
 '''
-
+Entity: Members
+    - Functions: CREATE, READ
 '''
 @app.route('/members', methods=['POST', 'GET'])
 def members():
@@ -35,6 +36,7 @@ def members():
         lastName = request.form['lastName']
         email = request.form['email']
         try:
+            # CREATE functionality
             db_connection = connect_to_database()
             query = '''
                     INSERT INTO Members (firstName, lastName, email)
@@ -43,10 +45,11 @@ def members():
             data = (firstName, lastName, email)
             execute_query(db_connection, query, data)
             flash('Welcome to Novel Hovel, {}!'.format(firstName), 'success')
+
         except: # email attribute is UNIQUE so must have error handling for this
             flash('Email unavailable. Please enter a different email.', 'danger')
     
-    all_members = get_all_members()
+    all_members = get_all_members() # SELECT functionality
     return render_template('members.html', form=members_form, active={'members':True}, members=all_members)
 
 
@@ -62,11 +65,12 @@ def get_all_members():
 
 # ----------------------- BOOKCLUBS ROUTE ---------------------------
 '''
-
+Entity: BookClubs
+    - Functions: READ 
 '''
 @app.route('/bookclubs', methods=['POST', 'GET'])
 def bookclubs():
-    clubs = get_all_clubs()
+    clubs = get_all_clubs() # READ functionality
     return render_template('bookclubs.html',
                             active={'bookclubs':True, 'view':True},
                             clubs=clubs)
@@ -74,7 +78,10 @@ def bookclubs():
 
 # ----------------- CREATE NEW BOOKCLUB ROUTE --------------------
 '''
-
+Entity: BookClubs
+    - Functions: CREATE
+Entity: bookclubs_members (M:M relationship)
+    - Functions: CREATE
 '''
 @app.route('/bookclubsnew', methods=['GET','POST'])
 def bookclubsnew():
@@ -93,6 +100,7 @@ def bookclubsnew():
         leaderID = validate_member(leader_email)
         if leaderID:
             try:
+                # BookClubs CREATE functionality
                 db_connection = connect_to_database()
                 query = '''
                         INSERT INTO BookClubs (clubName, meetingFrequency,
@@ -103,6 +111,7 @@ def bookclubsnew():
                 data = (club_name, meeting_frequency, genreID, leaderID)
                 execute_query(db_connection, query, data)
 
+                # bookclubs_members CREATE funcitionality
                 # Club Leader must now be added to bookclubs_members intersection table
                 query = '''
                         SELECT bookClubID FROM BookClubs WHERE clubName = %s
@@ -130,7 +139,8 @@ def bookclubsnew():
 
 # ----------------- BOOKCLUB SIGNUP ROUTE ------------------------
 '''
-
+Entity: bookclubs_members (M:M relationship)
+    - Functions: CREATE
 '''
 @app.route('/bookclubsignup', methods=['GET','POST'])
 def bookclubsignup():
@@ -144,7 +154,9 @@ def bookclubsignup():
         if memberID == False: # validate_member() returns error message if email not in Members table
             return render_template('bookclubsignup.html', formSignUp=formSignUp, active={'bookclubsignup':True})
         try:
-            addMember_bookClub(clubName, email)
+            # CREATE functionality
+            addMember_bookClub(clubName, email) 
+
             flash('Welcome to the club!', 'success')
         except:
             flash('You already signed up for this club!', 'danger')
@@ -152,10 +164,12 @@ def bookclubsignup():
 
 # ------------- VIEW BOOKCLUB MEMBERS ROUTE ----------------------
 '''
-
+Entity: bookclubs_members (M:M relationship)
+    - Functions: READ
 '''
 @app.route('/view_clubMembers/<int:id>')
 def view_clubMembers(id):
+    # READ functionality
     db_connection = connect_to_database()
     query = ''' 
         SELECT m.firstName as `First Name`, m.lastName as `Last Name` 
@@ -475,6 +489,10 @@ def get_attendees():
     return jsonify(attendees)
 
 # ----------------------- BOOKS ROUTE ----------------------------
+'''
+Entity: Books
+    - Functions: CREATE, READ
+'''
 @app.route('/books', methods=['POST', 'GET'])
 def books():
     books_form = BooksForm()
@@ -484,6 +502,7 @@ def books():
         author = request.form['author']
         bookGenreID = request.form['genre']
         try:
+            # CREATE functionality
             db_connection = connect_to_database()
             query = '''
                     INSERT INTO Books (title, author, bookGenreID)
@@ -492,13 +511,13 @@ def books():
             data = (title,author,bookGenreID) 
             execute_query(db_connection, query, data)
             flash('Successfully added {} by {}!'.format(title, author), 'success')
-            #return redirect('/books')
+            
         except:
             flash('The book already exists. Please add a new book.', 'danger')
         
     genres_list = get_genres()
     books_form.genre.choices = genres_list
-    all_books = get_all_books()    
+    all_books = get_all_books()   # READ functionality
     return render_template('books.html', form=books_form, active={'books':True}, books = all_books)
 
 
@@ -518,8 +537,9 @@ def get_all_books():
 
 # ---------------------- DELETE BOOK ROUTE ------------------------
 '''
-/delete_book route executes a DELETE query on the Books table. Deleting
-books is part of the NULLable relationship between Books and Meetings.
+Entity: Books
+    - Functions: DELETE (if a book selected for a ClubMeeting is 
+                         deleted, meetingBookID will be "NULL")
 
 REFERENCE: Week 7: UPDATE & DELETE functionality using Flask
 '''
@@ -531,6 +551,8 @@ def delete_book(id):
         data = (id,)
         title = execute_query(db_connection, query, data).fetchone()
         title = title[0]
+
+        # DELETE functionality
         query = "DELETE from Books WHERE bookID = %s"
         execute_query(db_connection, query, data)
         flash('{} has been deleted!'.format(title), 'success')
@@ -541,7 +563,8 @@ def delete_book(id):
 
 # ----------------------- GENRES ROUTE -----------------------------
 '''
-
+Entity: Genres
+    - Functions: CREATE, READ
 '''
 @app.route('/genres', methods=['POST', 'GET'] )
 def genres():
@@ -550,6 +573,7 @@ def genres():
         genre = request.form['genre']
         genre = genre.lower() # make input lowercase
         try:
+            # CREATE functionality
             db_connection = connect_to_database()
             query = '''
                     INSERT INTO Genres (genre)
@@ -561,7 +585,7 @@ def genres():
         except:
             flash('Genre already exists. Please enter a new genre.', 'danger')
 
-    all_genres = get_genres()
+    all_genres = get_genres() # READ functionality
     return render_template('genres.html', form=form, active={'genres':True}, genres=all_genres)
 
 

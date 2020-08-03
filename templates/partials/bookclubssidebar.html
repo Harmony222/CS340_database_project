@@ -5,4 +5,19 @@
         <a class="nav-link {% if active.bookclubsnew %}active{% endif %}" href="{{ url_for('bookclubsnew') }}">Create a new book club</a>
         <a class="nav-link {% if active.bookclubsignup %}active{% endif %}" href="{{ url_for('bookclubsignup') }}">Sign up for a book club</a>
     </div>
+
+
+    <div class="flex-column flashSideBar">
+        <!--FLASH messages reference: https://www.youtube.com/watch?v=cYWiDiIUxQc&t=30 -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">
+                    {{ message }} 
+                </div>
+            {% endfor %}
+        {% endif %}
+        {% endwith %}
+    </div>
+
 </div> 
