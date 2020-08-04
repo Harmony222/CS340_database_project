@@ -206,10 +206,15 @@ CREATE TABLE meetings_members (
 );
 
 INSERT INTO meetings_members (meetingID, memberID)
-    VALUES  ('3', '1'),
-            ('3', '2'),
-            ('4', '1'),
-            ('4', '4');
+    VALUES  (3, 1),
+            (3, 2),
+            (4, 1),
+            (4, 4),
+            (1, 4),
+            (2, 1),
+            (4, 7),
+            (5, 3),
+            (6, 8);
 
 CREATE TABLE bookclubs_members (
     memberID int(11) NOT NULL,
