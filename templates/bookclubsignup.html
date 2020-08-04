@@ -6,34 +6,35 @@
     {% include "partials/bookclubssidebar.html" %}
     <div class="col-md-9 mainContent">
     <!-- Sign Up For A Book Club -->
-        <div class="col-md-8">
-            <div class="clubSignUpForm">
-                <form method="POST" action="/bookclubsignup">
-                    <fieldset class="form-group">
-                        <legend class="border-bottom mb-4">Sign Up For A Book Club</legend>
+        <div class="row">
+            <div class="col-md-8">
+                <div class="clubSignUpForm">
+                    <form method="POST" action="/bookclubsignup">
+                        <fieldset class="form-group">
+                            <legend class="border-bottom mb-4">Sign Up For A Book Club</legend>
+                            <div class="form-group">
+                                {{ formSignUp.clubName.label(class="form-control-label") }} 
+                                <select class="form-control" name="clubName">
+                                {% for option in formSignUp.clubName %}
+                                    {% if loop.first %}
+                                        <option value="" disabled selected>Select a book club</option>
+                                    {% endif %}
+                                    {{ option }}
+                                {% endfor %}
+                                </select>
+                            </div>       
+                            <div class="form-group">
+                                {{ formSignUp.email.label(class="form-control-label") }}
+                                {{ formSignUp.email(class="form-control") }}
+                            </div>         
+                        </fieldset>
                         <div class="form-group">
-                            {{ formSignUp.clubName.label(class="form-control-label") }} 
-                            <select class="form-control" name="clubName">
-                            {% for option in formSignUp.clubName %}
-                                {% if loop.first %}
-                                    <option value="" disabled selected>Select a book club</option>
-                                {% endif %}
-                                {{ option }}
-                            {% endfor %}
-                            </select>
-                        </div>       
-                        <div class="form-group">
-                            {{ formSignUp.email.label(class="form-control-label") }}
-                            {{ formSignUp.email(class="form-control") }}
-                        </div>         
-                    </fieldset>
-                    <div class="form-group">
-                        {{ formSignUp.signUpSubmit(class="btn btn-outline-primary") }}
-                    </div>
-                </form>
-            </div> 
+                            {{ formSignUp.signUpSubmit(class="btn btn-outline-primary") }}
+                        </div>
+                    </form>
+                </div> 
+            </div>
         </div>
     </div>
-    
 </div>
 {% endblock body %}

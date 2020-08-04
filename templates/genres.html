@@ -30,52 +30,42 @@
             {% endif %}
             {% endwith %}
         </div>
-
     </div>
 
-
     <div class="col-md-9">
-        <div class="tab-content" id="v-pills-tabContent">
-            <div class="tab-pane fade" id="v-pills-add" role="tabpanel" aria-labelledby="v-pills-add-tab">
-                <div class="row">
-                    <div class="col-md-8">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="tab-content" id="v-pills-tabContent">
+                    <div class="tab-pane fade" id="v-pills-add" role="tabpanel" aria-labelledby="v-pills-add-tab">
                         <form method="POST" action="/genres">
                             <legend class="border-bottom mb-4">Add a New Genre</legend>
                             <div class="form-group">
                                 {{ form.genre.label(class="form-control-label") }}
                                 {{ form.genre(class="form-control") }}
-                        
                             </div>
                             
                             {{ form.genreSubmit(class="btn btn-outline-primary") }}
                         </form>
                     </div>
+                    <div class="tab-pane fade show active" id="v-pills-view" role="tabpanel" aria-labelledby="v-pills-view-tab">
+                        <legend>Genres of books available at Novel Hovel</legend>
+                        <table class = "table">
+                            <thead>
+                                <th hidden>Genre ID</th>
+                                <th>Genre</th>
+                            </thead>
+                            {% for genre in genres %}
+                            <tr>
+                                <td hidden>{{ genre[0] }}</td> <!-- genre ID -->
+                                <td class="genre">{{ genre[1] }}</td> <!-- genre -->
+                            </tr>
+                            {% endfor %}
+                        </table>
+                    </div>
                 </div>
-
             </div>
-
-            <div class="tab-pane fade show active" id="v-pills-view" role="tabpanel" aria-labelledby="v-pills-view-tab">
-                <legend>Genres of books available at Novel Hovel</legend>
-                <table class = "table">
-                    <thead>
-                        <th hidden>Genre ID</th>
-                        <th>Genre</th>
-                    </thead>
-                    {% for genre in genres %}
-                    <tr>
-                        <td hidden>{{ genre[0] }}</td> <!-- genre ID -->
-                        <td class="genre">{{ genre[1] }}</td> <!-- genre -->
-                    </tr>
-                    {% endfor %}
-                </table>
-                
-            </div>
-        
-        
         </div>
     </div>
-
-    
 </div>
 
 {% endblock body %}
