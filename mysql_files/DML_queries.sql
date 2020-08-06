@@ -93,7 +93,8 @@ WHERE meetingID = %meetingID_from_selected_row;
 SELECT b.bookID, b.title, b.author, g.genre
 FROM Books AS b
 JOIN Genres AS g 
-ON b.bookGenreID = g.genreID;
+ON b.bookGenreID = g.genreID
+ORDER BY g.genre;
 
 -- Add a new book
 INSERT INTO Books (title, author, bookGenreID)

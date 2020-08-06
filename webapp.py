@@ -531,7 +531,8 @@ def get_all_books():
     query = '''SELECT b.bookID, b.title, b.author, g.genre
                 FROM Books AS b
                 JOIN Genres AS g 
-                ON b.bookGenreID = g.genreID'''
+                ON b.bookGenreID = g.genreID
+                ORDER BY g.genre'''
     all_books = execute_query(db_connection, query).fetchall()
     return all_books
 
