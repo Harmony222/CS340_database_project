@@ -36,7 +36,7 @@
                 <ul>
                     <li>View all book clubs - SELECT FROM BookClubs</li>
                     <ul>
-                        <li>View members for specific book club - SELECT FROM Members</li>
+                        <li>View members for specific book club - SELECT FROM bookclubs_members</li>
                     </ul>
                     <li>Create a new book club - INSERT INTO BookClubs</li>
                     <li>Sign up for a book club - INSERT INTO bookclubs_members (M:M relationship)</li>
@@ -58,11 +58,10 @@
                     <ul>
                         <li>Club meetings list dynamically created from book club dropdown menu - SELECT FROM ClubMeetings</li>
                     </ul>
-                    <li>View members attending a meeting - SELECT FROM Members
+                    <li>View members attending a meeting - SELECT FROM meetings_members
                     <ul>
                         <li>Remove member from a meeting - DELETE FROM meetings_members (M:M relationship delete)</li>
                         <li>Club meetings list dynamically created from book club dropdown menu - SELECT FROM ClubMeetings</li>
-                        <li>Meeting attendee list dynamically created from members joined with meetings_members - SELECT FROM Members</li>
                     </ul>
                     </li>
                 </ul>
