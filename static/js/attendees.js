@@ -23,10 +23,10 @@ function selectClick(allrows, row) {
     row.setAttribute('class', 'table-primary');
     let tableDiv = document.getElementById('attendeeTable');
     tableDiv.setAttribute('class', 'hidden');
-    console.log(tableDiv);
+    // console.log(tableDiv);
     let noDiv = document.getElementById('noattendees');
     noDiv.setAttribute('class', 'hidden');
-    console.log(noDiv);
+    // console.log(noDiv);
     meetingID = document.getElementById('meetingID');
     meetingID.value = row.firstElementChild.innerHTML;
 };
@@ -81,6 +81,9 @@ function get_attendees(allrows, row) {
                     button.addEventListener('click', 
                         () => leaveClick(newRow, tableBody, rowData[0], rowData[1]));
                     cell.appendChild(button);
+                    console.log(newRow);
+                    newRow.firstChild.hidden = true;
+                    newRow.firstChild.nextSibling.hidden = true;
                     newRow.appendChild(cell);
                     tableBody.appendChild(newRow);
                 };
