@@ -356,7 +356,7 @@ def meetingsnew():
 
 # --------------- MEETINGS SIGN UP ROUTE --------------------------
 '''
-
+meetings_members INSERT
 '''
 @app.route('/meetingssignup', methods=['GET', 'POST'])
 def meetingssignup():
@@ -391,7 +391,9 @@ def meetingssignup():
                             club_meetings=club_meetings,
                             select_club=select_club)
 
-
+'''
+meetings_members INSERT
+'''
 def meeting_signup_member(meetingID, memberID, email):
     '''
     Tries signing up a member to specified meeting. 
@@ -442,6 +444,10 @@ def validate_member(email):
 
 
 # -------------------- ATTENDEES ROUTE --------------------------
+'''
+meetings_members SELECT
+meetings_members DELETE
+'''
 @app.route('/attendees', methods=['GET', 'POST', 'DELETE'])
 def attendees():
     club_names_list = get_club_names()
@@ -481,6 +487,9 @@ def attendees():
 
 
 # ------------------- GET ATTENDEES ROUTE -----------------------
+'''
+meetings_members SELECT
+'''
 @app.route('/get_attendees', methods = ['GET', 'POST'])
 def get_attendees():
     '''
@@ -720,6 +729,8 @@ def get_all_future_meetings():
     meetings = execute_query(db_connection, query, (), True).fetchall()
     return meetings
 
+# ----------------------------
+# ClubMeetings SELECT
 def get_all_past_meetings():
     '''
     Retrieves all PAST meetings from mysql database.
