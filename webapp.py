@@ -420,7 +420,6 @@ def meeting_signup_member(meetingID, memberID, email):
         return False
     return True
 
-
 def validate_member(email):
     '''
     Checks to see if email is a Novel Hovel Member. 
