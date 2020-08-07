@@ -196,10 +196,12 @@ ClubMeetings UPDATE
 '''
 @app.route('/meetings', methods=['GET', 'POST', 'PUT', 'DELETE'])
 def meetings():
-    all_meetings = get_all_future_meetings()
+    all_future_meetings = get_all_future_meetings()
+    all_past_meetings = get_all_past_meetings()
     club_names_list = get_club_names()
     # print(club_names_list)
     select_club = False
+
     if request.method == 'GET' and request.args:
         # Get data for meeting to be modified so that it can be used
         # in the modify form
@@ -226,6 +228,7 @@ def meetings():
             'books' : books
         }
         return jsonify(modify_data)
+
     if request.method == 'POST':
         # Modify club meeting form - get data from request and execute
         # MySQL query to update the club meeting
@@ -261,7 +264,8 @@ def meetings():
     return render_template('meetings.html', 
                             club_names=club_names_list,
                             active={'meetings':True, 'view':True},
-                            all_meetings=all_meetings,
+                            all_future_meetings=all_future_meetings,
+                            all_past_meetings=all_past_meetings,
                             select_club=select_club)
 
 @app.route('/get_books_in_genre', methods=['GET', 'POST'])
@@ -712,6 +716,25 @@ def get_all_future_meetings():
             '''
     meetings = execute_query(db_connection, query, (), True).fetchall()
     return meetings
+
+def get_all_past_meetings():
+    '''
+    Retrieves all PAST meetings from mysql database.
+    Returns a list of meetings with each meeting's data in dictionary format.
+    '''
+    db_connection = connect_to_database()
+    query = '''
+            SELECT cm.meetingID, cm.dateTime, b.title, b.author, 
+                   bc.clubName, m.firstName, m.lastName
+            FROM ClubMeetings as cm
+            LEFT JOIN Books as b ON cm.meetingBookID = b.bookID
+            JOIN Members as m on cm.meetingLeaderID = m.memberID
+            JOIN BookClubs as bc on cm.bookClubID = bc.bookClubID
+            WHERE cm.dateTime < CURDATE()
+            ORDER BY cm.bookClubID, cm.dateTime
+            '''
+    meetings = execute_query(db_connection, query, (), True).fetchall()
+    return meetings 
 
 # ---------------------------
 # ClubMeetings SELECT

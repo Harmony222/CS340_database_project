@@ -14,9 +14,9 @@ https://stackoverflow.com/questions/46921823/dynamic-choices-wtforms-flask-selec
 <div class="row">
 {% include "partials/meetingssidebar.html" %}
     <div class="col-md-9 mainContent">
-        <!-- View All Club Meetings -->
+        <!-- View All Future Club Meetings -->
         <div>
-            <legend>All Future Book Club Meetings</legend>
+            <legend>Future Book Club Meetings</legend>
             <table class="table">
                 <thead>
                     <th hidden>ID</th>
@@ -29,7 +29,7 @@ https://stackoverflow.com/questions/46921823/dynamic-choices-wtforms-flask-selec
                     <th></th>
                 </thead>
                 <tbody id="meetingsTableBody">
-                    {% for meeting in all_meetings %}
+                    {% for meeting in all_future_meetings %}
                     <tr id="{{ meeting.meetingID }}">
                         <td hidden>{{ meeting.meetingID }}</td>
                         <td class='dateTime'>{{ meeting.dateTime }}</td>
@@ -39,6 +39,32 @@ https://stackoverflow.com/questions/46921823/dynamic-choices-wtforms-flask-selec
                         <td>{{ meeting.firstName }} {{ meeting.lastName }}</td>
                         <td><button id="mb{{ meeting.meetingID }}" type="button" class="modify btn btn-primary btn-sm" data-toggle="modal" data-target="#modifyModal">Modify</button></td>
                         <td><button id="db{{ meeting.meetingID }}" type="button" class="delete btn btn-secondary btn-sm" data-toggle="modal" data-target="#deleteModal">Delete</button></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <!-- View All Past Club Meetings -->
+        <div>
+            <legend>Past Book Club Meetings</legend>
+            <table class="table" id="pastMeetingsTable">
+                <thead>
+                    <th hidden>ID</th>
+                    <th>Date/Time</th>
+                    <th>Book Title</th>
+                    <th>Author</th>
+                    <th>Book Club</th>
+                    <th>Meeting Leader</th>
+                </thead>
+                <tbody>
+                    {% for meeting in all_past_meetings %}
+                    <tr id="{{ meeting.meetingID }}">
+                        <td hidden>{{ meeting.meetingID }}</td>
+                        <td class='dateTime'>{{ meeting.dateTime }}</td>
+                        <td>{{ meeting.title }}</td>
+                        <td>{{ meeting.author }}</td>
+                        <td>{{ meeting.clubName }}</td>
+                        <td>{{ meeting.firstName }} {{ meeting.lastName }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
