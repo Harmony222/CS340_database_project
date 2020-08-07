@@ -161,7 +161,9 @@ CREATE TABLE ClubMeetings (
         ON DELETE SET NULL
         ON UPDATE CASCADE,
     FOREIGN KEY (meetingLeaderID)
-        REFERENCES Members(memberID)
+        REFERENCES Members(memberID),
+    FOREIGN KEY (bookClubID)
+        REFERENCES BookClubs(bookClubID)
 );
 
 INSERT INTO ClubMeetings (`dateTime`, bookClubID, meetingBookID, meetingLeaderID)
