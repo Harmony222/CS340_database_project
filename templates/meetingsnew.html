@@ -12,12 +12,6 @@
                 <form method="POST" action="/meetingsnew">
                     {{ formNewMeeting.csrf_token() }}
                     <legend class="border-bottom mb-4">Schedule a New Club Meeting</legend>
-                    <!-- https://stackoverflow.com/questions/35527722/why-validation-not-working-on-form-request -->
-                    <!-- {% for field in formNewMeeting.errors %}
-                    {% for error in formNewMeeting.errors[field] %}
-                        <div class="error">{{ error }}</div>
-                    {% endfor %}
-                    {% endfor %} -->
                     <div class="form-group">
                         {{ formNewMeeting.clubName.label(class="form-control-label") }} 
                         <select class="form-control" name="clubName" id="clubSelect">
@@ -50,7 +44,7 @@
                             <select class="form-control" name="meetingBook" id="bookSelect" required>
                                 <option value="" disabled selected>Please select a book club first</option>
                             </select>
-                            <small class="text-muted">Book selection is filtered by Book Club genre and includes only those books not already assigned to a meeting.
+                            <small class="text-muted">Book selection is filtered by Book Club genre and includes only those books not already assigned to a past or future meeting.
                             </small>
                         </div>                        
                         <div class="form-group">
@@ -61,6 +55,12 @@
                             {{ formNewMeeting.meetingSubmit(class="btn btn-outline-primary") }}
                         </div>
                     </fieldset>
+                    <!-- https://stackoverflow.com/questions/35527722/why-validation-not-working-on-form-request -->
+                    {% for field in formNewMeeting.errors %}
+                    {% for error in formNewMeeting.errors[field] %}
+                        <div class="error">{{ error }}</div>
+                    {% endfor %}
+                    {% endfor %}
                 </form>
             </div>            
         </div>

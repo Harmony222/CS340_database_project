@@ -355,6 +355,9 @@ def meetingsnew():
 
 
 # --------------- MEETINGS SIGN UP ROUTE --------------------------
+'''
+
+'''
 @app.route('/meetingssignup', methods=['GET', 'POST'])
 def meetingssignup():
     club_names_list = get_club_names()
