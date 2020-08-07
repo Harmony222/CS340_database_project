@@ -1,3 +1,8 @@
+<!-- 
+---------------------------------------------------------------------------
+Books INSERT, SELECT
+--------------------------------------------------------------------------- -->
+
 {% extends "layout.html" %}
 {% block title %}Novel Hovel Books Page{% endblock title %}
 
@@ -40,6 +45,7 @@
                 <div class="row">
                     <div class="col-md-8">
                         <form method="POST" action="/books">
+                            <!-- Books INSERT -->
                             <legend class="border-bottom mb-4">Add a New Book</legend>
                             <div class="form-group">
                                 {{ form.title.label(class="form-control-label") }}
@@ -71,6 +77,7 @@
             
             
             <div class="tab-pane fade show active" id="v-pills-view" role="tabpanel" aria-labelledby="v-pills-view-tab">
+                <!-- Books SELECT -->
                 <legend>Books available at Novel Hovel</legend>
                 <table class = "table">
                     <thead>

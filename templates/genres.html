@@ -1,3 +1,8 @@
+<!-- 
+---------------------------------------------------------------------------
+Genres INSERT, SELECT
+--------------------------------------------------------------------------- -->
+
 {% extends "layout.html" %}
 {% block title %}Novel Hovel Genres Page{% endblock title %}
 
@@ -38,6 +43,7 @@
                 <div class="tab-content" id="v-pills-tabContent">
                     <div class="tab-pane fade" id="v-pills-add" role="tabpanel" aria-labelledby="v-pills-add-tab">
                         <form method="POST" action="/genres">
+                            <!-- Genres INSERT -->
                             <legend class="border-bottom mb-4">Add a New Genre</legend>
                             <div class="form-group">
                                 {{ form.genre.label(class="form-control-label") }}
@@ -47,7 +53,9 @@
                             {{ form.genreSubmit(class="btn btn-outline-primary") }}
                         </form>
                     </div>
+
                     <div class="tab-pane fade show active" id="v-pills-view" role="tabpanel" aria-labelledby="v-pills-view-tab">
+                        <!-- Genres SELECT -->
                         <legend>Genres of books available at Novel Hovel</legend>
                         <table class = "table">
                             <thead>

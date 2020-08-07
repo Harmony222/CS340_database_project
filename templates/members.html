@@ -1,3 +1,8 @@
+<!-- 
+---------------------------------------------------------------------------
+Members INSERT, SELECT
+--------------------------------------------------------------------------- -->
+
 {% extends "layout.html" %}
 {% block title %}Novel Hovel Members Page{% endblock title %}
 
@@ -40,6 +45,7 @@
                 <div class="row">
                     <div class="col-md-8">
                         <form method="POST" action="/members">
+                            <!-- Members INSERT -->
                             <legend class="border-bottom mb-4">Become a Member of Novel Hovel</legend>
                             <div class="form-group">
                                 {{ form.firstName.label(class="form-control-label") }}
@@ -62,6 +68,7 @@
             </div>
 
             <div class="tab-pane fade show active" id="v-pills-view" role="tabpanel" aria-labelledby="v-pills-view-tab">
+                <!-- Members SELECT -->
                 <legend>Members of Novel Hovel</legend>
                 <table class = "table">
                     <thead>
