@@ -190,9 +190,13 @@ def view_clubMembers(id):
     return render_template('bookclubmembers.html', active={'view_clubMembers':True}, club_members=club_members, clubName = clubName)
 
 # -------------------- MEETINGS ROUTE ----------------------------
+'''
+ClubMeetings SELECT
+ClubMeetings UPDATE
+'''
 @app.route('/meetings', methods=['GET', 'POST', 'PUT', 'DELETE'])
 def meetings():
-    all_meetings = get_all_meetings()
+    all_meetings = get_all_future_meetings()
     club_names_list = get_club_names()
     # print(club_names_list)
     select_club = False
@@ -268,7 +272,7 @@ def get_books_in_genre():
 
 # -------------------- DELETE MEETING ROUTE ----------------------
 '''
-
+ClubMeetings DELETE
 '''
 @app.route('/meetings_delete', methods=['GET', 'POST'])
 def meetings_delete():
@@ -288,6 +292,9 @@ def meetings_delete():
         return redirect('meetings')
 
 # -------------------- NEW MEETINGS ROUTE ------------------------
+'''
+ClubMeetings INSERT
+'''
 @app.route('/meetingsnew', methods=['GET', 'POST'])
 def meetingsnew():
     club_names_list = get_club_names()
@@ -590,6 +597,9 @@ def genres():
 
 
 # ------------------------- MISC HELPER FUNCTIONS ---------------------------
+
+# ---------------------------
+# Genres SELECT   
 def get_genres():
     '''
     Retrieves all genres from mysql database.
@@ -600,6 +610,8 @@ def get_genres():
     genres = execute_query(db_connection, query).fetchall()
     return genres
 
+# ---------------------------
+# BookClubs SELECT
 def get_club_names():
     '''
     Retrieves all club names from mysql database.
@@ -610,6 +622,8 @@ def get_club_names():
     club_names = execute_query(db_connection, query).fetchall()
     return club_names
 
+# ---------------------------
+# Books SELECT
 def get_books(clubID, selected=False):
     '''
     Retrieve books that are in the genre associated with clubID.
@@ -651,6 +665,8 @@ def get_books(clubID, selected=False):
                 selected_book['title'] + ' by ' + selected_book['author'])
     return {'selected_book': selected_book, 'book_options': book_options}
 
+# ---------------------------
+# BookClubs SELECT
 def get_all_clubs():
     '''
     Retrieves all book clubs from mysql database pluse the next book club
@@ -675,7 +691,9 @@ def get_all_clubs():
     clubs = execute_query(db_connection, query, (), True).fetchall()
     return clubs
 
-def get_all_meetings():
+# ---------------------------
+# ClubMeetings SELECT
+def get_all_future_meetings():
     '''
     Retrieves all meetings from mysql database.
     Returns a list of all meetings with each meeting's data in dictionary format.
@@ -694,6 +712,8 @@ def get_all_meetings():
     meetings = execute_query(db_connection, query, (), True).fetchall()
     return meetings
 
+# ---------------------------
+# ClubMeetings SELECT
 def get_club_meetings(club):
     '''
     Retrieves meetings for the given club from mysql database.
@@ -712,6 +732,8 @@ def get_club_meetings(club):
     club_meetings = execute_query(db_connection, query, (), True).fetchall()
     return club_meetings
 
+# ---------------------------
+# bookclubs_members INSERT
 def addMember_bookClub(clubName, email):
     '''
     Executes INSERT query into bookclubs_members intersection
